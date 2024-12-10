@@ -3,8 +3,9 @@
     ViewData["Title"] = "Registration";
 }
 
+<link rel="stylesheet" href="~/assets/style.css" asp-append-version="true" />
 
-<div class="container-registration">
+<div class="container-box">
     <div class="row">
         <div class="col-md-12 col-sm-12 col-lg-12 shadow p-3 mb-2 rounded">
             <form id="registerForm" asp-controller="Account" asp-action="Register" asp-area="" asp-route-returnUrl="@Model.ReturnUrl" method="post" asp-antiforgery="true">

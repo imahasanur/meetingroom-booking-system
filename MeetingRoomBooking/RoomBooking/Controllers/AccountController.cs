@@ -19,7 +19,16 @@ namespace RoomBooking.Controllers
             return View();
         }
 
+        [HttpGet]
         public IActionResult Login()
+        {
+            var model = new LoginModel();
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Login(LoginModel model)
         {
             return View();
         }
