@@ -216,6 +216,10 @@
     <script src="~/adminLTE/js/demo.js"></script>
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="~/adminLTE/js/pages/dashboard.js"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    @if (IsSectionDefined("Scripts"))
+    {
+        @await RenderSectionAsync("Scripts", required: false)
+    }
+    
 </body>
 </html>
