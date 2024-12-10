@@ -2,8 +2,11 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RoomBooking.Data;
+using RoomBooking.Infrastructure;
 using Serilog;
 using Serilog.Events;
+using System.Configuration;
+using System.Reflection;
 
 namespace RoomBooking
 {
@@ -36,14 +39,11 @@ namespace RoomBooking
                     .ReadFrom.Configuration(builder.Configuration));
 
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DbCon");
+                var migrationAssembly = Assembly.GetExecutingAssembly().FullName;
 
-                // Add services to the container.
-                builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseSqlServer(connectionString));
+                builder.Services.AddScoped<ApplicationDbContext>(s => new ApplicationDbContext(connectionString, migrationAssembly));
                 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-                builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                    .AddEntityFrameworkStores<ApplicationDbContext>();
                 builder.Services.AddControllersWithViews();
 
                 var app = builder.Build();
@@ -69,7 +69,7 @@ namespace RoomBooking
                 app.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                app.MapRazorPages();
+                //app.MapRazorPages();
 
                 app.Run();
             }
