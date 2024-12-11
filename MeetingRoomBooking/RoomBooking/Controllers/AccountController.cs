@@ -100,9 +100,28 @@ namespace RoomBooking.Controllers
         }
 
 
-        public IActionResult Logout()
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout(string returnUrl = null)
         {
-            return View();
+            try
+            {
+                await _signInManager.SignOutAsync();
+                _logger.LogInformation("User logged out.");
+                if (returnUrl != null)
+                {
+                    return LocalRedirect(returnUrl);
+                }
+                else
+                {
+                    return RedirectToAction("Register");
+                }
+            }
+            catch (Exception ex)
+            { 
+                _logger.LogWarning($"Error in the redirect to: {returnUrl}");
+                return RedirectToAction("AccessDenied");
+            }
+
         }
     }
 }
