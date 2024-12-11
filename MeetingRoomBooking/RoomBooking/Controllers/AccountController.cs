@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RoomBooking.Infrastructure.Membership;
 using RoomBooking.Models;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace RoomBooking.Controllers
 {
@@ -55,20 +57,48 @@ namespace RoomBooking.Controllers
             return View(model);
         }
 
-
         [HttpGet]
-        public IActionResult Login()
+        public async Task<IActionResult> Login(string returnUrl = null)
         {
-            var model = new LoginModel();
+            returnUrl ??= Url.Content("~/");
+            var model = new LoginModel 
+            { 
+                ReturnUrl = returnUrl 
+            };
+
+            // Clear the existing external cookie to ensure a clean login process
+            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+
             return View(model);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Login(LoginModel model)
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginModel model)
         {
-            return View();
+            model.ReturnUrl ??= Url.Content("~/");
+
+            if (ModelState.IsValid)
+            {
+                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
+                if (result.Succeeded)
+                {
+                    var user = await _userManager.FindByEmailAsync(model.Email);
+                    var claims = (await _userManager.GetClaimsAsync(user)).ToArray();
+
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    _logger.LogWarning("Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                }
+            }
+            _logger.LogInformation("Model State is not valid");
+
+            return View(model);
         }
+
 
         public IActionResult Logout()
         {

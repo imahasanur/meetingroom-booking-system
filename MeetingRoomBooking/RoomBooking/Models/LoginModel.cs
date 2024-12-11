@@ -15,6 +15,5 @@ namespace RoomBooking.Models
         [Display(Name = "Password")]
         public string Password { get; set; }
         public string? ReturnUrl { get; set; }
-
     }
 }
