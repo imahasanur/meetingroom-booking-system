@@ -1,7 +1,6 @@
 using DotNetEnv;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using RoomBooking.Data;
 using RoomBooking.Infrastructure;
 using Serilog;
 using Serilog.Events;
@@ -40,6 +39,10 @@ namespace RoomBooking
 
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DbCon");
                 var migrationAssembly = Assembly.GetExecutingAssembly().FullName;
+
+                //builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                //    options.UseSqlServer(connectionString,
+                //    (m) => m.MigrationsAssembly(migrationAssembly)));
 
                 builder.Services.AddScoped<ApplicationDbContext>(s => new ApplicationDbContext(connectionString, migrationAssembly));
                 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
