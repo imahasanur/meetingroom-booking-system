@@ -2,6 +2,7 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RoomBooking.Infrastructure;
+using RoomBooking.Infrastructure.Membership;
 using Serilog;
 using Serilog.Events;
 using System.Configuration;
@@ -45,6 +46,13 @@ namespace RoomBooking
                 //    (m) => m.MigrationsAssembly(migrationAssembly)));
 
                 builder.Services.AddScoped<ApplicationDbContext>(s => new ApplicationDbContext(connectionString, migrationAssembly));
+                builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
+                   .AddEntityFrameworkStores<ApplicationDbContext>()
+                   .AddUserManager<ApplicationUserManager>()
+                   .AddRoleManager<ApplicationRoleManager>()
+                   .AddSignInManager<ApplicationSignInManager>()
+                   .AddDefaultTokenProviders();
+                //builder.Services.AddScoped<SignInManager<ApplicationUser>>();
                 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
                 builder.Services.AddControllersWithViews();
