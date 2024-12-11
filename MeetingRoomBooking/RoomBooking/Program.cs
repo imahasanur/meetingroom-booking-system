@@ -1,4 +1,5 @@
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RoomBooking.Infrastructure;
@@ -41,10 +42,6 @@ namespace RoomBooking
                 var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DbCon");
                 var migrationAssembly = Assembly.GetExecutingAssembly().FullName;
 
-                //builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                //    options.UseSqlServer(connectionString,
-                //    (m) => m.MigrationsAssembly(migrationAssembly)));
-
                 builder.Services.AddScoped<ApplicationDbContext>(s => new ApplicationDbContext(connectionString, migrationAssembly));
                 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
                    .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -52,10 +49,17 @@ namespace RoomBooking
                    .AddRoleManager<ApplicationRoleManager>()
                    .AddSignInManager<ApplicationSignInManager>()
                    .AddDefaultTokenProviders();
-                //builder.Services.AddScoped<SignInManager<ApplicationUser>>();
+
                 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
                 builder.Services.AddControllersWithViews();
+                builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(x =>
+                {
+                    x.LoginPath = "/account/Login";
+                    x.AccessDeniedPath = "/account/AccessDenied";
+                    x.LogoutPath = "/";
+                    x.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+                });
 
                 var app = builder.Build();
 
@@ -75,6 +79,7 @@ namespace RoomBooking
 
                 app.UseRouting();
 
+                app.UseAuthentication();
                 app.UseAuthorization();
 
                 app.MapControllerRoute(

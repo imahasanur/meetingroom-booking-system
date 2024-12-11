@@ -79,8 +79,8 @@ namespace RoomBooking.Controllers
 
             if (ModelState.IsValid)
             {
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
+
                 if (result.Succeeded)
                 {
                     var user = await _userManager.FindByEmailAsync(model.Email);
@@ -107,6 +107,7 @@ namespace RoomBooking.Controllers
             {
                 await _signInManager.SignOutAsync();
                 _logger.LogInformation("User logged out.");
+
                 if (returnUrl != null)
                 {
                     return LocalRedirect(returnUrl);
