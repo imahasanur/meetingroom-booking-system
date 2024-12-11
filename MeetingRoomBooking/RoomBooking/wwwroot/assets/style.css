@@ -5,7 +5,7 @@
 
 .container-box {
     max-width: 600px;
-    margin: 50px 200px;
+    margin: 40px auto;
     background-color: #F3F5F8;
     padding: 20px;
 }
