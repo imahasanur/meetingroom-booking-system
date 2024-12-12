@@ -2,8 +2,13 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using RoomBooking.Application;
+using RoomBooking.Application.Services.Room;
+using RoomBooking.Domain;
+using RoomBooking.Domain.Repositories;
 using RoomBooking.Infrastructure;
 using RoomBooking.Infrastructure.Membership;
+using RoomBooking.Infrastructure.Repositories;
 using Serilog;
 using Serilog.Events;
 using System.Configuration;
@@ -43,12 +48,18 @@ namespace RoomBooking
                 var migrationAssembly = Assembly.GetExecutingAssembly().FullName;
 
                 builder.Services.AddScoped<ApplicationDbContext>(s => new ApplicationDbContext(connectionString, migrationAssembly));
+                builder.Services.AddScoped<IApplicationDbContext>(s => new ApplicationDbContext(connectionString, migrationAssembly));
                 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
                    .AddEntityFrameworkStores<ApplicationDbContext>()
                    .AddUserManager<ApplicationUserManager>()
                    .AddRoleManager<ApplicationRoleManager>()
                    .AddSignInManager<ApplicationSignInManager>()
                    .AddDefaultTokenProviders();
+
+                builder.Services.AddScoped<IRoomManagementService, RoomManagementService>();
+                builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+                builder.Services.AddScoped<IApplicationUnitOfWork, ApplicationUnitOfWork>();
+                builder.Services.AddScoped<ApplicationUser>();
 
                 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

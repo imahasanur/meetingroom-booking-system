@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Mapster.Async" Version="2.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\RoomBooking.Domain\RoomBooking.Domain.csproj" />
   </ItemGroup>
 

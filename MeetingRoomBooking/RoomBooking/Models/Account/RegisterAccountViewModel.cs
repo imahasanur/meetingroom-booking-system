@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RoomBooking.Models.Account
 {
-    public class RegistrationModel
+    public class RegisterAccountViewModel
     {
         private UserManager<ApplicationUser> _userManager;
         private SignInManager<ApplicationUser> _signInManager;
@@ -38,7 +38,7 @@ namespace RoomBooking.Models.Account
         public string ConfirmPassword { get; set; }
         public string? ReturnUrl { get; set; }
 
-        public RegistrationModel() { }
+        public RegisterAccountViewModel() { }
 
         public void Resolve(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {

@@ -1,6 +1,7 @@
-﻿@* @{
+﻿@model CreateRoomViewModel
+@{
     ViewData["Title"] = "Create Room";
-} *@
+}
 
 <div class="row ml-auto">
     <div class="col-md-1 col-sm-1"></div>
@@ -9,35 +10,46 @@
             <div class="card-header mx-auto bg-cyan">
                 <h3 class="card-title">Create Room</h3>
             </div>
-            <form asp-controller="Room" asp-action="Create" asp-area="" asp-route-returnUrl="Room/ViewAll" method="post" asp-antiforgery="true" >
+            <form asp-controller="Room" asp-action="Create" asp-area="" asp-route-returnUrl="Room/Create" method="post" asp-antiforgery="true" >
                 <div class="card-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                     <div class="form-group">
                         <label>All Available Rooms</label>
-                            <select class="form-control select2 overflow-auto" style="width: 100%;">
-                            <option selected="selected">Room A1</option>
-                            <option>Room A1</option>
-                            <option>Room A2</option>
-                            <option>Room A3</option>
-                            <option>Room B1</option>
-                            <option>Room C1</option>
-                            <option>Room D1</option>
+                        <select class="form-control select2 overflow-auto text-center" style="width: 100%;">
+                            <option selected="selected">All Rooms</option>
+                            @if(Model.PreviousRooms is not null)
+                            {
+                                foreach(var room in Model.PreviousRooms)
+                                {
+                                    <option>@room.Name</option>
+                                }
+                            }
                         </select>
                     </div>
+
                     <div class="form-group">
-                        <label for="">Room Name</label>
-                        <input type="text" class="form-control" id="" autocomplete="given-name" aria-required="true" placeholder="Enter Room Name" required>
+                        <label>Select Available Floors</label>
+                        <select class="form-control select2 overflow-auto text-center" style="width: 100%;" asp-for = "Location">
+                            <option value = "Level-3" asp-for = "Location"> Level-3</option>
+                            <option value = "Level-4" asp-for = "Location"> Level-4</option>
+                            <option value = "Level-5" asp-for = "Location"> Level-5</option>
+                        </select>
+                        <span asp-validation-for="Location" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="">Room Location</label>
-                        <input type="text" class="form-control" id="" autocomplete="given-name" aria-required="true" placeholder="Write Room Location" required>
+                        <label asp-for="Name">Room Name</label>
+                        <input asp-for="Name" type="text" class="form-control" id="" autocomplete="given-name" aria-required="true" placeholder="Room name limited to A1, B1, A2, B2 avoid prefix and suffix space" required>
+                        <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="">Room Capacity</label>
-                        <input type="number" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Enter Room Capacity" required>
+                        <label asp-for="Capacity">Room Capacity</label>
+                        <input asp-for="Capacity" type="number" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Enter Room Capacity" required>
+                        <span asp-validation-for="Capacity" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="">Room Facility</label>
-                        <input type="text" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Write Room Facility" required>
+                        <label asp-for="Details">Room Details</label>
+                        <input asp-for="Details" type="text" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Write Room Facility" required>
+                        <span asp-validation-for="Details" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="card-footer text-center">
@@ -47,3 +59,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+}

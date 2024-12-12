@@ -15,7 +15,7 @@ namespace RoomBooking.Application.DTO
         public required string Details { get; set; }
         public required string CreatedBy { get; set; }
         public required DateTime CreatedAtUTC { get; set; }
-        public DateTime? UpdatedAtUTC { get; set; }
+        public DateTime? LastUpdatedAtUTC { get; set; }
 
     }
 }

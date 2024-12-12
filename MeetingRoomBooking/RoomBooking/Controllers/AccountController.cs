@@ -23,7 +23,7 @@ namespace RoomBooking.Controllers
         }
         public IActionResult Register()
         {
-            var model = new RegistrationModel();
+            var model = new RegisterAccountViewModel();
             return View(model);
         }
 
@@ -33,7 +33,7 @@ namespace RoomBooking.Controllers
         }
 
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegistrationModel model)
+        public async Task<IActionResult> Register(RegisterAccountViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -61,7 +61,7 @@ namespace RoomBooking.Controllers
         public async Task<IActionResult> Login(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
-            var model = new LoginModel 
+            var model = new LoginAccountViewModel 
             { 
                 ReturnUrl = returnUrl 
             };
@@ -73,7 +73,7 @@ namespace RoomBooking.Controllers
         }
 
         [HttpPost, ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginModel model)
+        public async Task<IActionResult> Login(LoginAccountViewModel model)
         {
             model.ReturnUrl ??= Url.Content("~/");
 

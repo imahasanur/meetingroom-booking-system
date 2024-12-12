@@ -2,7 +2,7 @@
 
 namespace RoomBooking.Models.Account
 {
-    public class LoginModel
+    public class LoginAccountViewModel
     {
         [Required]
         [EmailAddress]
