@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using RoomBooking.Domain.Entities;
 using RoomBooking.Infrastructure.Membership;
 using System;
 using System.Collections.Generic;
@@ -84,5 +85,7 @@ namespace RoomBooking.Infrastructure
                 }
             );
         }
+
+        public DbSet<Room> Room { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using RoomBooking.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +10,6 @@ namespace RoomBooking.Infrastructure
 {
     public interface IApplicationDbContext
     {
+        public DbSet<Room> Room { get; set; }
     }
 }
