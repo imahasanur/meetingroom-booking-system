@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace RoomBooking.Models
+namespace RoomBooking.Models.Account
 {
     public class LoginModel
     {

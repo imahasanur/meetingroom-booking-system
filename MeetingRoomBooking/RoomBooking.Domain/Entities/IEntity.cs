@@ -9,7 +9,7 @@ namespace RoomBooking.Domain.Entities
     public interface IEntity<T>
     {
         T Id { get; set; }
-        public DateTime CreatedAtUtc { get; set; }
-        public DateTime? LastUpdatedAtUtc { get; set; }
+        public DateTime CreatedAtUTC { get; set; }
+        public DateTime? LastUpdatedAtUTC { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RoomBooking.Infrastructure.Membership;
-using RoomBooking.Models;
+using RoomBooking.Models.Account;
 using static System.Formats.Asn1.AsnWriter;
 
 namespace RoomBooking.Controllers

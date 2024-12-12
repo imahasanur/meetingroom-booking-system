@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using RoomBooking.Infrastructure.Membership;
 using System.ComponentModel.DataAnnotations;
 
-namespace RoomBooking.Models
+namespace RoomBooking.Models.Account
 {
     public class RegistrationModel
     {

@@ -9,7 +9,7 @@
             <div class="card-header mx-auto bg-cyan">
                 <h3 class="card-title">Create Room</h3>
             </div>
-            <form asp-controller="Room" asp-action="Create" asp-area="" asp-route-returnUrl="" method="post" asp-antiforgery="true" >
+            <form asp-controller="Room" asp-action="Create" asp-area="" asp-route-returnUrl="Room/ViewAll" method="post" asp-antiforgery="true" >
                 <div class="card-body">
                     <div class="form-group">
                         <label>All Available Rooms</label>
@@ -25,19 +25,19 @@
                     </div>
                     <div class="form-group">
                         <label for="">Room Name</label>
-                        <input type="text" class="form-control" id="" aria-required="true" placeholder="Enter Room Name" required>
+                        <input type="text" class="form-control" id="" autocomplete="given-name" aria-required="true" placeholder="Enter Room Name" required>
                     </div>
                     <div class="form-group">
                         <label for="">Room Location</label>
-                        <input type="text" class="form-control" id="" aria-required="true" placeholder="Write Room Location" required>
+                        <input type="text" class="form-control" id="" autocomplete="given-name" aria-required="true" placeholder="Write Room Location" required>
                     </div>
                     <div class="form-group">
                         <label for="">Room Capacity</label>
-                        <input type="text" class="form-control" id="" aria-required="true" placeholder="Enter Room Capacity" required>
+                        <input type="number" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Enter Room Capacity" required>
                     </div>
                     <div class="form-group">
                         <label for="">Room Facility</label>
-                        <input type="text" class="form-control" id="" aria-required="true" placeholder="Write Room Facility" required>
+                        <input type="text" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Write Room Facility" required>
                     </div>
                 </div>
                 <div class="card-footer text-center">
