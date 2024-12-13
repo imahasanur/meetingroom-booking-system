@@ -57,7 +57,6 @@ namespace RoomBooking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateRoomViewModel model)
         {
-
             var user = await _userManager.GetUserAsync(User);
 
             if (user is not null) 
@@ -84,13 +83,15 @@ namespace RoomBooking.Controllers
                         ModelState.AddModelError(string.Empty, " This room is already exists !");
 
                         return View(model);
-
                     }
                     else
                     {
                         try
                         {
                             await model.CreateRoomAsync(model);
+                            TempData["status"] = "Room is Created";
+
+                            return View(model);
                         }
                         catch (Exception ex)
                         {
@@ -105,11 +106,13 @@ namespace RoomBooking.Controllers
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Error in Creating a new room");
+                    ModelState.AddModelError(string.Empty, " An Error is occured!");
 
                     return View(model);
                 }
             }
             _logger.LogWarning("ModelState is not valid");
+            ModelState.AddModelError(string.Empty, "Model State is not valid");
 
             return View(model);
         }

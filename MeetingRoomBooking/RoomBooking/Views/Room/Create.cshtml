@@ -6,6 +6,13 @@
 <div class="row ml-auto">
     <div class="col-md-1 col-sm-1"></div>
     <div class=" col-md-6 col-sm-8">
+        @if (TempData["status"] is not null)
+        {
+            <div id="successMessage" class="alert alert-success alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+                <i class="icon fas fa-check"></i>
+                @TempData["status"]
+            </div>
+        }
         <div class="card card-primary">
             <div class="card-header mx-auto bg-cyan">
                 <h3 class="card-title">Create Room</h3>
@@ -21,7 +28,7 @@
                             {
                                 foreach(var room in Model.PreviousRooms)
                                 {
-                                    <option>@room.Name</option>
+                                    <option>@room.Location @room.Name</option>
                                 }
                             }
                         </select>
@@ -60,6 +67,15 @@
     </div>
 </div>
 
-@section Scripts {
-        <partial name="_ValidationScriptsPartial" />
+@section Scripts 
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            $('#successMessage').on('click', function () {
+                $(this).hide();
+            });
+        });
+    </script>
 }
