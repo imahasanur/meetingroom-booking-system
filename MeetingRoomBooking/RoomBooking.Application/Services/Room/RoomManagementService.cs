@@ -1,10 +1,4 @@
 ﻿using RoomBooking.Application.DTO;
-using RoomBooking.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RoomBooking.Application.Services.Room
 {
@@ -44,16 +38,8 @@ namespace RoomBooking.Application.Services.Room
         public async Task CreateRoomAsync(CreateRoomDTO roomDTO)
         {
 
-            var room = new Room()
-            {
-                Name = roomDTO.Name,
-                Details = roomDTO.Details,
-                Location = roomDTO.Location,
-                Capacity = roomDTO.Capacity,
-                CreatedAtUTC = roomDTO.CreatedAtUTC,
-                CreatedBy = roomDTO.CreatedBy,
-            };
-            await _unitOfWork.RoomRepository.CreateRoomAsync(room);
+
+            await _unitOfWork.RoomRepository.CreateRoomAsync(roomDTO);
             await _unitOfWork.SaveAsync();
         }
     }

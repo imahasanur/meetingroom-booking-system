@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RoomBooking.Domain;
+using RoomBooking.Application.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;

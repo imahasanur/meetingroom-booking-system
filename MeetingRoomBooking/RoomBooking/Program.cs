@@ -1,17 +1,14 @@
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using RoomBooking.Application;
+using RoomBooking.Application.Domain.Repositories;
 using RoomBooking.Application.Services.Room;
-using RoomBooking.Domain;
-using RoomBooking.Domain.Repositories;
 using RoomBooking.Infrastructure;
 using RoomBooking.Infrastructure.Membership;
 using RoomBooking.Infrastructure.Repositories;
 using Serilog;
 using Serilog.Events;
-using System.Configuration;
 using System.Reflection;
 
 namespace RoomBooking

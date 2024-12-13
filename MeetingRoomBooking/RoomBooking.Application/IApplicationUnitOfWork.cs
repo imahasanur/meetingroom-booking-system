@@ -1,6 +1,6 @@
 ﻿using RoomBooking.Application.Services.Room;
-using RoomBooking.Domain;
-using RoomBooking.Domain.Repositories;
+using RoomBooking.Application.Domain;
+using RoomBooking.Application.Domain.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;

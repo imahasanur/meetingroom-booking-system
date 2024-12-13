@@ -1,12 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Query;
-using RoomBooking.Domain.Entities;
-using RoomBooking.Domain.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using RoomBooking.Application.Domain.Entities;
+using RoomBooking.Application.Domain.Repositories;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RoomBooking.Infrastructure.Repositories
 {

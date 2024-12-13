@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using RoomBooking.Domain.Entities;
+using RoomBooking.Application.Domain.Entities;
 using RoomBooking.Infrastructure.Membership;
 using System;
 using System.Collections.Generic;

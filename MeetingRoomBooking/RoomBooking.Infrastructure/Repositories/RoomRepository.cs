@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RoomBooking.Application.Domain.Entities;
 using RoomBooking.Application.DTO;
-using RoomBooking.Domain.Entities;
-using RoomBooking.Domain.Repositories;
+using RoomBooking.Application.Domain.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,8 +22,17 @@ namespace RoomBooking.Infrastructure.Repositories
             return await GetAllAsync();
         }
 
-        public async Task CreateRoomAsync(Room room)
+        public async Task CreateRoomAsync(CreateRoomDTO roomDTO)
         {
+            var room = new Room()
+            {
+                Name = roomDTO.Name,
+                Details = roomDTO.Details,
+                Location = roomDTO.Location,
+                Capacity = roomDTO.Capacity,
+                CreatedAtUTC = roomDTO.CreatedAtUTC,
+                CreatedBy = roomDTO.CreatedBy,
+            };
             await AddAsync(room);
         }
     }
