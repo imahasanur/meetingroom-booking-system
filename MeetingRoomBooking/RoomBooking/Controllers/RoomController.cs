@@ -29,9 +29,13 @@ namespace RoomBooking.Controllers
             return View();
         }
 
-        public IActionResult GetAll()
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
         {
-            return View();
+            var model = new GetAllRoomViewModel();
+            model.ResolveDI(_provider);
+            var allRooms = await model.GetAllRoomAsync();
+            return View(allRooms);
         }
 
         [HttpGet]
@@ -117,10 +121,8 @@ namespace RoomBooking.Controllers
             return View(model);
         }
 
-        public IActionResult ViewAll()
-        {
-            return View();
-        }
+
+        [HttpGet]
         public IActionResult Edit()
         {
             return View();

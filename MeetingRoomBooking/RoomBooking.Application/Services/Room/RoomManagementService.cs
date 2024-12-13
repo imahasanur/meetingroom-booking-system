@@ -37,8 +37,6 @@ namespace RoomBooking.Application.Services.Room
 
         public async Task CreateRoomAsync(CreateRoomDTO roomDTO)
         {
-
-
             await _unitOfWork.RoomRepository.CreateRoomAsync(roomDTO);
             await _unitOfWork.SaveAsync();
         }
