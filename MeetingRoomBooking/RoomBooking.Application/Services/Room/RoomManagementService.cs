@@ -70,5 +70,11 @@ namespace RoomBooking.Application.Services.Room
             await _unitOfWork.RoomRepository.DeleteRoomAsync(roomDTO);
             await _unitOfWork.SaveAsync();
         }
+
+        public async Task EditRoomAsync(EditRoomDTO roomDTO)
+        {
+            await _unitOfWork.RoomRepository.EditRoomAsync(roomDTO);
+            await _unitOfWork.SaveAsync();
+        }
     }
 }

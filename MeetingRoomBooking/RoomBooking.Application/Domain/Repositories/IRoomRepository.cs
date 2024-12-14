@@ -8,6 +8,7 @@ namespace RoomBooking.Application.Domain.Repositories
         Task<Room> GetRoomAsync(Guid id);
         public Task<IList<Room>> GetAllRoomAsync();
         Task CreateRoomAsync(CreateRoomDTO roomDTO);
+        Task EditRoomAsync(EditRoomDTO roomDTO);
         Task DeleteRoomAsync(RoomDTO roomDTO);
     }
 }

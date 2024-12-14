@@ -1,44 +1,78 @@
-﻿@* @{
+﻿@model EditRoomViewModel
+@{
     ViewData["Title"] = "Edit Room";
-} *@
+}
 
 <div class="row ml-auto">
     <div class="col-md-1 col-sm-1"></div>
     <div class=" col-md-6 col-sm-8">
+        @if (TempData["success"] is not null)
+        {
+            <div id="message" class="alert alert-success alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+                <i class="icon fas fa-check"></i>
+                @TempData["success"]
+            </div>
+        }
+
+        @if (TempData["failure"] is not null)
+        {
+            <div id="message" class="alert alert-danger alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+                <i class="icon fas fa-sad-tear"></i>
+                @TempData["failure"]
+            </div>
+        }
         <div class="card card-primary">
             <div class="card-header mx-auto bg-cyan">
-                <h3 class="card-title">Edit Room</h3>
+                <h3 class="card-title">Update Room</h3>
             </div>
-            <form asp-controller="Room" asp-action="Edit" asp-area="" asp-route-returnUrl="" method="post" asp-antiforgery="true">
+            <form asp-controller="Room" asp-action="Edit" asp-area="" asp-route-returnUrl="Room/Edit" method="post" asp-antiforgery="true">
                 <div class="card-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
                     <div class="form-group">
                         <label>All Available Rooms</label>
-                        <select class="form-control select2 overflow-auto" style="width: 100%;">
-                            <option selected="selected">Room A1</option>
-                            <option>Room A1</option>
-                            <option>Room A2</option>
-                            <option>Room A3</option>
-                            <option>Room B1</option>
-                            <option>Room C1</option>
-                            <option>Room D1</option>
+                        <select class="form-control select2 overflow-auto text-center" style="width: 100%;">
+                            <option selected="selected">All Rooms</option>
+                            @if (Model.PreviousRooms is not null)
+                            {
+                                foreach (var room in Model.PreviousRooms)
+                                {
+                                    <option>@room.Location @room.Name</option>
+                                }
+                            }
                         </select>
                     </div>
+
                     <div class="form-group">
-                        <label for="">Room Name</label>
-                        <input type="text" class="form-control" id="" aria-required="true" placeholder="Enter Room Name" required>
+                        <label>Select Available Floors</label>
+                        <select class="form-control select2 overflow-auto text-center" style="width: 100%;" asp-for="Location">
+                            <option value="Level-3" asp-for="Location"> Level-3</option>
+                            <option value="Level-4" asp-for="Location"> Level-4</option>
+                            <option value="Level-5" asp-for="Location"> Level-5</option>
+                        </select>
+                        <span asp-validation-for="Location" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="">Room Location</label>
-                        <input type="text" class="form-control" id="" aria-required="true" placeholder="Write Room Location" required>
+                        <label asp-for="Name">Room Name</label>
+                        <input asp-for="Name" type="text" class="form-control" id="" autocomplete="given-name" aria-required="true" placeholder="Room name limited to A1, B1, A2, B2 avoid prefix and suffix space" required>
+                        <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="">Room Capacity</label>
-                        <input type="text" class="form-control" id="" aria-required="true" placeholder="Enter Room Capacity" required>
+                        <label asp-for="Capacity">Room Capacity</label>
+                        <input asp-for="Capacity" type="number" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Enter Room Capacity" required>
+                        <span asp-validation-for="Capacity" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label for="">Room Facility</label>
-                        <input type="text" class="form-control" id="" aria-required="true" placeholder="Write Room Facility" required>
+                        <label asp-for="Details">Room Details</label>
+                        <input asp-for="Details" type="text" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Write Room Facility" required>
+                        <span asp-validation-for="Details" class="text-danger"></span>
                     </div>
+                </div>
+                <div class="form-group">
+                    <input asp-for="Id" value="@Model.Id" type="hidden">
+                    <input asp-for="CreatedAtUTC" value="@Model.CreatedAtUTC " type="hidden">
+                    <input asp-for="LastUpdatedAtUTC" value="@Model.LastUpdatedAtUTC" type="hidden">
+                    <input asp-for="CreatedBy" value="@Model.CreatedBy" type="hidden">
+                    <input asp-for="PreviousRooms" value="@Model.PreviousRooms" type="hidden">
                 </div>
                 <div class="card-footer text-center">
                     <button type="submit" class="btn btn-primary">Edit Room</button>
@@ -47,3 +81,16 @@
         </div>
     </div>
 </div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            $('#successMessage').on('click', function () {
+                $(this).hide();
+            });
+        });
+    </script>
+}

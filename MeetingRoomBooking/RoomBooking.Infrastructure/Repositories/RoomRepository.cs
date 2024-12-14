@@ -41,6 +41,21 @@ namespace RoomBooking.Infrastructure.Repositories
             await AddAsync(room);
         }
 
+        public async Task EditRoomAsync(EditRoomDTO roomDTO)
+        {
+            var room = new Room()
+            {
+                Name = roomDTO.Name,
+                Details = roomDTO.Details,
+                Location = roomDTO.Location,
+                Capacity = roomDTO.Capacity,
+                CreatedAtUTC = roomDTO.CreatedAtUTC,
+                CreatedBy = roomDTO.CreatedBy,
+                LastUpdatedAtUTC = roomDTO.LastUpdatedAtUTC
+            };
+            await EditAsync(room);
+        }
+
         public async Task DeleteRoomAsync(RoomDTO roomDTO)
         {
             var room = new Room()

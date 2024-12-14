@@ -30,7 +30,7 @@ namespace RoomBooking.Models.Room
         {
             var room = await _roomService.GetRoomAsync(id);
 
-            if (room is null && room?.CreatedBy is null)
+            if (room is null || room?.CreatedBy is null)
             {
                 var roomViewModel = new DeleteRoomViewModel();
                 return roomViewModel;

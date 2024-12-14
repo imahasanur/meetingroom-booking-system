@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using RoomBooking.Application.Domain.Entities;
 using RoomBooking.Application.DTO;
 using RoomBooking.Application.Services.Room;
 using RoomBooking.Infrastructure.Membership;
@@ -123,9 +124,100 @@ namespace RoomBooking.Controllers
 
 
         [HttpGet]
-        public IActionResult Edit()
+        public async Task<IActionResult> Edit(Guid id)
         {
-            return View();
+            try
+            {
+                var model = new EditRoomViewModel();
+                model.ResolveDI(_provider);
+
+                var roomModel = await model.GetRoomAsync(id);
+
+                TempData.Clear();
+
+                if (roomModel?.CreatedBy is not null)
+                {
+                    roomModel.ResolveDI(_provider);
+
+                    model = await roomModel.GetAllRoomAsync();
+                    roomModel.PreviousRooms = model.PreviousRooms;
+
+                    return View(roomModel);
+                }
+                else
+                {
+                    TempData["message"] = "Room doesn't exist . Already deleted";
+                }
+
+                return RedirectToAction("GetAll");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Room Get operation failed ");
+                TempData["failure"] = "Room Get operation failed";
+            }
+
+            return RedirectToAction("GetAll");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(EditRoomViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                TempData.Clear();
+
+                try
+                {
+                    bool isRepeated = false;
+
+                    var editRoomModel = new EditRoomViewModel();
+                    editRoomModel.ResolveDI(_provider);
+
+                    var rooms = await editRoomModel.GetAllRoomAsync();
+
+                    if (rooms.PreviousRooms is not null && rooms.PreviousRooms?.Count > 0)
+                    {
+                        isRepeated = editRoomModel.CheckRoomRedundancy(rooms.PreviousRooms, model.Name, model.Location, model.Id);
+                    }
+
+                    if (isRepeated == true)
+                    {
+                        ModelState.AddModelError(string.Empty, " This room is already exists !");
+
+                        return View(model);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            await editRoomModel.EditRoomAsync(model);
+                            TempData["success"] = "Room is Updated";
+
+                            return View(model);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "Error in Updating a new room");
+                            TempData["failure"] = "Error in Updating the room";
+
+                            return View(model);
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error in Creating a new room");
+                    ModelState.AddModelError(string.Empty, " An Error is occured!");
+
+                    return View(model);
+                }
+            }
+            _logger.LogWarning("ModelState is not valid");
+            ModelState.AddModelError(string.Empty, "Model State is not valid");
+            return View(model);
         }
 
         [HttpGet]
@@ -135,6 +227,7 @@ namespace RoomBooking.Controllers
             {
                 var model = new DeleteRoomViewModel();
                 model.ResolveDI(_provider);
+
                 var room = await model.GetRoomAsync(id);
 
                 TempData.Clear();
