@@ -17,6 +17,11 @@ namespace RoomBooking.Infrastructure.Repositories
         {
         }
 
+        public async Task<Room> GetRoomAsync(Guid id)
+        {
+            return await GetByIdAsync(id);
+        }
+
         public async Task<IList<Room>> GetAllRoomAsync()
         {
             return await GetAllAsync();
@@ -35,5 +40,20 @@ namespace RoomBooking.Infrastructure.Repositories
             };
             await AddAsync(room);
         }
+
+        public async Task DeleteRoomAsync(RoomDTO roomDTO)
+        {
+            var room = new Room()
+            {
+                Name = roomDTO.Name,
+                Details = roomDTO.Details,
+                Location = roomDTO.Location,
+                Capacity = roomDTO.Capacity,
+                CreatedAtUTC = roomDTO.CreatedAtUTC,
+                CreatedBy = roomDTO.CreatedBy,
+            };
+            await RemoveAsync(room);
+        }
+
     }
 }

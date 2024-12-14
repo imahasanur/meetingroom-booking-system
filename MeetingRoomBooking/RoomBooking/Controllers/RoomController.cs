@@ -129,15 +129,33 @@ namespace RoomBooking.Controllers
         }
 
         [HttpGet]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
+                var model = new DeleteRoomViewModel();
+                model.ResolveDI(_provider);
+                var room = await model.GetRoomAsync(id);
 
+                TempData.Clear();
+
+                if (room?.CreatedBy is not null)
+                {
+                    await model.DeleteRoomAsync(room);
+                    
+                    TempData["success"] = "Room is Deleted";
+                }
+                else
+                {
+                    TempData["message"] = "Room doesn't exist . Already deleted";
+                }
+
+                return RedirectToAction("GetAll");
             }
             catch(Exception ex)
             {
-
+                _logger.LogError(ex, "Delete operation failed ");
+                TempData["failure"] = "Room Deletion failed";
             }
 
             return RedirectToAction("GetAll");
