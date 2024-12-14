@@ -1,5 +1,88 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model List<GetAllRoomViewModel>
 @{
+    ViewData["Title"] = "All Rooms";
+}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Room Details</h3>
+    </div>
+    <div class="card-body">
+        <table id="roomsTable" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Sl No</th>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Capacity</th>
+                    <th>Details</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Count > 0)
+                {
+                    int serial = 1;
+                    foreach (var room in Model)
+                    {
+                        <tr>
+                            <td>@serial</td>
+                            <td>@room.Name</td>
+                            <td>@room.Location</td>
+                            <td>@room.Capacity</td>
+                            <td>@room.Details</td>
+                            <td>
+                                <a href="@Url.Action("Edit", "Room", new { id = room.Id })" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <a href="@Url.Action("Delete", "Room", new { id = room.Id })"
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirm('Want to delete this room? @room.Location @room.Name');">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </a>
+                            </td>
+                        </tr>
+                        serial++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center">No rooms available.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <!-- /.card-body -->
+</div>
+
+@section Scripts
+{
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        $(function () {
+            $("#roomsTable").DataTable({
+                "responsive": true,           
+                "lengthChange": true,         
+                "autoWidth": false,           
+                "paging": true,               
+                "info": true,                              
+                "pageLength": 5,            
+                "lengthMenu": [5, 10, 25, 50], 
+                "language": {
+                    "paginate": {
+                        "previous": "« Prev",      
+                        "next": "» Next"           
+                    },
+                    "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+                    "infoEmpty": "No Room is not available",
+                    "lengthMenu": "All Romms Entries"
+                }
+            });
+        });
+    </script>
 }
