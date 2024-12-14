@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RoomBooking.Application.Domain.Entities;
 using RoomBooking.Application.DTO;
 using RoomBooking.Application.Services.Room;
+using RoomBooking.Data.Migrations;
 using RoomBooking.Infrastructure.Membership;
 using RoomBooking.Models.Room;
 
@@ -164,6 +165,7 @@ namespace RoomBooking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditRoomViewModel model)
         {
+
             if (ModelState.IsValid)
             {
                 TempData.Clear();
@@ -192,6 +194,7 @@ namespace RoomBooking.Controllers
                     {
                         try
                         {
+
                             await editRoomModel.EditRoomAsync(model);
                             TempData["success"] = "Room is Updated";
 

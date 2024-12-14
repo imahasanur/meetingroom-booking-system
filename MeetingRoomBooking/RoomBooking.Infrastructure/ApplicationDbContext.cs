@@ -27,7 +27,6 @@ namespace RoomBooking.Infrastructure
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-    
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseSqlServer(_connectionString, x => x.MigrationsAssembly(_migrationAssembly));
@@ -84,7 +83,11 @@ namespace RoomBooking.Infrastructure
                     ClaimValue = "user"
                 }
             );
+
+            builder.Entity<Room>().Property<byte[]>("ConcurrencyToken")
+                .IsRowVersion();
         }
+
 
         public DbSet<Room> Room { get; set; }
     }

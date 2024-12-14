@@ -51,7 +51,7 @@ namespace RoomBooking.Infrastructure.Repositories
                 Capacity = roomDTO.Capacity,
                 CreatedAtUTC = roomDTO.CreatedAtUTC,
                 CreatedBy = roomDTO.CreatedBy,
-                LastUpdatedAtUTC = roomDTO.LastUpdatedAtUTC
+                LastUpdatedAtUTC = roomDTO.LastUpdatedAtUTC,
             };
             await EditAsync(room);
         }

@@ -62,7 +62,7 @@ namespace RoomBooking.Models.Room
                 Details = room.Details,
                 CreatedBy = room.CreatedBy,
                 CreatedAtUTC = room.CreatedAtUTC,
-                LastUpdatedAtUTC = room.LastUpdatedAtUTC
+                LastUpdatedAtUTC = room.LastUpdatedAtUTC,
             };
 
             return viewModel;
@@ -105,7 +105,7 @@ namespace RoomBooking.Models.Room
                 CreatedAtUTC = DateTime.UtcNow,
                 CreatedBy = model.CreatedBy,
                 Details = model.Details,
-                LastUpdatedAtUTC = DateTime.UtcNow 
+                LastUpdatedAtUTC = DateTime.UtcNow,
             };
             await _roomService.EditRoomAsync(room);
         }

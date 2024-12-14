@@ -7,6 +7,7 @@ using RoomBooking.Application.Services.Room;
 using RoomBooking.Infrastructure;
 using RoomBooking.Infrastructure.Membership;
 using RoomBooking.Infrastructure.Repositories;
+using RoomBooking.Models.Room;
 using Serilog;
 using Serilog.Events;
 using System.Reflection;
@@ -57,6 +58,9 @@ namespace RoomBooking
                 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
                 builder.Services.AddScoped<IApplicationUnitOfWork, ApplicationUnitOfWork>();
                 builder.Services.AddScoped<ApplicationUser>();
+
+                builder.Services.AddScoped<GetAllRoomViewModel>();
+                builder.Services.AddScoped<EditRoomViewModel>();
 
                 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
