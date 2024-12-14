@@ -128,9 +128,19 @@ namespace RoomBooking.Controllers
             return View();
         }
 
-        public IActionResult Delete()
+        [HttpGet]
+        public IActionResult Delete(Guid id)
         {
-            return View();
+            try
+            {
+
+            }
+            catch(Exception ex)
+            {
+
+            }
+
+            return RedirectToAction("GetAll");
         }
     }
 }
