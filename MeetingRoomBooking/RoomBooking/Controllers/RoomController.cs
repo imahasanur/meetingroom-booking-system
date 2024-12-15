@@ -132,18 +132,18 @@ namespace RoomBooking.Controllers
                 var model = new EditRoomViewModel();
                 model.ResolveDI(_provider);
 
-                var roomModel = await model.GetRoomAsync(id);
+                model = await model.GetRoomAsync(id);
 
-                TempData.Clear();
+                //TempData.Clear();
 
-                if (roomModel?.CreatedBy is not null)
+                if (model?.CreatedBy is not null)
                 {
-                    roomModel.ResolveDI(_provider);
+                    model.ResolveDI(_provider);
 
-                    model = await roomModel.GetAllRoomAsync();
-                    roomModel.PreviousRooms = model.PreviousRooms;
+                    //var roomsModel = await model.GetAllRoomAsync();
+                    //model.PreviousRooms = roomsModel.PreviousRooms;
 
-                    return View(roomModel);
+                    return View(model);
                 }
                 else
                 {
@@ -168,56 +168,35 @@ namespace RoomBooking.Controllers
 
             if (ModelState.IsValid)
             {
+                string response = string.Empty;
+
                 TempData.Clear();
 
                 try
                 {
-                    bool isRepeated = false;
+                    model.ResolveDI(_provider);
+                    response = await model.EditRoomAsync(model);
 
-                    var editRoomModel = new EditRoomViewModel();
-                    editRoomModel.ResolveDI(_provider);
-
-                    var rooms = await editRoomModel.GetAllRoomAsync();
-
-                    if (rooms.PreviousRooms is not null && rooms.PreviousRooms?.Count > 0)
+                    if (response.Equals("success"))
                     {
-                        isRepeated = editRoomModel.CheckRoomRedundancy(rooms.PreviousRooms, model.Name, model.Location, model.Id);
+                        TempData["success"] = "Room is Updated";
                     }
-
-                    if (isRepeated == true)
+                    else if (response.Equals("redundant")) 
                     {
-                        ModelState.AddModelError(string.Empty, " This room is already exists !");
-
-                        return View(model);
+                        TempData["message"] = "Room is already exists";
                     }
-                    else
-                    {
-                        try
-                        {
-
-                            await editRoomModel.EditRoomAsync(model);
-                            TempData["success"] = "Room is Updated";
-
-                            return View(model);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex, "Error in Updating a new room");
-                            TempData["failure"] = "Error in Updating the room";
-
-                            return View(model);
-                        }
-                    }
-
+                    
+                    return View(model);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error in Creating a new room");
-                    ModelState.AddModelError(string.Empty, " An Error is occured!");
+                    _logger.LogError(ex, "Error in Updating a new room");
+                    TempData["failure"] = "Error in Updating the room";
 
                     return View(model);
                 }
             }
+
             _logger.LogWarning("ModelState is not valid");
             ModelState.AddModelError(string.Empty, "Model State is not valid");
             return View(model);

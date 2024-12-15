@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RoomBooking.Application.DTO;
-using RoomBooking.Application.Domain.Entities;
 using System;
 using System.Data.Common;
 
@@ -65,54 +64,77 @@ namespace RoomBooking.Application.Services.Room
 
         public async Task CreateRoomAsync(CreateRoomDTO roomDTO)
         {
-            await _unitOfWork.RoomRepository.CreateRoomAsync(roomDTO);
+            var room = new RoomBooking.Application.Domain.Entities.Room()
+            {
+                Name = roomDTO.Name,
+                Details = roomDTO.Details,
+                Location = roomDTO.Location,
+                Capacity = roomDTO.Capacity,
+                CreatedAtUTC = roomDTO.CreatedAtUTC,
+                CreatedBy = roomDTO.CreatedBy,
+                ConcurrencyToken = Guid.NewGuid()
+            };
+            await _unitOfWork.RoomRepository.CreateRoomAsync(room);
             await _unitOfWork.SaveAsync();
         }
 
         public async Task DeleteRoomAsync(RoomDTO roomDTO)
         {
-            await _unitOfWork.RoomRepository.DeleteRoomAsync(roomDTO);
+            var room = new RoomBooking.Application.Domain.Entities.Room()
+            {
+                Name = roomDTO.Name,
+                Details = roomDTO.Details,
+                Location = roomDTO.Location,
+                Capacity = roomDTO.Capacity,
+                CreatedAtUTC = roomDTO.CreatedAtUTC,
+                CreatedBy = roomDTO.CreatedBy,
+            };
+            await _unitOfWork.RoomRepository.DeleteRoomAsync(room);
             await _unitOfWork.SaveAsync();
         }
 
-        public async Task EditRoomAsync(EditRoomDTO roomDTO)
+
+
+        public async Task<string> EditRoomAsync(EditRoomDTO roomDTO)
         {
+            string response = "";
             try
             {
-                await _unitOfWork.RoomRepository.EditRoomAsync(roomDTO);
+                var existingRoom = await _unitOfWork.RoomRepository.GetRoomAsync(roomDTO.Id);
+
+                if (existingRoom.CreatedBy is not null)
+                {
+                    var rooms = await _unitOfWork.RoomRepository.CheckRoomRedundancy(roomDTO.Id, roomDTO.Location, roomDTO.Name);
+                    if (rooms is not null && rooms?.Count > 0)
+                    {
+                        response = "redundant";
+                        return response;
+                    }
+
+                    existingRoom.Location = roomDTO.Location;
+                    existingRoom.Capacity = roomDTO.Capacity;
+                    existingRoom.Details = roomDTO.Details;
+                    existingRoom.LastUpdatedAtUTC = DateTime.UtcNow;
+                    existingRoom.Name = roomDTO.Name;
+                    existingRoom.ConcurrencyToken = Guid.NewGuid();
+                }
+
+                await _unitOfWork.RoomRepository.EditRoomAsync(existingRoom);
                 await _unitOfWork.SaveAsync();
+
+                response = "success";
+                return response;
             }
-            catch (DbUpdateConcurrencyException ex) { 
-                var exceptionEntry = ex.Entries.Single(); 
+            catch (DbUpdateConcurrencyException ex)
+            {
+                response = ex.Message;
+                return response;
 
-                var clientValues = (RoomBooking.Application.Domain.Entities.Room)exceptionEntry.Entity;
-                var room = await _unitOfWork.RoomRepository.GetRoomAsync(clientValues.Id);
-
-                room.Name = roomDTO.Name;
-                room.Location = roomDTO.Location;
-                room.CreatedBy = roomDTO.CreatedBy;
-                room.LastUpdatedAtUTC = DateTime.UtcNow;
-                room.Capacity = roomDTO.Capacity;
-                room.Details = roomDTO.Details;
-                _unitOfWork.RoomRepository.EditAsync(room);
-                _unitOfWork.SaveAsync();
-
-
-                //if (room.CreatedBy is not null) 
-                //{
-                //    await _unitOfWork.RoomRepository.EditRoomAsync(roomDTO);
-                //    await _unitOfWork.SaveAsync();
-                //}
-                //else
-                //{
-                //    throw new NotImplementedException();
-                //}
-
-                
-
-                // Retry the update
-                //_unitOfWork.RoomRepository.EditRoomAsync2(databaseValues); // Assuming `Update` method exists in your repository
-                //await _unitOfWork.SaveAsync();
+            }
+            catch (Exception ex) 
+            {
+                response = ex.Message;
+                return response;
             }
 
         }

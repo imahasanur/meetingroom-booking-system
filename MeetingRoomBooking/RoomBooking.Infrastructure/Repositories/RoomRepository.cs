@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace RoomBooking.Infrastructure.Repositories
 {
@@ -27,47 +28,27 @@ namespace RoomBooking.Infrastructure.Repositories
             return await GetAllAsync();
         }
 
-        public async Task CreateRoomAsync(CreateRoomDTO roomDTO)
+        public async Task CreateRoomAsync(Room room)
         {
-            var room = new Room()
-            {
-                Name = roomDTO.Name,
-                Details = roomDTO.Details,
-                Location = roomDTO.Location,
-                Capacity = roomDTO.Capacity,
-                CreatedAtUTC = roomDTO.CreatedAtUTC,
-                CreatedBy = roomDTO.CreatedBy,
-            };
+           
             await AddAsync(room);
         }
 
-        public async Task EditRoomAsync(EditRoomDTO roomDTO)
+        public async Task EditRoomAsync(Room room)
         {
-            var room = new Room()
-            {
-                Name = roomDTO.Name,
-                Details = roomDTO.Details,
-                Location = roomDTO.Location,
-                Capacity = roomDTO.Capacity,
-                CreatedAtUTC = roomDTO.CreatedAtUTC,
-                CreatedBy = roomDTO.CreatedBy,
-                LastUpdatedAtUTC = roomDTO.LastUpdatedAtUTC,
-            };
             await EditAsync(room);
         }
 
-        public async Task DeleteRoomAsync(RoomDTO roomDTO)
+        public async Task DeleteRoomAsync(Room room)
         {
-            var room = new Room()
-            {
-                Name = roomDTO.Name,
-                Details = roomDTO.Details,
-                Location = roomDTO.Location,
-                Capacity = roomDTO.Capacity,
-                CreatedAtUTC = roomDTO.CreatedAtUTC,
-                CreatedBy = roomDTO.CreatedBy,
-            };
             await RemoveAsync(room);
+        }
+
+        public async Task<IList<Room>> CheckRoomRedundancy(Guid id, string location, string name)
+        {
+            Expression<Func<Room, bool>> expression = x => x.Id != id && x.Location == location && x.Name == name ;
+
+            return await GetAsync(expression, null);
         }
 
     }

@@ -21,6 +21,14 @@
                 @TempData["failure"]
             </div>
         }
+
+        @if (TempData["message"] is not null)
+        {
+            <div id="message" class="alert alert-danger alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+                <i class="icon  fas fa-times"></i>
+                @TempData["message"]
+            </div>
+        }
         <div class="card card-primary">
             <div class="card-header mx-auto bg-cyan">
                 <h3 class="card-title">Update Room</h3>
@@ -28,7 +36,7 @@
             <form asp-controller="Room" asp-action="Edit" asp-area="" asp-route-returnUrl="Room/Edit" method="post" asp-antiforgery="true">
                 <div class="card-body">
                     <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-                    <div class="form-group">
+@*                     <div class="form-group">
                         <label>All Available Rooms</label>
                         <select class="form-control select2 overflow-auto text-center" style="width: 100%;">
                             <option selected="selected">All Rooms</option>
@@ -40,7 +48,7 @@
                                 }
                             }
                         </select>
-                    </div>
+                    </div> *@
 
                     <div class="form-group">
                         <label>Select Available Floors</label>
@@ -73,6 +81,7 @@
                     <input asp-for="LastUpdatedAtUTC" value="@Model.LastUpdatedAtUTC" type="hidden">
                     <input asp-for="CreatedBy" value="@Model.CreatedBy" type="hidden">
                     <input asp-for="PreviousRooms" value="@Model.PreviousRooms" type="hidden">
+                    <input asp-for="ConcurrencyToken" value="@Model.ConcurrencyToken" type="hidden">
                 </div>
                 <div class="card-footer text-center">
                     <button type="submit" class="btn btn-primary">Edit Room</button>
@@ -88,7 +97,7 @@
 
     <script>
         $(document).ready(function () {
-            $('#successMessage').on('click', function () {
+            $('#message').on('click', function () {
                 $(this).hide();
             });
         });

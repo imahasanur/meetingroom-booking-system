@@ -6,25 +6,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RoomBooking.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class ConCurrencyToken : Migration
+    public partial class AppManagedConcurrencyColumn : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<byte[]>(
+            migrationBuilder.AddColumn<Guid>(
                 name: "ConcurrencyToken",
                 table: "Room",
-                type: "rowversion",
-                rowVersion: true,
+                type: "uniqueidentifier",
                 nullable: false,
-                defaultValue: new byte[0]);
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.UpdateData(
                 table: "AspNetUsers",
                 keyColumn: "Id",
                 keyValue: new Guid("6c23fda7-ae43-439e-b7f9-7d30868cb399"),
                 columns: new[] { "ConcurrencyStamp", "PasswordHash" },
-                values: new object[] { "4b26b41c-9d1d-47b2-9a19-bdec15ce5d9d", "AQAAAAIAAYagAAAAEPCudr6l2TqPSmm+fFJeA01lbTwfIfZegbhAc2BlsPVlYeUW9lMTrXKEcoVgxDBEBQ==" });
+                values: new object[] { "bb7ea193-5714-4c9e-a28d-e4c784a6f4eb", "AQAAAAIAAYagAAAAECQ9YrczNK1XuCG/42zXiQ+HLRmCNwqtWWTn4mtmXFxUV7mL9gFns5bL22BwwzNR/g==" });
         }
 
         /// <inheritdoc />

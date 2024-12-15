@@ -12,8 +12,8 @@ using RoomBooking.Infrastructure;
 namespace RoomBooking.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241214091729_ConCurrencyToken")]
-    partial class ConCurrencyToken
+    [Migration("20241215031416_AppManagedConcurrencyColumn")]
+    partial class AppManagedConcurrencyColumn
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,11 +34,9 @@ namespace RoomBooking.Data.Migrations
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
 
-                    b.Property<byte[]>("ConcurrencyToken")
+                    b.Property<Guid>("ConcurrencyToken")
                         .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAtUTC")
                         .HasColumnType("datetime2");
@@ -207,7 +205,7 @@ namespace RoomBooking.Data.Migrations
                         {
                             Id = new Guid("6c23fda7-ae43-439e-b7f9-7d30868cb399"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4b26b41c-9d1d-47b2-9a19-bdec15ce5d9d",
+                            ConcurrencyStamp = "bb7ea193-5714-4c9e-a28d-e4c784a6f4eb",
                             CreatedAtUtc = new DateTime(2024, 12, 11, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
@@ -217,7 +215,7 @@ namespace RoomBooking.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPCudr6l2TqPSmm+fFJeA01lbTwfIfZegbhAc2BlsPVlYeUW9lMTrXKEcoVgxDBEBQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECQ9YrczNK1XuCG/42zXiQ+HLRmCNwqtWWTn4mtmXFxUV7mL9gFns5bL22BwwzNR/g==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,

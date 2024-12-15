@@ -57,6 +57,7 @@ namespace RoomBooking.Infrastructure.Repositories
                 _dbSet.Attach(entityToUpdate);
                 _dbContext.Entry(entityToUpdate).State = EntityState.Modified;
             });
+            
         }
 
         public virtual async Task<TEntity> GetByIdAsync(TKey id)

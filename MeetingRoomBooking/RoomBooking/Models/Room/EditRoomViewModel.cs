@@ -36,6 +36,7 @@ namespace RoomBooking.Models.Room
         public string CreatedBy { get; set; }
         public DateTime CreatedAtUTC { get; set; }
         public DateTime? LastUpdatedAtUTC { get; set; }
+        public Guid ConcurrencyToken { get; set; }
 
         public IList<GetRoomDTO>? PreviousRooms { get; set; }
 
@@ -63,6 +64,7 @@ namespace RoomBooking.Models.Room
                 CreatedBy = room.CreatedBy,
                 CreatedAtUTC = room.CreatedAtUTC,
                 LastUpdatedAtUTC = room.LastUpdatedAtUTC,
+                ConcurrencyToken = room.ConcurrencyToken
             };
 
             return viewModel;
@@ -78,23 +80,10 @@ namespace RoomBooking.Models.Room
             return model;
         }
 
-        public bool CheckRoomRedundancy(IList<GetRoomDTO> rooms, string roomName, string location, Guid id)
-        {
-            bool found = false;
-            foreach (var room in rooms)
-            {
-                if (room.Name == roomName && room.Location == location && room.Id != id )
-                {
-                    found = true;
-                    break;
-                }
-            }
-
-            return found;
-        }
+       
 
        
-        public async Task EditRoomAsync(EditRoomViewModel model)
+        public async Task<string> EditRoomAsync(EditRoomViewModel model)
         {
             var room = new EditRoomDTO()
             {
@@ -106,8 +95,12 @@ namespace RoomBooking.Models.Room
                 CreatedBy = model.CreatedBy,
                 Details = model.Details,
                 LastUpdatedAtUTC = DateTime.UtcNow,
+                ConcurrencyToken = model.ConcurrencyToken
             };
-            await _roomService.EditRoomAsync(room);
+
+            var response = await _roomService.EditRoomAsync(room);
+
+            return response;
         }
     }
 }

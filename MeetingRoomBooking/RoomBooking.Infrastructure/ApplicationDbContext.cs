@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using RoomBooking.Application.Domain.Entities;
 using RoomBooking.Infrastructure.Membership;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,6 +29,8 @@ namespace RoomBooking.Infrastructure
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            //optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseSqlServer(_connectionString, x => x.MigrationsAssembly(_migrationAssembly));
@@ -84,8 +88,7 @@ namespace RoomBooking.Infrastructure
                 }
             );
 
-            builder.Entity<Room>().Property<byte[]>("ConcurrencyToken")
-                .IsRowVersion();
+            builder.Entity<Room>().Property(p => p.ConcurrencyToken).IsConcurrencyToken();
         }
 
 
