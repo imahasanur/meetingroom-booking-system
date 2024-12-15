@@ -52,21 +52,7 @@ namespace RoomBooking.Models.Room
             return model;
         }
 
-        public bool CheckRoomRedundancy(IList<GetRoomDTO> rooms, string roomName, string location)
-        {
-            bool found = false;
-            foreach (var room in rooms)
-            {
-                if(room.Name == roomName && room.Location == location)
-                {
-                    found = true;
-                    break;
-                }
-            }
-            return found;
-        }
-
-        public async Task CreateRoomAsync(CreateRoomViewModel model)
+        public async Task<string> CreateRoomAsync(CreateRoomViewModel model)
         {
             var room = new CreateRoomDTO()
             { 
@@ -77,7 +63,8 @@ namespace RoomBooking.Models.Room
                 CreatedBy = model.CreatedBy,
                 Details = model.Details
             };
-            await _roomService.CreateRoomAsync(room);
+            var response = await _roomService.CreateRoomAsync(room);
+            return response;
         }
     }
 }

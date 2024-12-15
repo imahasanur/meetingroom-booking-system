@@ -6,6 +6,7 @@ namespace RoomBooking.Application.Domain.Repositories
     public interface IRoomRepository:IRepositoryBase<Room, Guid>
     {
         Task<IList<Room>?> CheckRoomRedundancy(Guid id, string location, string name);
+        Task<IList<Room>> CheckRoomRedundancy(string location, string name);
         Task<Room> GetRoomAsync(Guid id);
         public Task<IList<Room>> GetAllRoomAsync();
         Task CreateRoomAsync(Room room);

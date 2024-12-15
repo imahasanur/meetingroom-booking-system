@@ -46,10 +46,16 @@ namespace RoomBooking.Infrastructure.Repositories
 
         public async Task<IList<Room>> CheckRoomRedundancy(Guid id, string location, string name)
         {
-            Expression<Func<Room, bool>> expression = x => x.Id != id && x.Location == location && x.Name == name ;
-
+            Expression<Func<Room, bool>> expression = x => x.Id != id && x.Location == location && x.Name == name;
+            
             return await GetAsync(expression, null);
         }
 
+        public async Task<IList<Room>> CheckRoomRedundancy(string location, string name)
+        {
+            Expression<Func<Room, bool>> expression = x => x.Location == location && x.Name == name;
+
+            return await GetAsync(expression, null);
+        }
     }
 }

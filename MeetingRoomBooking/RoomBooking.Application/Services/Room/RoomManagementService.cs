@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RoomBooking.Application.Domain.Entities;
 using RoomBooking.Application.DTO;
 using System;
 using System.Data.Common;
@@ -62,7 +63,7 @@ namespace RoomBooking.Application.Services.Room
             return roomsDTO;
         }
 
-        public async Task CreateRoomAsync(CreateRoomDTO roomDTO)
+        public async Task<string> CreateRoomAsync(CreateRoomDTO roomDTO)
         {
             var room = new RoomBooking.Application.Domain.Entities.Room()
             {
@@ -74,8 +75,22 @@ namespace RoomBooking.Application.Services.Room
                 CreatedBy = roomDTO.CreatedBy,
                 ConcurrencyToken = Guid.NewGuid()
             };
+
+            string response = string.Empty;
+
+            var rooms = await _unitOfWork.RoomRepository.CheckRoomRedundancy(roomDTO.Location, roomDTO.Name);
+            if (rooms is not null && rooms?.Count > 0)
+            {
+                response = "redundant";
+                return response;
+            }
+
             await _unitOfWork.RoomRepository.CreateRoomAsync(room);
             await _unitOfWork.SaveAsync();
+
+            response = "success";
+
+            return response;
         }
 
         public async Task DeleteRoomAsync(RoomDTO roomDTO)

@@ -72,47 +72,30 @@ namespace RoomBooking.Controllers
 
             if (ModelState.IsValid)
             {
+                string response = string.Empty;
+                TempData.Clear();
+
                 try
                 {
-                    bool isRepeated = true;
-
                     model.ResolveDI(_provider);
-                    var rooms = await model.GetAllRoomAsync();
 
-                    if(rooms.PreviousRooms is not null)
+                    response = await model.CreateRoomAsync(model);
+
+                    if (response.Equals("success"))
                     {
-                        isRepeated = model.CheckRoomRedundancy(rooms.PreviousRooms, model.Name, model.Location); 
+                        TempData["success"] = "Room is Created";
+                    }
+                    else if (response.Equals("redundant"))
+                    {
+                        TempData["message"] = "Room already exists ";
                     }
 
-                    if (isRepeated == true)
-                    {
-                        ModelState.AddModelError(string.Empty, " This room is already exists !");
-
-                        return View(model);
-                    }
-                    else
-                    {
-                        try
-                        {
-                            await model.CreateRoomAsync(model);
-                            TempData["status"] = "Room is Created";
-
-                            return View(model);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex, "Error in Creating a new room");
-                            ModelState.AddModelError(string.Empty, " This room is not created. An Error happended !");
-
-                            return View(model);
-                        }
-                    }
- 
+                    return View(model);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Error in Creating a new room");
-                    ModelState.AddModelError(string.Empty, " An Error is occured!");
+                    ModelState.AddModelError(string.Empty, " This room is not created. An Error happended !");
 
                     return View(model);
                 }
@@ -134,7 +117,7 @@ namespace RoomBooking.Controllers
 
                 model = await model.GetRoomAsync(id);
 
-                //TempData.Clear();
+                TempData.Clear();
 
                 if (model?.CreatedBy is not null)
                 {
