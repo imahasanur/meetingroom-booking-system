@@ -1,0 +1,246 @@
+﻿@{
+    ViewData["Title"] = "Create Booking";
+}
+
+<style>
+    .scheduler_default_main_demo {
+        display: none !important;
+    }
+
+    #dp > div:nth-child(1) > div > div:nth-child(1) > div > div:nth-child(2) {
+        display: none !important;
+    }
+
+    .calendar_default_event,
+    .calendar_default_event_inner {
+        border-radius: 15px;
+        color: white;
+    }
+
+    .wrap {
+        display: flex;
+    }
+
+    .left {
+        margin-right: 10px;
+    }
+
+    .right {
+        flex-grow: 1;
+    }
+</style>
+
+<div class ="container">
+    <div class="wrap">
+        <div class="left">
+            <div id="nav"></div>
+        </div>
+        <div class="right">
+            <div id="dp"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/daypilot/daypilot-all.min.js" asp-append-version="true"></script>
+
+    <script>
+        const colors = [
+            { id: "#1066a8", name: "Blue" },
+            { id: "#6aa84f", name: "Green" },
+            { id: "#f1c232", name: "Yellow" },
+            { id: "#cc0000", name: "Red" },
+        ];
+
+
+        const calendar = new DayPilot.Calendar("dp", {
+            viewType: "Resources",
+            durationBarVisible: true,
+            cellDuration: 15,
+            contextMenu: new DayPilot.Menu({
+                items: [
+                    {
+                        text: "Delete",
+                        onClick: async (args) => {
+                            const e = args.source;
+                            const { data } = await DayPilot.Http.delete(`/api/events/${e.id()}`);
+                            calendar.events.remove(e.id());
+                        }
+                    },
+                    { text: "-" },
+                    ...colors.map(color => ({
+                        text: color.name,
+                        icon: `icon icon-${color.name.toLowerCase()}`,
+                        color: color.id,
+                        onClick: (args) => { app.updateColor(args.source, color.id); }
+                    }))
+                ]
+            }),
+            onTimeRangeSelected: async (args) => {
+                const form = [
+                    {
+                        name: "Text",
+                        id: "text",
+                        validators: [
+                            {
+                                name: "Required",
+                                validate: (value) => value && value.trim() !== "",
+                                message: "This field is required."
+                            }
+                        ]
+                    },
+                    {
+                        name: "Color",
+                        id: "color",
+                        type: "select",
+                        options: colors,
+                        validators: [
+                            {
+                                name: "Required",
+                                validate: (value) => value && value.trim() !== "",
+                                message: "Please select a color."
+                            }
+                        ]
+                    },
+                    {
+                        name: "Host",
+                        id: "host",
+                        type: "text",
+                        validators: [
+                            {
+                                name: "Required",
+                                validate: (value) => value && value.trim() !== "",
+                                message: "This field is required. Enter a valid email address"
+                            },
+                        ]
+                    }
+                ];
+
+                const data = {
+                    text: "Enter event name",
+                    color: "choose color",
+                    start: args.start,
+                    end: args.end,
+                    roomId: args.resource,
+                    host: "enter host email"
+                };
+
+                let isValid = true;
+                for (let field of form) {
+                    const fieldValue = data[field.id];
+
+                    for (let validator of field.validators) {
+                        const isFieldValid = validator.validate(fieldValue);
+                        if (!isFieldValid) {
+                            isValid = false;
+                            alert(validator.message); 
+                            break; 
+                        }
+                    }
+
+                    if (!isValid) break; 
+                }
+
+                if (!isValid) {
+                    return;
+                }
+
+                const modal = await DayPilot.Modal.form(form, data);
+                calendar.clearSelection();
+                if (modal.canceled) {
+                    return;
+                }
+
+                const params = modal.result;
+                const { data: event } = await DayPilot.Http.post("/api/events", params);
+                calendar.events.add(event);
+            },
+            onEventMove: async (args) => {
+                const params = {
+                    id: args.e.id(),
+                    start: args.newStart,
+                    end: args.newEnd
+                };
+                await DayPilot.Http.put(`/api/events/${args.e.id()}/move`, params);
+            },
+            onEventResize: async (args) => {
+                const params = {
+                    id: args.e.id(),
+                    start: args.newStart,
+                    end: args.newEnd
+                };
+                await DayPilot.Http.put(`/api/events/${args.e.id()}/move`, params);
+            },
+            onBeforeEventRender: (args) => {
+                args.data.backColor = args.data.color + "99";
+                args.data.borderColor = args.data.color;
+                args.data.areas = [
+                    {
+                        top: 6,
+                        right: 6,
+                        width: 20,
+                        height: 20,
+                        backColor: args.data.color,
+                        symbol: "icons/daypilot.svg#minichevron-down-2",
+                        visibility: "Visible",
+                        action: "ContextMenu",
+                        style: "border-radius: 15px; cursor:pointer;"
+                    }
+                ];
+            }
+        });
+        calendar.init();
+
+        const datepicker = new DayPilot.Navigator("nav", {
+            showMonths: 3,
+            skipMonths: 3,
+            selectMode: "Day",
+            onTimeRangeSelected: args => {
+                calendar.startDate = args.day;
+                calendar.update();
+                calendar.events.load("/api/events");
+            }
+        });
+        datepicker.init();
+
+        const app = {
+            async loadResources() {
+                
+                const { data: rooms } = await DayPilot.Http.get("/Booking/GetAllRoom");
+                console.log("Rooms :", rooms);
+                const columns = rooms.map(room => ({ id: room.id, name: room.name }));
+                console.log("Columns : ", columns);
+                calendar.columns = columns;
+                calendar.update();
+            },
+            async loadEvents(date) {
+                const params = {
+                    start: date.toString(),
+                    end: new Date(date.getTime() + 86400000).toString()
+                };
+
+                const { data } = await DayPilot.Http.get("/api/events", params);
+                const demoEvents = [
+                    { id: "1", text: "Test Event", start: "2024-12-16T10:00:00", end: "2024-12-16T12:00:00", resource: "277d212d-77a0-454c-ab45-7656bbfc3f58", Color: "#f1c232" }
+                ];
+                calendar.events.list = demoEvents;
+                calendar.update();
+            },
+            async updateColor(e, color) {
+                const params = { color: color };
+                await DayPilot.Http.put(`/api/events/${e.id()}/color`, params);
+                e.data.color = color;
+                calendar.events.update(e);
+            },
+            init() {
+                this.loadResources();
+                this.loadEvents(new DayPilot.Date());
+            }
+        };
+        app.init();
+    </script>
+}
+
+
+
