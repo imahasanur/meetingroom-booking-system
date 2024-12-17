@@ -39,6 +39,13 @@ namespace RoomBooking.Controllers
             return View();
         }
 
+        //[HttpPost]
+        //public async Task<IActionResult> Create()
+        //{
+
+        //    return View();
+        //}
+
         public IActionResult Edit()
         {
             return View();

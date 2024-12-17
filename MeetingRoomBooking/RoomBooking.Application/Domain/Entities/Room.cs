@@ -18,5 +18,6 @@ namespace RoomBooking.Application.Domain.Entities
         public Guid ConcurrencyToken { get; set; }
         public DateTime CreatedAtUTC { get; set; }
         public DateTime? LastUpdatedAtUTC { get; set; }
+       
     }
 }

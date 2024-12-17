@@ -11,5 +11,6 @@ namespace RoomBooking.Infrastructure
     public interface IApplicationDbContext
     {
         public DbSet<Room> Room { get; set; }
+        public DbSet<Event> Event { get; set; }
     }
 }

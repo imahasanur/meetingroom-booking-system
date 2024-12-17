@@ -89,9 +89,29 @@ namespace RoomBooking.Infrastructure
             );
 
             builder.Entity<Room>().Property(p => p.ConcurrencyToken).IsConcurrencyToken();
+
+            builder.Entity<Event>()
+                .HasMany(e => e.Guests)          
+                .WithOne()                       
+                .HasForeignKey(g => g.EventId)    
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Event>()
+                .HasOne<Room>()                 
+                .WithOne()                      
+                .HasForeignKey<Event>(e => e.RoomId) 
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Guest>()
+                .HasOne(g => g.Event)                
+                .WithMany(e => e.Guests)             
+                .HasForeignKey(g => g.EventId)       
+                .OnDelete(DeleteBehavior.Cascade);
+
         }
 
 
         public DbSet<Room> Room { get; set; }
+        public DbSet<Event> Event { get; set; }
     }
 }
