@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using RoomBooking.Application;
 using RoomBooking.Application.Domain.Repositories;
+using RoomBooking.Application.Services;
+using RoomBooking.Application.Services.Booking;
 using RoomBooking.Application.Services.Room;
 using RoomBooking.Infrastructure;
 using RoomBooking.Infrastructure.Membership;
@@ -54,7 +56,10 @@ namespace RoomBooking
                    .AddSignInManager<ApplicationSignInManager>()
                    .AddDefaultTokenProviders();
 
+                builder.Services.AddScoped<IBookingManagementService, BookingManagementService>();
                 builder.Services.AddScoped<IRoomManagementService, RoomManagementService>();
+
+                builder.Services.AddScoped<IBookingRepository, BookingRepository>();
                 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
                 builder.Services.AddScoped<IApplicationUnitOfWork, ApplicationUnitOfWork>();
                 builder.Services.AddScoped<ApplicationUser>();

@@ -1,4 +1,5 @@
 ﻿using RoomBooking.Application.DTO;
+using RoomBooking.Application.Services.Booking;
 using RoomBooking.Application.Services.Room;
 using RoomBooking.Models.Room;
 using System.ComponentModel.DataAnnotations;

@@ -13,11 +13,14 @@ namespace RoomBooking.Infrastructure
     public class ApplicationUnitOfWork : UnitOfWork, IApplicationUnitOfWork
     {
         public IRoomRepository RoomRepository { get; set; }
+        public IBookingRepository BookingRepository { get; set; }
         private readonly IApplicationDbContext _context;
-        public ApplicationUnitOfWork(IApplicationDbContext dbContext, IRoomRepository roomRepository) : base((DbContext)dbContext)
+
+        public ApplicationUnitOfWork(IApplicationDbContext dbContext, IRoomRepository roomRepository, IBookingRepository bookingRepository) : base((DbContext)dbContext)
         {
             _context = (ApplicationDbContext)dbContext;
             RoomRepository = roomRepository;
+            BookingRepository = bookingRepository;
         }
     }
 }

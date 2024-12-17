@@ -1,7 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Create Booking";
 }
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/repeater.js/1.2.1/repeater.min.css">
 <style>
     .scheduler_default_main_demo {
         display: none !important;
@@ -31,6 +31,23 @@
 </style>
 
 <div class ="container">
+
+    @if (TempData["success"] is not null)
+    {
+        <div id="successMessage" class="alert alert-success alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+            <i class="icon fas fa-check"></i>
+            @TempData["success"]
+        </div>
+    }
+
+    @if (TempData["message"] is not null)
+    {
+        <div id="successMessage" class="alert alert-warning alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+            <i class="icon fas fa-times"></i>
+            @TempData["message"]
+        </div>
+    }
+
     <div class="wrap">
         <div class="left">
             <div id="nav"></div>
@@ -44,8 +61,37 @@
 @section Scripts{
     <partial name="_ValidationScriptsPartial" />
     <script src="~/daypilot/daypilot-all.min.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.repeater/1.2.1/jquery.repeater.min.js" asp-append-version="true"></script>
+    <script>
+        $(document).ready(function () {
+            $('#successMessage').on('click', function () {
+                $(this).hide();
+            });
+        });
+    </script>
 
     <script>
+        
+        function validateTextRequired(args) {
+            var value = args.value || "";
+            if (value.trim().length === 0) {
+                args.valid = false;
+                args.message = "Text required";
+            } 
+        }
+
+        function validateEmailRequired(args) {
+            var value = args.value || "";
+            if (value.trim().length === 0) {
+                args.valid = false;
+                args.message = "Text required";
+            }
+            else if (!value.match(/^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
+                args.valid = false;
+                args.message = "Invalid email.";
+            }
+        }
+
         const colors = [
             { id: "#1066a8", name: "Blue" },
             { id: "#6aa84f", name: "Green" },
@@ -78,73 +124,30 @@
                 ]
             }),
             onTimeRangeSelected: async (args) => {
+
                 const form = [
                     {
-                        name: "Text",
-                        id: "text",
-                        validators: [
-                            {
-                                name: "Required",
-                                validate: (value) => value && value.trim() !== "",
-                                message: "This field is required."
-                            }
-                        ]
+                        name: "Event Name", id: "Name", onValidate: validateTextRequired, type: "text"
                     },
                     {
-                        name: "Color",
-                        id: "color",
-                        type: "select",
-                        options: colors,
-                        validators: [
-                            {
-                                name: "Required",
-                                validate: (value) => value && value.trim() !== "",
-                                message: "Please select a color."
-                            }
-                        ]
+                        name: "Email ", id: "Host", onValidate: validateEmailRequired, type: "text"
                     },
-                    {
-                        name: "Host",
-                        id: "host",
-                        type: "text",
-                        validators: [
-                            {
-                                name: "Required",
-                                validate: (value) => value && value.trim() !== "",
-                                message: "This field is required. Enter a valid email address"
-                            },
-                        ]
-                    }
                 ];
+                
+
 
                 const data = {
-                    text: "Enter event name",
-                    color: "choose color",
-                    start: args.start,
-                    end: args.end,
-                    roomId: args.resource,
-                    host: "enter host email"
+                    Name: "Enter event name",
+                    Color: "choose color",
+                    Start: args.start,
+                    End: args.end,
+                    RoomId: args.resource,
+                    Host: "enter host email",
+                    CreatedAtUTC: new DayPilot.Date(),
+                    CreatedBy: "user@gamil.com",
+                    State: "pending"
                 };
 
-                let isValid = true;
-                for (let field of form) {
-                    const fieldValue = data[field.id];
-
-                    for (let validator of field.validators) {
-                        const isFieldValid = validator.validate(fieldValue);
-                        if (!isFieldValid) {
-                            isValid = false;
-                            alert(validator.message); 
-                            break; 
-                        }
-                    }
-
-                    if (!isValid) break; 
-                }
-
-                if (!isValid) {
-                    return;
-                }
 
                 const modal = await DayPilot.Modal.form(form, data);
                 calendar.clearSelection();
@@ -153,7 +156,8 @@
                 }
 
                 const params = modal.result;
-                const { data: event } = await DayPilot.Http.post("/api/events", params);
+                console.log("Paramss :", params);
+                const { data: event } = await DayPilot.Http.post("/Booking/Create", params);
                 calendar.events.add(event);
             },
             onEventMove: async (args) => {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol;
+using RoomBooking.Application.Domain.Entities;
 using RoomBooking.Infrastructure.Membership;
 using RoomBooking.Models.Booking;
 using System.Runtime.InteropServices;
@@ -39,12 +40,19 @@ namespace RoomBooking.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Create()
-        //{
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] Event @event)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData.Clear();
+                _logger.LogError("Model State is not valid for Booking Create Action");
+                TempData["message"] = "Model State is not valid";
+                return View(); 
+            }
 
-        //    return View();
-        //}
+            return View();
+        }
 
         public IActionResult Edit()
         {

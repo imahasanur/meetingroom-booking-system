@@ -12,5 +12,6 @@ namespace RoomBooking.Application
     public interface IApplicationUnitOfWork : IUnitOfWork
     {
         public IRoomRepository RoomRepository { get; set; }
+        public IBookingRepository BookingRepository { get; set; }
     }
 }
