@@ -81,14 +81,34 @@
         }
 
         function validateEmailRequired(args) {
+
             var value = args.value || "";
+            const array = value.trim().split(",");
+            console.log("array ", array);
+            var guests = "";
+            var isValid = true;
             if (value.trim().length === 0) {
                 args.valid = false;
-                args.message = "Text required";
+                args.message = "Valid Email address required";
             }
-            else if (!value.match(/^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
+            else if (array.length > 0) {
+             
+                for(var i = 0; i < array.length; i++)
+                {
+                    if(/^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(array[i].trim()) == true){
+                        guests += array[i].trim() + ",";
+                    }
+                    else{
+                        isValid = false;
+                        break;
+                    }
+                }
+                
+            }
+
+            if(isValid == false){
                 args.valid = false;
-                args.message = "Invalid email.";
+                args.message = "Invalid email format found Try Ex:[ab@gamil.com, ss@gmail.com]";
             }
         }
 
@@ -130,7 +150,7 @@
                         name: "Event Name", id: "Name", onValidate: validateTextRequired, type: "text"
                     },
                     {
-                        name: "Email ", id: "Host", onValidate: validateEmailRequired, type: "text"
+                        name: "Guests Email  ", id: "Guests", onValidate: validateEmailRequired, type: "text"
                     },
                 ];
                 
@@ -145,7 +165,9 @@
                     Host: "enter host email",
                     CreatedAtUTC: new DayPilot.Date(),
                     CreatedBy: "user@gamil.com",
-                    State: "pending"
+                    State: "pending",
+                    Guests: "Enter email in a comma seperated way [Ex: ab@gmail.com, bd@yahoo.com, dc@gmail.c]"
+
                 };
 
 
@@ -156,9 +178,10 @@
                 }
 
                 const params = modal.result;
-                console.log("Paramss :", params);
                 const { data: event } = await DayPilot.Http.post("/Booking/Create", params);
                 calendar.events.add(event);
+
+
             },
             onEventMove: async (args) => {
                 const params = {

@@ -41,15 +41,31 @@ namespace RoomBooking.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Event @event)
+        public async Task<IActionResult> Create([FromBody] CreateBookingViewModel @model)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                TempData.Clear();
-                _logger.LogError("Model State is not valid for Booking Create Action");
-                TempData["message"] = "Model State is not valid";
-                return View(); 
+                if (!ModelState.IsValid)
+                {
+                    TempData.Clear();
+                    _logger.LogError("Model State is not valid for Booking Create Action");
+                    TempData["message"] = "Model State is not valid";
+                    return View();
+                }
+
+                var user = await _userManager.GetUserAsync(User);
+
+                if (user is not null)
+                {
+                    @model.CreatedBy = user.Email;
+                }
+
             }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Ann Exception error occured ");
+            }
+
 
             return View();
         }
