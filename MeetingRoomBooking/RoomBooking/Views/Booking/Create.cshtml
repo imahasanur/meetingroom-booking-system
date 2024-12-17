@@ -112,6 +112,28 @@
             }
         }
 
+        function validateSingleEmailRequired(args) {
+
+            var value = args.value || "";
+            
+            if (value.trim().length === 0) {
+                args.valid = false;
+                args.message = "Email address required";
+            }
+            else if (value.length > 0) {
+             
+               if(/^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value.trim()) == true)
+               {
+                   args.valid = true;
+                  
+               }  
+               else{
+                   args.valid = false;
+                   args.message = "Enter valid format ! Mail format : zy@gmail.com";
+               }
+            }
+        }
+
         const colors = [
             { id: "#1066a8", name: "Blue" },
             { id: "#6aa84f", name: "Green" },
@@ -150,15 +172,23 @@
                         name: "Event Name", id: "Name", onValidate: validateTextRequired, type: "text"
                     },
                     {
-                        name: "Guests Email  ", id: "Guests", onValidate: validateEmailRequired, type: "text"
+                        name: "Start Date & Time", id: "Start", type: "dateFormat", disabled: true
+                    },
+                    {
+                        name: "End Date & Time", id: "End", type: "dateFormat", disabled: true
+                    },
+                    {
+                        name: "Event Host", id: "Host", onValidate: validateSingleEmailRequired, type: "text",
+                    },
+                    {
+                        name: "Guests Email " , id: "Guests", onValidate: validateEmailRequired, type: "text"
                     },
                 ];
                 
 
-
                 const data = {
                     Name: "Enter event name",
-                    Color: "choose color",
+                    Color: "#f1c232",
                     Start: args.start,
                     End: args.end,
                     RoomId: args.resource,
