@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RoomBooking.Infrastructure;
 
@@ -11,9 +12,11 @@ using RoomBooking.Infrastructure;
 namespace RoomBooking.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241218054452_UpdatedEventAndGuestTable")]
+    partial class UpdatedEventAndGuestTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,7 +75,7 @@ namespace RoomBooking.Data.Migrations
 
                     b.HasIndex("RoomId1");
 
-                    b.ToTable("Event", (string)null);
+                    b.ToTable("Event");
                 });
 
             modelBuilder.Entity("RoomBooking.Application.Domain.Entities.Guest", b =>
@@ -98,7 +101,7 @@ namespace RoomBooking.Data.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("Guest", (string)null);
+                    b.ToTable("Guest");
                 });
 
             modelBuilder.Entity("RoomBooking.Application.Domain.Entities.Room", b =>
@@ -138,7 +141,7 @@ namespace RoomBooking.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Room", (string)null);
+                    b.ToTable("Room");
                 });
 
             modelBuilder.Entity("RoomBooking.Infrastructure.Membership.ApplicationRole", b =>

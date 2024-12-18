@@ -76,14 +76,13 @@ namespace RoomBooking.Controllers
                 {
                     TempData["message"] = "Booking already exists ";
                 }
-
+                return View();
 
             }
             catch(Exception ex)
             {
                 _logger.LogError(ex, "An Exception error occured ");
             }
-
 
             return View();
         }

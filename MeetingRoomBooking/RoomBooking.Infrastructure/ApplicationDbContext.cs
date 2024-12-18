@@ -96,10 +96,15 @@ namespace RoomBooking.Infrastructure
                 .HasForeignKey(g => g.EventId)    
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<Event>()
-                .HasOne<Room>()                 
-                .WithOne()                      
-                .HasForeignKey<Event>(e => e.RoomId) 
+            //builder.Entity<Event>()
+            //    .HasOne<Room>()                 
+            //    .WithOne()                      
+            //    .HasForeignKey<Event>(e => e.RoomId) 
+            //    .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<Room>()
+                .HasMany(e => e.Events)
+                .WithOne()
+                .HasForeignKey(e => e.RoomId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Guest>()
