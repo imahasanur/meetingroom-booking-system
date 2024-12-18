@@ -255,16 +255,18 @@
             selectMode: "Day",
             onTimeRangeSelected: args => {
                 calendar.startDate = args.day;
+                app.loadEvents(args.day);
                 calendar.update();
-                calendar.events.load("/Booking/Create");
+                calendar.events.load(`/Booking/GetAllEvent/${args.day} ${args.day}`);   
+
             }
         });
         datepicker.init();
 
         const app = {
             async loadResources() {
-                
-                const { data: rooms } = await DayPilot.Http.get("/Booking/GetAllRoom");
+
+                const { data: rooms } = await DayPilot.Http.get(`/Booking/GetAllRoom`);
                 console.log("Rooms :", rooms);
                 const columns = rooms.map(room => ({ id: room.id, name: room.name }));
                 console.log("Columns : ", columns);
@@ -277,11 +279,9 @@
                     end: new Date(date.getTime() + 86400000).toString()
                 };
 
-                const { data } = await DayPilot.Http.get("/Booking/GetAllEvent", params);
+                const { data } = await DayPilot.Http.get(`/Booking/GetAllEvent/${params.start} ${params.end}`);
                 console.log("Data to load events :", data);
-                const demoEvents = [
-                    { id: "1", text: "Test Event", start: "2024-12-16T10:00:00", end: "2024-12-16T12:00:00", resource: "277d212d-77a0-454c-ab45-7656bbfc3f58", Color: "#f1c232" }
-                ];
+            
                 calendar.events.list = data;
                 calendar.update();
             },

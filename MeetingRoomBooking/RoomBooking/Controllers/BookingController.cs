@@ -34,8 +34,9 @@ namespace RoomBooking.Controllers
             return Ok(rooms);
         }
 
-        public async Task<IActionResult> GetAllEvent([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] Guid? roomId)
+        public async Task<IActionResult> GetAllEvent(DateTime start, DateTime end)
         {
+
             if (start == DateTime.MinValue)
                 start = DateTime.Now;
             if (end == DateTime.MinValue)
@@ -45,12 +46,14 @@ namespace RoomBooking.Controllers
             model.ResolveDI(_provider);
 
             var allEvent = await model.GetAllEventAsync(start, end);
+          
 
             return Ok(allEvent);
         }
 
-        public async Task<IActionResult> Create([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] Guid? roomId)
+        public async Task<IActionResult> Create(DateTime start, DateTime end)
         {
+            
             if (start == DateTime.MinValue)
                 start = DateTime.Now;
             if (end == DateTime.MinValue)
