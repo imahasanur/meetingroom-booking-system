@@ -256,7 +256,7 @@
             onTimeRangeSelected: args => {
                 calendar.startDate = args.day;
                 calendar.update();
-                calendar.events.load("/api/events");
+                calendar.events.load("/Booking/Create");
             }
         });
         datepicker.init();
@@ -277,11 +277,12 @@
                     end: new Date(date.getTime() + 86400000).toString()
                 };
 
-                const { data } = await DayPilot.Http.get("/api/events", params);
+                const { data } = await DayPilot.Http.get("/Booking/GetAllEvent", params);
+                console.log("Data to load events :", data);
                 const demoEvents = [
                     { id: "1", text: "Test Event", start: "2024-12-16T10:00:00", end: "2024-12-16T12:00:00", resource: "277d212d-77a0-454c-ab45-7656bbfc3f58", Color: "#f1c232" }
                 ];
-                calendar.events.list = demoEvents;
+                calendar.events.list = data;
                 calendar.update();
             },
             async updateColor(e, color) {

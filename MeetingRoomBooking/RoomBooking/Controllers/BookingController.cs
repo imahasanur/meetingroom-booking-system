@@ -34,10 +34,34 @@ namespace RoomBooking.Controllers
             return Ok(rooms);
         }
 
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> GetAllEvent([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] Guid? roomId)
         {
+            if (start == DateTime.MinValue)
+                start = DateTime.Now;
+            if (end == DateTime.MinValue)
+                end = DateTime.Now;
 
-            return View();
+            var model = new GetAllBookingViewModel();
+            model.ResolveDI(_provider);
+
+            var allEvent = await model.GetAllEventAsync(start, end);
+
+            return Ok(allEvent);
+        }
+
+        public async Task<IActionResult> Create([FromQuery] DateTime start, [FromQuery] DateTime end, [FromQuery] Guid? roomId)
+        {
+            if (start == DateTime.MinValue)
+                start = DateTime.Now;
+            if (end == DateTime.MinValue)
+                end = DateTime.Now;
+
+            var model = new GetAllBookingViewModel();
+            model.ResolveDI(_provider);
+
+            var allEvent = await model.GetAllEventAsync(start, end);
+
+            return View(allEvent);
         }
 
         [HttpPost]

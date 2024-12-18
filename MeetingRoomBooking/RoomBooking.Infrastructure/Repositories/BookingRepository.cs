@@ -23,10 +23,12 @@ namespace RoomBooking.Infrastructure.Repositories
         //    return await GetByIdAsync(id);
         //}
 
-        //public async Task<IList<Room>> GetAllRoomAsync()
-        //{
-        //    return await GetAllAsync();
-        //}
+        public async Task<IList<Event>> GetAllEventAsync(DateTime start, DateTime end)
+        {
+            Expression<Func<Event, bool>> expression = x => start.Date <= x.Start.Date && end.Date >= x.End.Date;
+
+            return await GetAsync(expression, null);
+        }
 
         public async Task CreateBookingAsync(Event eventEntity)
         {
