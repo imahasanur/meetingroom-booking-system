@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RoomBooking.Application.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,15 +9,17 @@ namespace RoomBooking.Application.DTO
 {
     public record CreateEventDTO
     {
-        public string Name { get; set; }
-        public string Color { get; set; }
-        public string State { get; set; }
-        public DateTime Start { get; set; }
-        public DateTime End { get; set; }
-        public string CreatedBy { get; set; }
-        public string Host { get; set; }
-        public Guid RoomId { get; set; }
-        public DateTime CreatedAtUTC { get; set; }
+        public required Guid Id { get; set; }
+        public required string Name { get; set; }
+        public required string Color { get; set; }
+        public required string State { get; set; }
+        public required DateTime Start { get; set; }
+        public required DateTime End { get; set; }
+        public required string CreatedBy { get; set; }
+        public required string Host { get; set; }
+        public required List<Guest> Guests { get; set; }
+        public required Guid RoomId { get; set; }
+        public required DateTime CreatedAtUTC { get; set; }
 
     }
 }

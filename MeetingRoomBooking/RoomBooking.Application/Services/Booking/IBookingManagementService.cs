@@ -11,7 +11,8 @@ namespace RoomBooking.Application.Services.Booking
     {
         //Task<GetRoomDTO> GetRoomAsync(Guid id);
         //Task<IList<GetRoomDTO>> GetAllRoomAsync();
-        //Task<string> CreateRoomAsync(CreateRoomDTO roomDTO);
+        Task<string> CreateBookingAsync(CreateEventDTO eventDTO);
+        
         //Task<string> EditRoomAsync(EditRoomDTO roomDTO);
         //Task DeleteRoomAsync(RoomDTO getRoomDTO);
     }

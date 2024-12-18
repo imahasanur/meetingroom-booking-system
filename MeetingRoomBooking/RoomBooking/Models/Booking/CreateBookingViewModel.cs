@@ -10,6 +10,7 @@ namespace RoomBooking.Models.Booking
     public class CreateBookingViewModel
     {
         private IRoomManagementService _roomService;
+        private IBookingManagementService _bookingService;
 
         public string Name { get; set; }
         public string Color { get; set; }
@@ -25,6 +26,7 @@ namespace RoomBooking.Models.Booking
         public void ResolveDI(IServiceProvider provider)
         {
             _roomService = provider.GetService<IRoomManagementService>();
+            _bookingService = provider.GetService<IBookingManagementService>();
         }
 
         public async Task<List<RoomColumn>> GetAllRoomAsync()
@@ -33,6 +35,45 @@ namespace RoomBooking.Models.Booking
             var roomColumns = rooms.Select(x => new RoomColumn{ Name = $"{x.Location} {x.Name}", Id = x.Id }).ToList();
 
             return roomColumns;
+        }
+
+        public async Task<string> CreateBookingAsync(CreateBookingViewModel model)
+        {
+
+            var guests = new List<Guest>();
+            var temp = model.Guests.Split(',');
+            var id = Guid.NewGuid();
+
+            for (int i = 0; i < temp.Length; i++)
+            {
+                var guest = temp[i].Trim();
+                guests.Add(new Guest
+                {
+                    Id = Guid.NewGuid(),
+                    EventId = id,
+                    User = guest,
+                    CreatedAtUTC = DateTime.UtcNow,
+                });
+            }
+
+            var bookingEvent = new CreateEventDTO()
+            {
+                Id = id,
+                Name = model.Name,
+                Start = model.Start,
+                End = model.End,
+                CreatedBy = model.CreatedBy,
+                Host = model.Host,
+                Color = model.Color,
+                CreatedAtUTC = model.CreatedAtUTC,
+                State = model.State,
+                RoomId = model.RoomId,
+                Guests = guests,
+            };
+
+            var response = await _bookingService.CreateBookingAsync(bookingEvent);
+
+            return response;
         }
 
     }

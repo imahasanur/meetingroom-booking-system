@@ -28,11 +28,12 @@ namespace RoomBooking.Infrastructure.Repositories
         //    return await GetAllAsync();
         //}
 
-        //public async Task CreateRoomAsync(Room room)
-        //{
-           
-        //    await AddAsync(room);
-        //}
+        public async Task CreateBookingAsync(Event eventEntity)
+        {
+            await AddAsync(eventEntity);
+        }
+
+
 
         //public async Task EditRoomAsync(Room room)
         //{
@@ -47,7 +48,7 @@ namespace RoomBooking.Infrastructure.Repositories
         //public async Task<IList<Room>> CheckRoomRedundancy(Guid id, string location, string name)
         //{
         //    Expression<Func<Room, bool>> expression = x => x.Id != id && x.Location == location && x.Name == name;
-            
+
         //    return await GetAsync(expression, null);
         //}
 

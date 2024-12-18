@@ -41,15 +41,19 @@ namespace RoomBooking.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateBookingViewModel @model)
+        public async Task<IActionResult> Create([FromBody] CreateBookingViewModel model)
         {
+
+            string response = string.Empty;
             try
             {
+                TempData.Clear();
+
                 if (!ModelState.IsValid)
                 {
-                    TempData.Clear();
                     _logger.LogError("Model State is not valid for Booking Create Action");
                     TempData["message"] = "Model State is not valid";
+
                     return View();
                 }
 
@@ -57,13 +61,27 @@ namespace RoomBooking.Controllers
 
                 if (user is not null)
                 {
-                    @model.CreatedBy = user.Email;
+                    model.CreatedBy = user.Email;
                 }
+
+                model.ResolveDI(_provider);
+
+                response = await model.CreateBookingAsync(model);
+
+                if (response.Equals("success"))
+                {
+                    TempData["success"] = "Booking is Created";
+                }
+                else if (response.Equals("redundant"))
+                {
+                    TempData["message"] = "Booking already exists ";
+                }
+
 
             }
             catch(Exception ex)
             {
-                _logger.LogError(ex, "Ann Exception error occured ");
+                _logger.LogError(ex, "An Exception error occured ");
             }
 
 

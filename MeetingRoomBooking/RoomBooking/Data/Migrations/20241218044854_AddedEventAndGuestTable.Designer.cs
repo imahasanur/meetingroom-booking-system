@@ -12,8 +12,8 @@ using RoomBooking.Infrastructure;
 namespace RoomBooking.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241217052234_AddedEventAndGuestTablForBooking")]
-    partial class AddedEventAndGuestTablForBooking
+    [Migration("20241218044854_AddedEventAndGuestTable")]
+    partial class AddedEventAndGuestTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -285,7 +285,7 @@ namespace RoomBooking.Data.Migrations
                         {
                             Id = new Guid("6c23fda7-ae43-439e-b7f9-7d30868cb399"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "eb80b453-2d75-4825-8005-d0cd35b8b253",
+                            ConcurrencyStamp = "af505680-8dc4-4289-a108-204dc5c74ef4",
                             CreatedAtUtc = new DateTime(2024, 12, 11, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
@@ -295,7 +295,7 @@ namespace RoomBooking.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEE0+yAUPVb9jH0GtHM5IpiGtj6Wd7ENAVlw4QLsWYnbb2BjTFGWTXsm91rfKhWVJYg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEHHAFB3Gd+UsISmuzHBR8g5cEkyE4QyqM3u99jmiLgJrk2obpj+pes1bWZ2GaTl8DA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,

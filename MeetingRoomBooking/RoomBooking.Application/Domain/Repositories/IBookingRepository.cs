@@ -9,7 +9,7 @@ namespace RoomBooking.Application.Domain.Repositories
         //Task<IList<Room>> CheckRoomRedundancy(string location, string name);
         //Task<Room> GetRoomAsync(Guid id);
         //public Task<IList<Room>> GetAllRoomAsync();
-        //Task CreateRoomAsync(Room room);
+        Task CreateBookingAsync(Event eventEntity);
         //Task EditRoomAsync(Room room);
         //Task DeleteRoomAsync(Room room);
     }
