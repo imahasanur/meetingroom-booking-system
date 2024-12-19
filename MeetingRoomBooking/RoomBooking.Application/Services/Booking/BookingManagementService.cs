@@ -123,7 +123,7 @@ namespace RoomBooking.Application.Services.Booking
                     existingEvent.Start = eventDTO.Start;
                     existingEvent.End = eventDTO.End;
                     existingEvent.RoomId = eventDTO.RoomId;
-
+                    //throw new NotImplementedException();
                     await _unitOfWork.BookingRepository.EditBookingAsync(existingEvent);
                     await _unitOfWork.SaveAsync();
                 }

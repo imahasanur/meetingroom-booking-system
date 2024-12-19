@@ -222,6 +222,8 @@
                     roomId: args.newResource
                 };
                 await DayPilot.Http.put(`/Booking/Edit/${args.e.id()}`, params);
+                calendar.update();
+                calendar.events.load(`/Booking/GetAllEvent/${args.newStart} ${args.newEnd}`);
             },
             onEventResize: async (args) => {
                 const params = {
@@ -231,6 +233,8 @@
                     roomId: args.e.data.resource
                 };
                 await DayPilot.Http.put(`/Booking/Edit/${args.e.id()}`, params);
+                calendar.update();
+                calendar.events.load(`/Booking/GetAllEvent/${args.newStart} ${args.newEnd}`);
             },
             onBeforeEventRender: (args) => {
                 args.data.backColor = args.data.color + "99";
