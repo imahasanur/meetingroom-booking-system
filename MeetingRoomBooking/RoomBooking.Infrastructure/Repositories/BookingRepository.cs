@@ -18,10 +18,15 @@ namespace RoomBooking.Infrastructure.Repositories
         {
         }
 
-        //public async Task<Room> GetRoomAsync(Guid id)
-        //{
-        //    return await GetByIdAsync(id);
-        //}
+        public async Task<Event> GetEventAsync(Guid id)
+        {
+            return await GetByIdAsync(id);
+        }
+
+        public async Task EditBookingAsync(Event eventEntity)
+        {
+            await EditAsync(eventEntity);
+        }
 
         public async Task<IList<Event>> GetAllEventAsync(DateTime start, DateTime end)
         {
@@ -36,11 +41,6 @@ namespace RoomBooking.Infrastructure.Repositories
         }
 
 
-
-        //public async Task EditRoomAsync(Room room)
-        //{
-        //    await EditAsync(room);
-        //}
 
         //public async Task DeleteRoomAsync(Room room)
         //{

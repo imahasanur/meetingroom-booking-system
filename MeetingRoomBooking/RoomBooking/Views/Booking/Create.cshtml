@@ -218,17 +218,19 @@
                 const params = {
                     id: args.e.id(),
                     start: args.newStart,
-                    end: args.newEnd
+                    end: args.newEnd,
+                    roomId: args.newResource
                 };
-                await DayPilot.Http.put(`/api/events/${args.e.id()}/move`, params);
+                await DayPilot.Http.put(`/Booking/Edit/${args.e.id()}`, params);
             },
             onEventResize: async (args) => {
                 const params = {
                     id: args.e.id(),
                     start: args.newStart,
-                    end: args.newEnd
+                    end: args.newEnd,
+                    roomId: args.e.data.resource
                 };
-                await DayPilot.Http.put(`/api/events/${args.e.id()}/move`, params);
+                await DayPilot.Http.put(`/Booking/Edit/${args.e.id()}`, params);
             },
             onBeforeEventRender: (args) => {
                 args.data.backColor = args.data.color + "99";

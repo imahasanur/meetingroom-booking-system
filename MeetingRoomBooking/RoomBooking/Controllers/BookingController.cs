@@ -53,7 +53,7 @@ namespace RoomBooking.Controllers
 
         public async Task<IActionResult> Create()
         {
-            
+            TempData.Clear();
             return View();
         }
 
@@ -115,9 +115,35 @@ namespace RoomBooking.Controllers
             return View();
         }
 
-        public IActionResult Edit()
+        [HttpPut]
+        public async Task<IActionResult> Edit([FromRoute]Guid id, [FromBody] EditBookingViewModel model)
         {
-            return View();
+
+            string response = string.Empty;
+
+            TempData.Clear();
+
+            try
+            {
+                model.ResolveDI(_provider);
+                response = await model.EditBookingAsync(model);
+
+                if (response.Equals("success"))
+                {
+                    TempData["success"] = "Event is Updated";
+                }
+                else if (response.Equals("redundant"))
+                {
+                    TempData["message"] = "Event is overlapping ";
+                }
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex,"Error in editing the event on event move action");
+                TempData["failure"] = "Error in Updating the Event";
+                return BadRequest();
+            }
         }
 
         public IActionResult Delete()

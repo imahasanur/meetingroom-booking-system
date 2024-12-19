@@ -6,7 +6,7 @@ using System.Data.Common;
 
 namespace RoomBooking.Application.Services.Booking
 {
-    public class BookingManagementService:IBookingManagementService
+    public class BookingManagementService : IBookingManagementService
     {
         private readonly IApplicationUnitOfWork _unitOfWork;
         
@@ -112,48 +112,37 @@ namespace RoomBooking.Application.Services.Booking
 
 
 
-        //public async Task<string> EditRoomAsync(EditRoomDTO roomDTO)
-        //{
-        //    string response = "";
-        //    try
-        //    {
-        //        var existingRoom = await _unitOfWork.RoomRepository.GetRoomAsync(roomDTO.Id);
+        public async Task<string> EditBookingAsync(EditEventDTO eventDTO)
+        {
+            string response = string.Empty;
+            try
+            {
+                var existingEvent = await _unitOfWork.BookingRepository.GetEventAsync(eventDTO.Id);
+                if (existingEvent.CreatedBy != null)
+                {
+                    existingEvent.Start = eventDTO.Start;
+                    existingEvent.End = eventDTO.End;
+                    existingEvent.RoomId = eventDTO.RoomId;
 
-        //        if (existingRoom.CreatedBy is not null)
-        //        {
-        //            var rooms = await _unitOfWork.RoomRepository.CheckRoomRedundancy(roomDTO.Id, roomDTO.Location, roomDTO.Name);
-        //            if (rooms is not null && rooms?.Count > 0)
-        //            {
-        //                response = "redundant";
-        //                return response;
-        //            }
+                    await _unitOfWork.BookingRepository.EditBookingAsync(existingEvent);
+                    await _unitOfWork.SaveAsync();
+                }
+                response = "success";
+                return response;
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                response = ex.Message;
+                return response;
 
-        //            existingRoom.Location = roomDTO.Location;
-        //            existingRoom.Capacity = roomDTO.Capacity;
-        //            existingRoom.Details = roomDTO.Details;
-        //            existingRoom.LastUpdatedAtUTC = DateTime.UtcNow;
-        //            existingRoom.Name = roomDTO.Name;
-        //            existingRoom.ConcurrencyToken = Guid.NewGuid();
-        //        }
+            }
+            catch (Exception ex)
+            {
+                response = ex.Message;
+                return response;
+            }
 
-        //        await _unitOfWork.RoomRepository.EditRoomAsync(existingRoom);
-        //        await _unitOfWork.SaveAsync();
+        }
 
-        //        response = "success";
-        //        return response;
-        //    }
-        //    catch (DbUpdateConcurrencyException ex)
-        //    {
-        //        response = ex.Message;
-        //        return response;
-
-        //    }
-        //    catch (Exception ex) 
-        //    {
-        //        response = ex.Message;
-        //        return response;
-        //    }
-
-        //}
     }
-    }
+}

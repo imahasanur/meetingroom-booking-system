@@ -7,10 +7,10 @@ namespace RoomBooking.Application.Domain.Repositories
     {
         //Task<IList<Room>?> CheckRoomRedundancy(Guid id, string location, string name);
         //Task<IList<Room>> CheckRoomRedundancy(string location, string name);
-        //Task<Room> GetRoomAsync(Guid id);
+        Task<Event> GetEventAsync(Guid id);
         Task<IList<Event>> GetAllEventAsync(DateTime start, DateTime end);
         Task CreateBookingAsync(Event eventEntity);
-        //Task EditRoomAsync(Room room);
+        Task EditBookingAsync(Event eventEntity);
         //Task DeleteRoomAsync(Room room);
     }
 }
