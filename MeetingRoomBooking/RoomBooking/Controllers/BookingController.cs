@@ -51,20 +51,10 @@ namespace RoomBooking.Controllers
             return Ok(allEvent);
         }
 
-        public async Task<IActionResult> Create(DateTime start, DateTime end)
+        public async Task<IActionResult> Create()
         {
             
-            if (start == DateTime.MinValue)
-                start = DateTime.Now;
-            if (end == DateTime.MinValue)
-                end = DateTime.Now;
-
-            var model = new GetAllBookingViewModel();
-            model.ResolveDI(_provider);
-
-            var allEvent = await model.GetAllEventAsync(start, end);
-
-            return View(allEvent);
+            return View();
         }
 
         [HttpPost]
@@ -75,6 +65,7 @@ namespace RoomBooking.Controllers
             try
             {
                 TempData.Clear();
+                model.Id = Guid.NewGuid();
 
                 if (!ModelState.IsValid)
                 {
@@ -103,7 +94,17 @@ namespace RoomBooking.Controllers
                 {
                     TempData["message"] = "Booking already exists ";
                 }
-                return View();
+                var newEvent = new ScheduleEvent
+                {
+                    Id = model.Id,
+                    Text = model.Name,
+                    Start = model.Start,
+                    End = model.End,
+                    Resource = model.RoomId,
+                    Color = model.Color,
+                };
+
+                return Ok(newEvent);
 
             }
             catch(Exception ex)

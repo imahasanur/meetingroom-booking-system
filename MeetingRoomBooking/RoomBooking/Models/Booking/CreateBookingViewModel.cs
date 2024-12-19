@@ -12,6 +12,7 @@ namespace RoomBooking.Models.Booking
         private IRoomManagementService _roomService;
         private IBookingManagementService _bookingService;
 
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Color { get; set; }
         public string State { get; set; }
@@ -42,7 +43,6 @@ namespace RoomBooking.Models.Booking
 
             var guests = new List<Guest>();
             var temp = model.Guests.Split(',');
-            var id = Guid.NewGuid();
 
             for (int i = 0; i < temp.Length; i++)
             {
@@ -50,7 +50,7 @@ namespace RoomBooking.Models.Booking
                 guests.Add(new Guest
                 {
                     Id = Guid.NewGuid(),
-                    EventId = id,
+                    EventId = model.Id,
                     User = guest,
                     CreatedAtUTC = DateTime.UtcNow,
                 });
@@ -58,7 +58,7 @@ namespace RoomBooking.Models.Booking
 
             var bookingEvent = new CreateEventDTO()
             {
-                Id = id,
+                Id = model.Id,
                 Name = model.Name,
                 Start = model.Start,
                 End = model.End,

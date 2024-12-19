@@ -211,6 +211,7 @@
                 const { data: event } = await DayPilot.Http.post("/Booking/Create", params);
                 calendar.events.add(event);
 
+                await DayPilot.Http.get("/Booking/Create");
 
             },
             onEventMove: async (args) => {
@@ -299,6 +300,3 @@
         app.init();
     </script>
 }
-
-
-
