@@ -34,10 +34,19 @@ namespace RoomBooking.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var model = new GetAllRoomViewModel();
-            model.ResolveDI(_provider);
-            var allRooms = await model.GetAllRoomAsync();
-            return View(allRooms);
+            try
+            {
+                var model = new GetAllRoomViewModel();
+                model.ResolveDI(_provider);
+                var allRooms = await model.GetAllRoomAsync();
+                return View(allRooms);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "There is an exception while performing Get All room operation");
+                return View();
+            }
+            
         }
 
         [HttpGet]

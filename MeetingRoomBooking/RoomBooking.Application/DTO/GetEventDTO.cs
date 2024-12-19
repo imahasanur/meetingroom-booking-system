@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RoomBooking.Application.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,8 @@ namespace RoomBooking.Application.DTO
         public required string CreatedBy { get; set; }
         public required string Host { get; set; }
         public required Guid RoomId { get; set; }
+        public List<Guest> Guests { get; set; }
+        public Room Room { get; set; }
 
     }
 }

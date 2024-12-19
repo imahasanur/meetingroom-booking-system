@@ -19,6 +19,8 @@ namespace RoomBooking.Models.Booking
         public string CreatedBy { get; set; }
         public string Host { get; set; }
         public Guid RoomId { get; set; }
+        public List<Guest> Guests { get; set; }
+        public RoomBooking.Application.Domain.Entities.Room Room { get; set; }
         public DateTime CreatedAtUTC { get; set; }
 
         public void ResolveDI(IServiceProvider provider)
@@ -28,11 +30,21 @@ namespace RoomBooking.Models.Booking
 
         public async Task<IList<ScheduleEvent>> GetAllEventAsync(DateTime start, DateTime end)
         {
-            var allEvents = await _bookingService.GetAllEventAsync(start, end);
+            var allEvents = await _bookingService.GetAllEventAsync(start, end,null);
             var events = allEvents.Select(x => new ScheduleEvent { Id = x.Id, Start = x.Start, End = x.End, Resource = x.RoomId, Text = x.Name , Color = x.Color }).ToList();
 
             return events;
 
+        }
+
+        public async Task<IList<GetAllBookingViewModel>> GetAllEventAsync(string user)
+        {
+            DateTime start = DateTime.Now;
+            DateTime end = DateTime.Now.AddYears(1);
+
+            var allEvents = await _bookingService.GetAllEventAsync(start, end, user);
+            var getAllBooking = allEvents.Select(x => new GetAllBookingViewModel {Id = x.Id, Start = x.Start, End = x.End, Color = x.Color, CreatedBy = x.CreatedBy, State = x.State, Host = x.Host, Guests = x.Guests, RoomId = x.RoomId, Room = x.Room }).ToList();
+            return getAllBooking;
         }
 
     }

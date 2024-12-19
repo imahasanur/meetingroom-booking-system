@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using DotNetEnv;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol;
 using RoomBooking.Application.Domain.Entities;
@@ -151,9 +152,26 @@ namespace RoomBooking.Controllers
             return View();
         }
 
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            return View();
+            try
+            {
+                var model = new GetAllBookingViewModel();
+                model.ResolveDI(_provider);
+
+                var user = await _userManager.GetUserAsync(User);
+
+                var allEvent = await model.GetAllEventAsync(user.UserName);
+
+                return View(allEvent);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex.Message}");
+                return View();
+            }
+
+           
         }
     }
 }

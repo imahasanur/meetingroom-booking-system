@@ -12,7 +12,7 @@ namespace RoomBooking.Application.Services.Booking
         //Task<GetRoomDTO> GetRoomAsync(Guid id);
         //Task<IList<GetRoomDTO>> GetAllRoomAsync();
         Task<string> CreateBookingAsync(CreateEventDTO eventDTO);
-        Task<IList<GetEventDTO>> GetAllEventAsync(DateTime start, DateTime end);
+        Task<IList<GetEventDTO>> GetAllEventAsync(DateTime start, DateTime end, string? user);
 
         Task<string> EditBookingAsync(EditEventDTO eventDTO);
         //Task DeleteRoomAsync(RoomDTO getRoomDTO);

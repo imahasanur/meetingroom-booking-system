@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
+using RoomBooking.Infrastructure.Membership;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace RoomBooking.Infrastructure.Repositories
 {
@@ -28,11 +30,24 @@ namespace RoomBooking.Infrastructure.Repositories
             await EditAsync(eventEntity);
         }
 
-        public async Task<IList<Event>> GetAllEventAsync(DateTime start, DateTime end)
+        public async Task<IList<Event>> GetAllEventAsync(DateTime start, DateTime end, string? user)
         {
-            Expression<Func<Event, bool>> expression = x => start.Date <= x.Start.Date && end.Date >= x.End.Date;
+            Expression<Func<Event, bool>> expression = null;
+            Func<IQueryable<Event>, IIncludableQueryable<Event, object>> include = q => q.Include(e => e.Room).Include(e => e.Guests);
 
-            return await GetAsync(expression, null);
+            if (user is not null)
+            {
+
+                expression = x => (start.Date <= x.Start.Date || end.Date >= x.End.Date) && (x.Host == user || x.Guests.Any(x => x.User == user) || x.CreatedBy == user);
+                return await GetAsync(expression, null);
+            }
+            else
+            {
+                expression = x => start.Date <= x.Start.Date && end.Date >= x.End.Date;
+
+                return await GetAsync(expression, null);
+            }
+
         }
 
         public async Task CreateBookingAsync(Event eventEntity)

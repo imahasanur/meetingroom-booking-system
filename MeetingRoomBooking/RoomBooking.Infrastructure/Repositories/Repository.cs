@@ -96,13 +96,24 @@ namespace RoomBooking.Infrastructure.Repositories
         {
             IQueryable<TEntity> query = _dbSet;
 
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
+            //if (filter != null)
+            //{
+            //    query = query.Where(filter);
+            //}
+
+            //if (include != null)
+            //    query = include(query);
 
             if (include != null)
-                query = include(query);
+            {
+                query = include(query); // Apply include before filter
+            }
+
+            if (filter != null)
+            {
+                query = query.Where(filter); // Apply filter after include
+            }
+
 
             return await query.ToListAsync();
         }

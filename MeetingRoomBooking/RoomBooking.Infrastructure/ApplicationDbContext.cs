@@ -90,6 +90,7 @@ namespace RoomBooking.Infrastructure
 
             builder.Entity<Room>().Property(p => p.ConcurrencyToken).IsConcurrencyToken();
 
+
             builder.Entity<Event>()
                 .HasMany(e => e.Guests)          
                 .WithOne()                       

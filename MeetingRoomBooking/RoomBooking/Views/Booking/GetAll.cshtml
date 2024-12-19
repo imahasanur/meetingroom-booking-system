@@ -1,5 +1,124 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model List<GetAllBookingViewModel>
 @{
+    ViewData["Title"] = "All Bookings";
+}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Meeting Booking Details</h3>
+    </div>
+    @if (TempData["success"] is not null)
+    {
+        <div id="message" class="alert alert-success alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+            <i class="icon fas fa-check"></i>
+            @TempData["success"]
+        </div>
+    }
+
+    @if (TempData["message"] is not null)
+    {
+        <div id="message" class="alert alert-warning alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+            <i class="icon fas fa-times"></i>
+            @TempData["message"]
+        </div>
+    }
+
+    @if (TempData["failure"] is not null)
+    {
+        <div id="message" class="alert alert-danger alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+            <i class="icon fas fa-sad-tear"></i>
+            @TempData["failuer"]
+        </div>
+    }
+    <div class="card-body">
+        <table id="roomsTable" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Sl No</th>
+                    <th>Meeting Name</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Host</th>
+                    <th>Meeting Creator</th>
+                    <th>Room </th>
+                    <th>Meeting Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Count > 0)
+                {
+                    int serial = 1;
+                    foreach (var meeting in Model)
+                    {
+                        <tr>
+                            <td>@serial</td>
+                            <td>@meeting.Name</td>
+                            <td>@meeting.Start</td>
+                            <td>@meeting.End</td>
+                            <td>@meeting.Host</td>
+                            <td>@meeting.CreatedBy</td>
+                            <td>@meeting.RoomId</td>
+                            <td>@meeting.State</td>
+                            <td>
+                                <a href="@Url.Action("Edit", "Booking", new { id = meeting.Id })" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <a href="@Url.Action("Delete", "Booking", new { id = meeting.Id })"
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirm('Want to delete this meeting? @meeting.Name ');">
+                                    <i class="fas fa-trash-alt"></i> Delete
+                                </a>
+                            </td>
+                        </tr>
+                        serial++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center">No meetings available.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#roomsTable").DataTable({
+                "responsive": true,
+                "lengthChange": true,
+                "autoWidth": false,
+                "paging": true,
+                "info": true,
+                "pageLength": 5,
+                "lengthMenu": [5, 10, 25, 50],
+                "language": {
+                    "paginate": {
+                        "previous": "« Prev",
+                        "next": "» Next"
+                    },
+                    "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+                    "infoEmpty": "No Room is not available",
+                    "lengthMenu": "All Romms Entries"
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#message').on('click', function () {
+                $(this).hide();
+            });
+        });
+    </script>
 }

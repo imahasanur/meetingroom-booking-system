@@ -69,9 +69,9 @@ namespace RoomBooking.Application.Services.Booking
 
             return response;
         }
-        public async Task<IList<GetEventDTO>> GetAllEventAsync(DateTime start, DateTime end)
+        public async Task<IList<GetEventDTO>> GetAllEventAsync(DateTime start, DateTime end, string? user)
         {
-            var allEvent = await _unitOfWork.BookingRepository.GetAllEventAsync(start, end);
+            var allEvent = await _unitOfWork.BookingRepository.GetAllEventAsync(start, end, user);
             var eventsDTO = new List<GetEventDTO>();
 
             for (int i = 0; i < allEvent.Count; i++)
@@ -88,6 +88,8 @@ namespace RoomBooking.Application.Services.Booking
                     RoomId= scheduleEvent.RoomId,
                     CreatedBy= scheduleEvent.CreatedBy,
                     Host = scheduleEvent.Host,
+                    Guests= scheduleEvent.Guests,
+                    Room = scheduleEvent.Room,
                 };
                 eventsDTO.Add(eventDTO);
             }
@@ -123,7 +125,7 @@ namespace RoomBooking.Application.Services.Booking
                     existingEvent.Start = eventDTO.Start;
                     existingEvent.End = eventDTO.End;
                     existingEvent.RoomId = eventDTO.RoomId;
-                    //throw new NotImplementedException();
+
                     await _unitOfWork.BookingRepository.EditBookingAsync(existingEvent);
                     await _unitOfWork.SaveAsync();
                 }
@@ -141,8 +143,6 @@ namespace RoomBooking.Application.Services.Booking
                 response = ex.Message;
                 return response;
             }
-
         }
-
     }
 }
