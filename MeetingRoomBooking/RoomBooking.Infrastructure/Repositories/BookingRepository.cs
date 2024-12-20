@@ -55,12 +55,15 @@ namespace RoomBooking.Infrastructure.Repositories
             await AddAsync(eventEntity);
         }
 
+        public async Task<Event> GetBookingAsync(Guid id)
+        {
+            return await GetByIdAsync(id); 
+        }
 
-
-        //public async Task DeleteRoomAsync(Room room)
-        //{
-        //    await RemoveAsync(room);
-        //}
+        public async Task DeleteBookingAsync(Event eventEntity)
+        {
+            await RemoveAsync(eventEntity);
+        }
 
         //public async Task<IList<Room>> CheckRoomRedundancy(Guid id, string location, string name)
         //{

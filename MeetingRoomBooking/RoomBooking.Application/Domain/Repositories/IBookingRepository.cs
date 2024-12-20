@@ -10,7 +10,8 @@ namespace RoomBooking.Application.Domain.Repositories
         Task<Event> GetEventAsync(Guid id);
         Task<IList<Event>> GetAllEventAsync(DateTime start, DateTime end, string? user);
         Task CreateBookingAsync(Event eventEntity);
+        Task<Event> GetBookingAsync(Guid id);
         Task EditBookingAsync(Event eventEntity);
-        //Task DeleteRoomAsync(Room room);
+        Task DeleteBookingAsync(Event eventEntity);
     }
 }

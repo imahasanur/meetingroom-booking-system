@@ -111,7 +111,25 @@ namespace RoomBooking.Application.Services.Booking
         //    await _unitOfWork.RoomRepository.DeleteRoomAsync(room);
         //    await _unitOfWork.SaveAsync();
         //}
+        public async Task<string> DeleteBookingAsync(Guid id)
+        {
+            string response = string.Empty;
 
+            var eventEntity = await _unitOfWork.BookingRepository.GetBookingAsync(id);
+
+            if(eventEntity.CreatedBy is null)
+            {
+                response = "not found";
+                return response;
+            }
+
+            await _unitOfWork.BookingRepository.DeleteBookingAsync(eventEntity);
+            await _unitOfWork.SaveAsync();
+
+            response = "success";
+
+            return response;
+        }
 
 
         public async Task<string> EditBookingAsync(EditEventDTO eventDTO)

@@ -43,7 +43,7 @@ namespace RoomBooking.Models.Booking
             DateTime end = DateTime.Now.AddYears(1);
 
             var allEvents = await _bookingService.GetAllEventAsync(start, end, user);
-            var getAllBooking = allEvents.Select(x => new GetAllBookingViewModel {Id = x.Id, Start = x.Start, End = x.End, Color = x.Color, CreatedBy = x.CreatedBy, State = x.State, Host = x.Host, Guests = x.Guests, RoomId = x.RoomId, Room = x.Room }).ToList();
+            var getAllBooking = allEvents.Select(x => new GetAllBookingViewModel {Id = x.Id, Name = x.Name, Start = x.Start, End = x.End, Color = x.Color, CreatedBy = x.CreatedBy, State = x.State, Host = x.Host, Guests = x.Guests, RoomId = x.RoomId, Room = x.Room }).ToList();
             return getAllBooking;
         }
 

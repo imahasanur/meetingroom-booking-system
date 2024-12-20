@@ -60,17 +60,23 @@
                             <td>@meeting.End</td>
                             <td>@meeting.Host</td>
                             <td>@meeting.CreatedBy</td>
-                            <td>@meeting.RoomId</td>
+                            <td>@meeting.Room.Location @meeting.Room.Name</td>
                             <td>@meeting.State</td>
                             <td>
                                 <a href="@Url.Action("Edit", "Booking", new { id = meeting.Id })" class="btn btn-sm btn-primary">
                                     <i class="fas fa-edit"></i> Edit
                                 </a>
-                                <a href="@Url.Action("Delete", "Booking", new { id = meeting.Id })"
-                                   class="btn btn-sm btn-danger"
-                                   onclick="return confirm('Want to delete this meeting? @meeting.Name ');">
-                                    <i class="fas fa-trash-alt"></i> Delete
-                                </a>
+                                @{
+                                    if (meeting.State.Equals("pending"))
+                                    {
+                                        <a href="@Url.Action("Delete", "Booking", new { id = meeting.Id })"
+                                           class="btn btn-sm btn-danger"
+                                           onclick="return confirm('Want to delete this meeting? @meeting.Name ');">
+                                            <i class="fas fa-trash-alt"></i> Delete
+                                        </a>
+                                    }
+                                }
+                                
                             </td>
                         </tr>
                         serial++;

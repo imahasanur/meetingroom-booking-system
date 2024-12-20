@@ -5,6 +5,7 @@ using NuGet.Protocol;
 using RoomBooking.Application.Domain.Entities;
 using RoomBooking.Infrastructure.Membership;
 using RoomBooking.Models.Booking;
+using RoomBooking.Models.Room;
 using System.Runtime.InteropServices;
 
 namespace RoomBooking.Controllers
@@ -147,9 +148,35 @@ namespace RoomBooking.Controllers
             }
         }
 
-        public IActionResult Delete()
+
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            return View();
+            var response = string.Empty;
+
+            try
+            {
+                var model = new DeleteBookingViewModel();
+                model.ResolveDI(_provider);
+
+                TempData.Clear();
+
+                response = await model.DeleteBookingAsync(id);
+                if (response.Equals("success")) 
+                { 
+                    TempData["success"] = "Booking is Deleted";
+                }
+                else if(response.Equals("not found"))
+                {
+                    TempData["message"] = "Can't delete Booking ";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Delete operation failed ");
+                TempData["failure"] = "Booking Deletion failed";
+            }
+
+            return RedirectToAction("GetAll");
         }
 
         public async Task<IActionResult> GetAll()

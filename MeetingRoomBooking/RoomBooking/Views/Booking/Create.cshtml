@@ -148,25 +148,18 @@
             viewType: "Resources",
             durationBarVisible: true,
             cellDuration: 15,
-            contextMenu: new DayPilot.Menu({
-                items: [
-                    {
-                        text: "Delete",
-                        onClick: async (args) => {
-                            const e = args.source;
-                            const { data } = await DayPilot.Http.delete(`/api/events/${e.id()}`);
-                            calendar.events.remove(e.id());
-                        }
-                    },
-                    { text: "-" },
-                    ...colors.map(color => ({
-                        text: color.name,
-                        icon: `icon icon-${color.name.toLowerCase()}`,
-                        color: color.id,
-                        onClick: (args) => { app.updateColor(args.source, color.id); }
-                    }))
-                ]
-            }),
+            // contextMenu: new DayPilot.Menu({
+            //     items: [
+            //         // {
+            //         //     text: "Delete",
+            //         //     onClick: async (args) => {
+            //         //         const e = args.source;
+            //         //         const { data } = await DayPilot.Http.delete(`/Booking/Delete/${e.id()}`);
+            //         //         calendar.events.remove(e.id());
+            //         //     }
+            //         // }
+            //     ]
+            // }),
             onTimeRangeSelected: async (args) => {
 
                 const form = [
