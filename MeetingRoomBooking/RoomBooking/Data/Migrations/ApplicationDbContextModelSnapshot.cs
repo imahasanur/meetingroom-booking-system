@@ -56,9 +56,6 @@ namespace RoomBooking.Data.Migrations
                     b.Property<Guid>("RoomId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("RoomId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("Start")
                         .HasColumnType("datetime2");
 
@@ -70,9 +67,7 @@ namespace RoomBooking.Data.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.HasIndex("RoomId1");
-
-                    b.ToTable("Event", (string)null);
+                    b.ToTable("Event");
                 });
 
             modelBuilder.Entity("RoomBooking.Application.Domain.Entities.Guest", b =>
@@ -98,7 +93,7 @@ namespace RoomBooking.Data.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("Guest", (string)null);
+                    b.ToTable("Guest");
                 });
 
             modelBuilder.Entity("RoomBooking.Application.Domain.Entities.Room", b =>
@@ -138,7 +133,7 @@ namespace RoomBooking.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Room", (string)null);
+                    b.ToTable("Room");
                 });
 
             modelBuilder.Entity("RoomBooking.Infrastructure.Membership.ApplicationRole", b =>
@@ -281,7 +276,7 @@ namespace RoomBooking.Data.Migrations
                         {
                             Id = new Guid("6c23fda7-ae43-439e-b7f9-7d30868cb399"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "28cb79cd-d9ff-4d38-8545-8d7615f30acb",
+                            ConcurrencyStamp = "e1fef2be-8ce7-456b-96c6-3e4f11ccee27",
                             CreatedAtUtc = new DateTime(2024, 12, 11, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
@@ -291,7 +286,7 @@ namespace RoomBooking.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAELS4YVAF0ssnWON3ly6Dv/ycSyCF3qSOpecFv/3AkzpDFHsFNizKBla+G60MT5o1Qw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDPTxpTL8kIp0q9gs1sufYAVAJUr+RI/VqQBiw6V9KNaHwikohdToV5c7Oa+SajVJQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -396,16 +391,10 @@ namespace RoomBooking.Data.Migrations
 
             modelBuilder.Entity("RoomBooking.Application.Domain.Entities.Event", b =>
                 {
-                    b.HasOne("RoomBooking.Application.Domain.Entities.Room", null)
+                    b.HasOne("RoomBooking.Application.Domain.Entities.Room", "Room")
                         .WithMany("Events")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("RoomBooking.Application.Domain.Entities.Room", "Room")
-                        .WithMany()
-                        .HasForeignKey("RoomId1")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Room");

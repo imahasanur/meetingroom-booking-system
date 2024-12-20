@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RoomBooking.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddedEventAndGuestTable : Migration
+    public partial class ReaddedEventandGuestTableWithRelations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -23,7 +23,6 @@ namespace RoomBooking.Data.Migrations
                     End = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Host = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RoomId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     RoomId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAtUTC = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdatedAtUTC = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -37,12 +36,6 @@ namespace RoomBooking.Data.Migrations
                         principalTable: "Room",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    //table.ForeignKey(
-                    //    name: "FK_Event_Room_RoomId1",
-                    //    column: x => x.RoomId1,
-                    //    principalTable: "Room",
-                    //    principalColumn: "Id",
-                    //    onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -71,18 +64,12 @@ namespace RoomBooking.Data.Migrations
                 keyColumn: "Id",
                 keyValue: new Guid("6c23fda7-ae43-439e-b7f9-7d30868cb399"),
                 columns: new[] { "ConcurrencyStamp", "PasswordHash" },
-                values: new object[] { "af505680-8dc4-4289-a108-204dc5c74ef4", "AQAAAAIAAYagAAAAEHHAFB3Gd+UsISmuzHBR8g5cEkyE4QyqM3u99jmiLgJrk2obpj+pes1bWZ2GaTl8DA==" });
+                values: new object[] { "e1fef2be-8ce7-456b-96c6-3e4f11ccee27", "AQAAAAIAAYagAAAAEDPTxpTL8kIp0q9gs1sufYAVAJUr+RI/VqQBiw6V9KNaHwikohdToV5c7Oa+SajVJQ==" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Event_RoomId",
                 table: "Event",
-                column: "RoomId",
-                unique: true);
-
-            //migrationBuilder.CreateIndex(
-            //    name: "IX_Event_RoomId1",
-            //    table: "Event",
-            //    column: "RoomId1");
+                column: "RoomId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Guest_EventId",

@@ -37,9 +37,9 @@ namespace RoomBooking.Infrastructure.Repositories
 
             if (user is not null)
             {
-
-                expression = x => (start.Date <= x.Start.Date || end.Date >= x.End.Date) && (x.Host == user || x.Guests.Any(x => x.User == user) || x.CreatedBy == user);
-                return await GetAsync(expression, null);
+                expression = x => (start.Date <= x.Start.Date && end.Date >= x.End.Date) && (x.Host == user || x.Guests.Any(x => x.User == user) || x.CreatedBy == user);
+                
+                return await GetAsync(expression, include);
             }
             else
             {

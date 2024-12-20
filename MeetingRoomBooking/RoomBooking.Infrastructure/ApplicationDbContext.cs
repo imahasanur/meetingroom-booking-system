@@ -90,18 +90,12 @@ namespace RoomBooking.Infrastructure
 
             builder.Entity<Room>().Property(p => p.ConcurrencyToken).IsConcurrencyToken();
 
-
             builder.Entity<Event>()
                 .HasMany(e => e.Guests)          
                 .WithOne()                       
                 .HasForeignKey(g => g.EventId)    
                 .OnDelete(DeleteBehavior.Cascade);
 
-            //builder.Entity<Event>()
-            //    .HasOne<Room>()                 
-            //    .WithOne()                      
-            //    .HasForeignKey<Event>(e => e.RoomId) 
-            //    .OnDelete(DeleteBehavior.Restrict);
             builder.Entity<Room>()
                 .HasMany(e => e.Events)
                 .WithOne()
@@ -114,10 +108,16 @@ namespace RoomBooking.Infrastructure
                 .HasForeignKey(g => g.EventId)       
                 .OnDelete(DeleteBehavior.Cascade);
 
-        }
+            builder.Entity<Event>()
+                .HasOne(e => e.Room)
+                .WithMany(x => x.Events)
+                .HasForeignKey(k => k.RoomId)
+                .OnDelete(DeleteBehavior.Restrict);
 
+        }
 
         public DbSet<Room> Room { get; set; }
         public DbSet<Event> Event { get; set; }
+        public DbSet<Guest> Guest { get; set; }
     }
 }
