@@ -102,5 +102,10 @@ namespace RoomBooking.Models.Room
 
             return response;
         }
+
+        internal async Task GetEventByIdAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

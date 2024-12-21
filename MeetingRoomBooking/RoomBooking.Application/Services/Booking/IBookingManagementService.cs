@@ -16,5 +16,6 @@ namespace RoomBooking.Application.Services.Booking
 
         Task<string> EditBookingAsync(EditEventDTO eventDTO);
         Task<string> DeleteBookingAsync(Guid id);
+        Task<GetEventDTO> GetEventByIdAsync(Guid id);
     }
 }

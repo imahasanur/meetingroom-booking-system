@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Linq.Expressions;
 using RoomBooking.Infrastructure.Membership;
 using Microsoft.EntityFrameworkCore.Query;
+using System.Collections;
 
 namespace RoomBooking.Infrastructure.Repositories
 {
@@ -63,6 +64,14 @@ namespace RoomBooking.Infrastructure.Repositories
         public async Task DeleteBookingAsync(Event eventEntity)
         {
             await RemoveAsync(eventEntity);
+        }
+
+        public async Task<IList<Event>> GetEventByIdAsync(Guid id)
+        {
+            Expression<Func<Event, bool>> expression = x => x.Id == id;
+            Func<IQueryable<Event>, IIncludableQueryable<Event, object>> include = q => q.Include(e => e.Room).Include(e => e.Guests);
+
+            return await GetAsync(expression, include);
         }
 
         //public async Task<IList<Room>> CheckRoomRedundancy(Guid id, string location, string name)

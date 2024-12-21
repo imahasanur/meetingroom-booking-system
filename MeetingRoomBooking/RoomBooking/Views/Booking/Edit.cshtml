@@ -1,5 +1,167 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model EditBookingViewModel
 @{
+    ViewData["Title"] = "Edit Meeting Booking";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<div class="row ml-auto">
+    <div class="col-md-1 col-sm-1"></div>
+    <div class=" col-md-6 col-sm-8">
+        @if (TempData["success"] is not null)
+        {
+            <div id="message" class="alert alert-success alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+                <i class="icon fas fa-check"></i>
+                @TempData["success"]
+            </div>
+        }
+
+        @if (TempData["failure"] is not null)
+        {
+            <div id="message" class="alert alert-danger alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+                <i class="icon fas fa-sad-tear"></i>
+                @TempData["failure"]
+            </div>
+        }
+
+        @if (TempData["message"] is not null)
+        {
+            <div id="message" class="alert alert-danger alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+                <i class="icon  fas fa-times"></i>
+                @TempData["message"]
+            </div>
+        }
+        <div class="card card-primary">
+            <div class="card-header mx-auto bg-cyan">
+                <h3 class="card-title">Update Meeting Booking</h3>
+            </div>
+            <form asp-controller="Booking" asp-action="Edit" asp-area="" asp-route-returnUrl="Booking/Edit" method="post" asp-antiforgery="true">
+                <div class="card-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                    <div class="form-group">
+                        <label asp-for="Name">Event Name</label>
+                        <input asp-for="Name" type="text" class="form-control" id="" autocomplete="given-name" aria-required="true" placeholder="Event Name" required>
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Start">Start Time</label>
+                        <input asp-for="Start" type="text" class="form-control" id="start-time" required>
+                        <span asp-validation-for="Start" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="End">End Time</label>
+                        <input asp-for="End" type="text" class="form-control" id="end-time" required>
+                        <span asp-validation-for="End" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Host">Meeting Host</label>
+                        <input asp-for="Host" type="email" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Meeting host.." required>
+                        <span asp-validation-for="Host" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Guests">Meeting Guests</label>
+                        <input asp-for="Guests" type="text" class="form-control" id="guests" onchange="validateEmailRequired(event,'')" autocomplete="on" aria-required="true" placeholder="Write meeting guests" required>
+                        <span id="guests-validation-message" class="text-danger"></span>
+                        <span asp-validation-for="Guests" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input asp-for="Id" value="@Model.Id" type="hidden">
+                </div>
+                <div class="card-footer text-center">
+                    <button type="submit" class="btn btn-primary" onclick="validateForm(event)">Edit Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+
+        function validateEmailRequired(event, val) {
+            const value = event.target.value || val || "";
+            const validationMessageElement = document.getElementById("guests-validation-message");
+            const array = value.trim().split(",");
+            let isValid = true;
+
+            validationMessageElement.textContent = "";
+
+            if (value.trim().length === 0) {
+                validationMessageElement.textContent = "Valid email address required.";
+                isValid = false;
+                return isValid;
+            }
+
+            for (let i = 0; i < array.length; i++) {
+                const email = array[i].trim();
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+                if (!emailRegex.test(email)) {
+                    validationMessageElement.textContent = "Invalid email format found. Try Ex: [ab@gmail.com, ss@gmail.com]";
+                    isValid = false;
+                }
+            }
+
+            if (isValid) {
+                validationMessageElement.textContent = "";
+            }
+
+            return isValid;
+        }
+
+
+        function validateForm(event) {
+            var value = document.getElementById("guests").value;
+            const isGuestsValid = validateEmailRequired(event,value);
+
+            if (!isGuestsValid) {
+                event.preventDefault();
+            }
+        }
+
+        $(document).ready(function () {
+            $('#message').on('click', function () {
+                $(this).hide();
+            });
+
+            $("form").on("submit", function (event) {
+                validateForm(event); 
+            });
+
+            const endPicker = flatpickr("#end-time", {
+                enableTime: true,
+                dateFormat: "m/d/Y h:i K",
+                time_24hr: false,
+                minuteIncrement: 15,
+            });
+
+            const startPicker = flatpickr("#start-time", {
+                enableTime: true,
+                dateFormat: "m/d/Y h:i K", 
+                time_24hr: false,
+                minuteIncrement: 15,
+                onChange: function (selectedDates) {
+                    if (selectedDates.length > 0) {
+                        const startTime = selectedDates[0];
+
+                        const minDate = new Date(startTime.getTime() + 15 * 60 * 1000); 
+                        const maxDate = new Date(startTime);
+                        maxDate.setHours(23, 59, 59, 999); 
+
+                        endPicker.set("minDate", minDate);
+                        endPicker.set("maxDate", maxDate);
+                    }
+                }
+            });
+        });
+
+    </script>
 }

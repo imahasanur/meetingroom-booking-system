@@ -1,7 +1,6 @@
 ﻿using RoomBooking.Application.DTO;
 using RoomBooking.Application.Services.Booking;
-using RoomBooking.Application.Services.Room;
-using RoomBooking.Models.Room;
+using RoomBooking.Models.Booking;
 
 namespace RoomBooking.Models.Booking
 {
@@ -41,6 +40,34 @@ namespace RoomBooking.Models.Booking
             var response = await _bookingService.EditBookingAsync(eventDTO);
 
             return response;
+        }
+
+        public async Task<EditBookingViewModel> GetEventByIdAsync(Guid id)
+        {
+            
+            var eventDTO = await _bookingService.GetEventByIdAsync(id); 
+
+            if(eventDTO == null)
+            {
+                return null;
+            }
+
+            string guests = string.Empty;
+            guests = string.Join(", ",eventDTO.Guests.Select(x => x.User));
+
+            var editBookingModel = new EditBookingViewModel
+            {
+                Id = eventDTO.Id,
+                Name = eventDTO.Name,
+                Color = eventDTO.Color,
+                State = eventDTO.State,
+                Start = eventDTO.Start,
+                End = eventDTO.End,
+                CreatedBy = eventDTO.CreatedBy,
+                Host = eventDTO.Host,
+                Guests = guests
+            };
+            return editBookingModel;
         }
     }
 }

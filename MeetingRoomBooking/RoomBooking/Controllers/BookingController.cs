@@ -148,6 +148,40 @@ namespace RoomBooking.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit([FromRoute]Guid id)
+        {
+            try
+            {
+                var model = new EditBookingViewModel();
+                model.ResolveDI(_provider);
+
+                model = await model.GetEventByIdAsync(id);
+
+                TempData.Clear();
+
+                if (model?.CreatedBy is not null)
+                {
+                    model.ResolveDI(_provider);
+
+                    return View(model);
+                }
+                else
+                {
+                    TempData["message"] = "Booking doesn't exist . Already deleted";
+                }
+
+                return RedirectToAction("GetAll");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Booking Get operation failed ");
+                TempData["failure"] = "Room Booking fetch failed, Occured error";
+            }
+
+            return RedirectToAction("GetAll");
+
+        }
 
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {

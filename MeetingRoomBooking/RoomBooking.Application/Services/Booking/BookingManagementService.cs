@@ -9,7 +9,7 @@ namespace RoomBooking.Application.Services.Booking
     public class BookingManagementService : IBookingManagementService
     {
         private readonly IApplicationUnitOfWork _unitOfWork;
-        
+
         public BookingManagementService(IApplicationUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -39,7 +39,7 @@ namespace RoomBooking.Application.Services.Booking
         //    return null;
         //}
 
-      
+
 
         public async Task<string> CreateBookingAsync(CreateEventDTO eventDTO)
         {
@@ -85,10 +85,10 @@ namespace RoomBooking.Application.Services.Booking
                     State = scheduleEvent.State,
                     Start = scheduleEvent.Start,
                     End = scheduleEvent.End,
-                    RoomId= scheduleEvent.RoomId,
-                    CreatedBy= scheduleEvent.CreatedBy,
+                    RoomId = scheduleEvent.RoomId,
+                    CreatedBy = scheduleEvent.CreatedBy,
                     Host = scheduleEvent.Host,
-                    Guests= scheduleEvent.Guests,
+                    Guests = scheduleEvent.Guests,
                     Room = scheduleEvent.Room,
                 };
                 eventsDTO.Add(eventDTO);
@@ -117,7 +117,7 @@ namespace RoomBooking.Application.Services.Booking
 
             var eventEntity = await _unitOfWork.BookingRepository.GetBookingAsync(id);
 
-            if(eventEntity.CreatedBy is null)
+            if (eventEntity.CreatedBy is null)
             {
                 response = "not found";
                 return response;
@@ -161,6 +161,32 @@ namespace RoomBooking.Application.Services.Booking
                 response = ex.Message;
                 return response;
             }
+        }
+
+        public async Task<GetEventDTO> GetEventByIdAsync(Guid id)
+        {
+            var eventEntity = await _unitOfWork.BookingRepository.GetEventByIdAsync(id);
+
+            if(eventEntity == null || eventEntity.Count == 0)
+            {
+                return null;
+            }
+
+            var eventDTO = new GetEventDTO
+            {
+                Id = eventEntity[0].Id,
+                Name = eventEntity[0].Name,
+                Start = eventEntity[0].Start,
+                End = eventEntity[0].End,
+                Color = eventEntity[0].Color,
+                RoomId = eventEntity[0].RoomId,
+                Guests = eventEntity[0].Guests,
+                CreatedBy = eventEntity[0].CreatedBy,
+                Host = eventEntity[0].Host,
+                State = eventEntity[0].State
+            };
+
+            return eventDTO;
         }
     }
 }
