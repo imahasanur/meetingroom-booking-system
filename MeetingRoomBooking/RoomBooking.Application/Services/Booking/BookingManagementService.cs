@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using RoomBooking.Application.Domain.Entities;
 using RoomBooking.Application.DTO;
 using System;
 using System.Data.Common;
+using System.Linq;
 
 namespace RoomBooking.Application.Services.Booking
 {
@@ -163,9 +165,84 @@ namespace RoomBooking.Application.Services.Booking
             }
         }
 
+        public async Task<string> EditBookingByIdAsync(EditEventDTO eventDTO)
+        {
+            string response = string.Empty;
+            try
+            {
+                var existingEvent = await _unitOfWork.BookingRepository.GetBookingByIdAsync(eventDTO.Id);
+
+                if(existingEvent.Count == 0)
+                {
+                    response = "not found";
+                    return response;
+                }
+
+                var eventEntity = existingEvent[0];
+                eventEntity.Name = eventDTO.Name;
+                eventEntity.Start = eventDTO.Start;
+                eventEntity.End = eventDTO.End;
+                eventEntity.Host = eventDTO.Host;
+
+                var existingGuests = eventEntity.Guests.ToList();
+
+                var newGuestUsers = eventDTO.AllGuest.Split(',').Select(name => name.Trim()).Where(name => !string.IsNullOrEmpty(name)).ToList(); 
+
+                var guestsToRemove = existingGuests.Where(g => !newGuestUsers.Contains(g.User)).ToList();
+                var guestsToAdd = newGuestUsers.Where(user => !existingGuests.Any(g => g.User == user))
+                    .Select(user => new Guest
+                    {
+                        Id = Guid.NewGuid(),
+                        User = user,
+                        EventId = eventDTO.Id,
+                        Event = existingGuests[0].Event,
+                        CreatedAtUTC = DateTime.UtcNow,
+                        LastUpdatedAtUTC = DateTime.UtcNow
+                    })
+                    .ToList();
+
+                // Explicitly remove guests
+                foreach (var guest in guestsToRemove)
+                {
+                    await _unitOfWork.GuestRepository.RemoveGuestAsync(guest);
+                }
+
+                // Explicitly add new guests
+                foreach (var newGuest in guestsToAdd)
+                {
+                    await _unitOfWork.GuestRepository.AddGuestAsync(newGuest);
+                }
+
+                // Update LastUpdatedAtUTC for remaining guests
+                foreach (var guest in existingGuests.Except(guestsToRemove))
+                {
+                    guest.LastUpdatedAtUTC = DateTime.UtcNow;
+                }
+
+                // Save changes
+                await _unitOfWork.SaveAsync();
+
+                response = "success";
+                return response;
+
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+
+                response = ex.Message;
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                response = ex.Message;
+                return response;
+            }
+        }
+
         public async Task<GetEventDTO> GetEventByIdAsync(Guid id)
         {
-            var eventEntity = await _unitOfWork.BookingRepository.GetEventByIdAsync(id);
+            var eventEntity = await _unitOfWork.BookingRepository.GetBookingByIdAsync(id);
 
             if(eventEntity == null || eventEntity.Count == 0)
             {

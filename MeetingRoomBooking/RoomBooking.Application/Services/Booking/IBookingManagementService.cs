@@ -9,12 +9,12 @@ namespace RoomBooking.Application.Services.Booking
 {
     public interface IBookingManagementService
     {
-        //Task<GetRoomDTO> GetRoomAsync(Guid id);
-        //Task<IList<GetRoomDTO>> GetAllRoomAsync();
+
         Task<string> CreateBookingAsync(CreateEventDTO eventDTO);
         Task<IList<GetEventDTO>> GetAllEventAsync(DateTime start, DateTime end, string? user);
 
         Task<string> EditBookingAsync(EditEventDTO eventDTO);
+        Task<string> EditBookingByIdAsync(EditEventDTO eventDTO);
         Task<string> DeleteBookingAsync(Guid id);
         Task<GetEventDTO> GetEventByIdAsync(Guid id);
     }

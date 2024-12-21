@@ -183,6 +183,45 @@ namespace RoomBooking.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Edit(EditBookingViewModel model)
+        {
+            TempData.Clear();
+
+            string response = string.Empty;
+
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError("Model state is not valid ");
+                    return View(model);
+                }
+                model.ResolveDI(_provider);
+                response = await model.EditBookingByIdAsync(model);
+
+                if (response.Equals("success"))
+                {
+                    TempData["success"] = "Booking is Updated";
+                }
+                else if (response.Equals("not found"))
+                {
+                    TempData["message"] = "Booking is deleted already ";
+                }
+                else
+                {
+                    TempData["message"] = response; 
+                }
+                return View(model);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "There is an exception in meeting edit action");
+                TempData["failure"] = "Booking is not updated , an error occured";
+            }
+            return View(model);
+        }
+
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var response = string.Empty;

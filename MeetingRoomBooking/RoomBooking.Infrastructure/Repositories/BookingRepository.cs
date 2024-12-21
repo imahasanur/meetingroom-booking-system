@@ -39,7 +39,7 @@ namespace RoomBooking.Infrastructure.Repositories
             if (user is not null)
             {
                 expression = x => (start.Date <= x.Start.Date && end.Date >= x.End.Date) && (x.Host == user || x.Guests.Any(x => x.User == user) || x.CreatedBy == user);
-                
+
                 return await GetAsync(expression, include);
             }
             else
@@ -58,7 +58,7 @@ namespace RoomBooking.Infrastructure.Repositories
 
         public async Task<Event> GetBookingAsync(Guid id)
         {
-            return await GetByIdAsync(id); 
+            return await GetByIdAsync(id);
         }
 
         public async Task DeleteBookingAsync(Event eventEntity)
@@ -66,13 +66,14 @@ namespace RoomBooking.Infrastructure.Repositories
             await RemoveAsync(eventEntity);
         }
 
-        public async Task<IList<Event>> GetEventByIdAsync(Guid id)
+        public async Task<IList<Event>> GetBookingByIdAsync(Guid id)
         {
             Expression<Func<Event, bool>> expression = x => x.Id == id;
             Func<IQueryable<Event>, IIncludableQueryable<Event, object>> include = q => q.Include(e => e.Room).Include(e => e.Guests);
 
             return await GetAsync(expression, include);
         }
+
 
         //public async Task<IList<Room>> CheckRoomRedundancy(Guid id, string location, string name)
         //{

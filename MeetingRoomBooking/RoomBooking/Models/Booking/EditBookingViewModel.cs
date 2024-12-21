@@ -42,6 +42,24 @@ namespace RoomBooking.Models.Booking
             return response;
         }
 
+        public async Task<string> EditBookingByIdAsync(EditBookingViewModel model)
+        {
+            var eventDTO = new EditEventDTO()
+            {
+                Id = model.Id,
+                Name = model.Name,
+                State = model.State,
+                Start = model.Start,
+                End = model.End,
+                Host = model.Host,
+                AllGuest = model.Guests
+            };
+
+            var response = await _bookingService.EditBookingByIdAsync(eventDTO);
+
+            return response;
+        }
+        
         public async Task<EditBookingViewModel> GetEventByIdAsync(Guid id)
         {
             

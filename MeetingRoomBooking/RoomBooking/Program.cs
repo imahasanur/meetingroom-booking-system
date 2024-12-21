@@ -61,6 +61,7 @@ namespace RoomBooking
 
                 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
                 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+                builder.Services.AddScoped<IGuestRepository, GuestRepository>();
                 builder.Services.AddScoped<IApplicationUnitOfWork, ApplicationUnitOfWork>();
                 builder.Services.AddScoped<ApplicationUser>();
 
