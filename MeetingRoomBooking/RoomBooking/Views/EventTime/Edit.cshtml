@@ -1,0 +1,75 @@
+﻿@model EditEventTimeViewModel
+@{
+    ViewData["Title"] = "Time Limit Settings";
+}
+
+<div class="row ml-auto">
+    <div class="col-md-1 col-sm-1"></div>
+    <div class=" col-md-6 col-sm-8">
+        @if (TempData["success"] is not null)
+        {
+            <div id="message" class="alert alert-success alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+                <i class="icon fas fa-check"></i>
+                @TempData["success"]
+            </div>
+        }
+
+        @if (TempData["failure"] is not null)
+        {
+            <div id="message" class="alert alert-danger alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+                <i class="icon fas fa-sad-tear"></i>
+                @TempData["failure"]
+            </div>
+        }
+
+        @if (TempData["message"] is not null)
+        {
+            <div id="message" class="alert alert-danger alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+                <i class="icon  fas fa-times"></i>
+                @TempData["message"]
+            </div>
+        }
+        <div class="card card-primary">
+            <div class="card-header mx-auto bg-cyan">
+                <h3 class="card-title">Set Meeting Time Limit</h3>
+            </div>
+            <form asp-controller="EventTime" asp-action="Edit" asp-area="" asp-route-returnUrl="/EventTime/Edit" method="post" asp-antiforgery="true">
+                <div class="card-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                    
+                    <div class="form-group">
+                        <label asp-for="MinimumTime">Meeting Minimum Time Limit</label>
+                        <input asp-for="MinimumTime" type="number" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Enter Room Minimum Capacity" required>
+                        <span asp-validation-for="MinimumTime" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="MaximumTime">Meeting Maximum Time Limit</label>
+                        <input asp-for="MaximumTime" type="number" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Enter Room Maximum Capacity" required>
+                        <span asp-validation-for="MaximumTime" class="text-danger"></span>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <input asp-for="Id" value="@Model.Id" type="hidden">
+                </div>
+                <div class="card-footer text-center">
+                    <button type="submit" class="btn btn-primary">Save </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            $('#message').on('click', function () {
+                $(this).hide();
+            });
+        });
+    </script>
+}

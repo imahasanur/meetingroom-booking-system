@@ -9,6 +9,7 @@ namespace RoomBooking.Application.Domain.Repositories
 {
     public interface IEventTimeRepository: IRepositoryBase<EventTime, Guid>
     {
-    
+        Task<IList<EventTime>> GetTimeLimitAsync();
+        Task<EventTime> GetTimeLimitByIdAsync(Guid id);
     }
 }

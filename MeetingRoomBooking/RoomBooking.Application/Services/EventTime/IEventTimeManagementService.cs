@@ -9,7 +9,9 @@ namespace RoomBooking.Application.Services.EventTime
 {
     public interface IEventTimeManagementService
     {
+        Task<string> EditEventTimeLimitAsync(EditEventTimeDTO eventTimeDTO);
+        Task<GetEventTimeDTO> GetTimeLimitAsync();
 
-       
+
     }
 }

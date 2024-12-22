@@ -5,6 +5,7 @@ using RoomBooking.Application.DTO;
 using RoomBooking.Application.Services.Room;
 using RoomBooking.Data.Migrations;
 using RoomBooking.Infrastructure.Membership;
+using RoomBooking.Models.EventTime;
 using RoomBooking.Models.Room;
 
 namespace RoomBooking.Controllers
@@ -26,106 +27,87 @@ namespace RoomBooking.Controllers
             _user = user;
         }
 
+
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Edit()
         {
+            var model = new EditEventTimeViewModel();
+
             try
             {
-                var model = new CreateRoomViewModel();
                 model.ResolveDI(_provider);
-                var rooms = await model.GetAllRoomAsync();
 
-                return View(rooms);
-            }
-            catch (Exception ex) 
-            {
-                _logger.LogError(ex, "Error in Getting All Rooms");
+                model = await model.GetEventTimeLimitAsync();
 
-                return View();
-            }
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateRoomViewModel model)
-        {
-            var user = await _userManager.GetUserAsync(User);
-
-            if (user is not null) 
-            {
-                model.CreatedBy = user.Email;
-            }
-
-            if (ModelState.IsValid)
-            {
-                string response = string.Empty;
                 TempData.Clear();
 
-                try
-                {
-                    model.ResolveDI(_provider);
-
-                    response = await model.CreateRoomAsync(model);
-
-                    if (response.Equals("success"))
-                    {
-                        TempData["success"] = "Room is Created";
-                    }
-                    else if (response.Equals("redundant"))
-                    {
-                        TempData["message"] = "Room already exists ";
-                    }
-
+                if (model?.MinimumTime != 0)
+                { 
                     return View(model);
                 }
-                catch (Exception ex)
+                else
                 {
-                    _logger.LogError(ex, "Error in Creating a new room");
-                    ModelState.AddModelError(string.Empty, " This room is not created. An Error happended !");
-
-                    return View(model);
+                    TempData["message"] = "Time Limit doesn't exist";
                 }
+
+                return View(model);
             }
-            _logger.LogWarning("ModelState is not valid");
-            ModelState.AddModelError(string.Empty, "Model State is not valid");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Meeting Time limit Get operation failed ");
+                TempData["failure"] = "Meeting Time limit Get operation failed";
+            }
 
             return View(model);
         }
 
 
-        [HttpGet]
-        public async Task<IActionResult> Edit(Guid id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(EditEventTimeViewModel model)
         {
+            var response = string.Empty;
+
             try
             {
-                var model = new EditRoomViewModel();
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError("Model state is not valid in EventTime Edit action");
+                    return View(model);
+                }
+
+                var user = await _userManager.GetUserAsync(User);
+
+                if (user is not null)
+                {
+                    model.UpdatedBy = user.Email;
+                }
+
                 model.ResolveDI(_provider);
 
-                model = await model.GetRoomAsync(id);
+                response = await model.EditEventTimeLimitAsync(model);
 
                 TempData.Clear();
 
-                if (model?.CreatedBy is not null)
+                if (response == "success")
                 {
-                    model.ResolveDI(_provider);
-
+                    TempData["success"] = "Event Time limit has updated";
                     return View(model);
                 }
                 else
                 {
-                    TempData["message"] = "Room doesn't exist . Already deleted";
+                    TempData["message"] = "Time Limit doesn't update";
                 }
 
-                return RedirectToAction("GetAll");
+                return View(model);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Room Get operation failed ");
-                TempData["failure"] = "Room Get operation failed";
+                _logger.LogError(ex, "Meeting Time limit Get operation failed ");
+                TempData["failure"] = "Meeting Time limit set operation failed";
             }
 
-            return RedirectToAction("GetAll");
+            return View(model);
         }
-
     }
 }
