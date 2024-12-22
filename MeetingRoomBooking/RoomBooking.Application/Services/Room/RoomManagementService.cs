@@ -57,6 +57,8 @@ namespace RoomBooking.Application.Services.Room
                     Details = room.Details,
                     LastUpdatedAtUTC = room.LastUpdatedAtUTC,
                     CreatedBy = room.CreatedBy,
+                    MinimumCapacity = room.MinimumCapacity,
+                    MaximumCapacity = room.MaximumCapacity,
                 };
                 roomsDTO.Add(roomDTO);
             }

@@ -18,6 +18,8 @@ namespace RoomBooking.Models.Room
         public int Capacity { get; set; }
         public string Details { get; set; }
         public string CreatedBy { get; set; }
+        public int? MinimumCapacity { get; set; }
+        public int? MaximumCapacity { get; set; }
         public DateTime CreatedAtUTC { get; set; }
         public DateTime? LastUpdatedAtUTC { get; set; }
 
@@ -41,7 +43,9 @@ namespace RoomBooking.Models.Room
                     Details = room.Details,
                     CreatedBy = room.CreatedBy,
                     CreatedAtUTC = room.CreatedAtUTC,
-                    LastUpdatedAtUTC = room.LastUpdatedAtUTC
+                    LastUpdatedAtUTC = room.LastUpdatedAtUTC,
+                    MinimumCapacity = room.MinimumCapacity,
+                    MaximumCapacity = room.MaximumCapacity,
                 };
                 roomsViewModel.Add(viewModel);
             };

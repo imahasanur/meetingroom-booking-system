@@ -40,7 +40,10 @@
                     <th>Name</th>
                     <th>Location</th>
                     <th>Capacity</th>
+                    <th>Min Limit</th>
+                    <th>Max Limit</th>
                     <th>Details</th>
+
                     <th>Action</th>
                 </tr>
             </thead>
@@ -55,6 +58,8 @@
                             <td>@room.Name</td>
                             <td>@room.Location</td>
                             <td>@room.Capacity</td>
+                            <td>@room.MinimumCapacity</td>
+                            <td>@room.MaximumCapacity</td>
                             <td>@room.Details</td>
                             <td>
                                 <a href="@Url.Action("Edit", "Room", new { id = room.Id })" class="btn btn-sm btn-primary">
