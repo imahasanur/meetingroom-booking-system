@@ -192,11 +192,11 @@ namespace RoomBooking.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditSetting()
+        public async Task<IActionResult> SetLimit()
         {
             TempData.Clear();
 
-            var model = new EditSettingRoomViewModel();
+            var model = new SetLimitRoomViewModel();
 
             try
             {
@@ -218,7 +218,7 @@ namespace RoomBooking.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> EditSetting(EditSettingRoomViewModel model)
+        public async Task<IActionResult> SetLimit(SetLimitRoomViewModel model)
         {
             TempData.Clear();
             string response = string.Empty;

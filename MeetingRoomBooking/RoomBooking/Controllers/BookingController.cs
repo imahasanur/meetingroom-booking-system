@@ -222,6 +222,7 @@ namespace RoomBooking.Controllers
             return View(model);
         }
 
+
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var response = string.Empty;

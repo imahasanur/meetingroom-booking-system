@@ -8,7 +8,7 @@ using RoomBooking.Application.Services.Room;
 
 namespace RoomBooking.Models.Room
 {
-    public class EditSettingRoomViewModel
+    public class SetLimitRoomViewModel
     {
         private IRoomManagementService _roomService;
 
@@ -30,10 +30,10 @@ namespace RoomBooking.Models.Room
             _roomService = provider.GetService<IRoomManagementService>();
         }
 
-        public async Task<EditSettingRoomViewModel> GetAllRoomAsync()
+        public async Task<SetLimitRoomViewModel> GetAllRoomAsync()
         {
             var rooms = await _roomService.GetAllRoomAsync();
-            var model = new EditSettingRoomViewModel()
+            var model = new SetLimitRoomViewModel()
             {
                 PreviousRooms = rooms
             };
@@ -41,7 +41,7 @@ namespace RoomBooking.Models.Room
         }
 
 
-        public async Task<string> EditRoomAsync(EditSettingRoomViewModel model)
+        public async Task<string> EditRoomAsync(SetLimitRoomViewModel model)
         {
             var room = new EditRoomSettingDTO()
             {

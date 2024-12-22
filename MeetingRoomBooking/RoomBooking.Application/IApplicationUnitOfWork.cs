@@ -14,5 +14,6 @@ namespace RoomBooking.Application
         public IRoomRepository RoomRepository { get; set; }
         public IBookingRepository BookingRepository { get; set; }
         public IGuestRepository GuestRepository { get; set; }
+        public IEventTimeRepository EventTimeRepository { get; set; }
     }
 }

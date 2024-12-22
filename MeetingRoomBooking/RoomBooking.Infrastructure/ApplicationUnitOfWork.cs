@@ -15,15 +15,17 @@ namespace RoomBooking.Infrastructure
         public IRoomRepository RoomRepository { get; set; }
         public IBookingRepository BookingRepository { get; set; }
         public IGuestRepository GuestRepository { get; set; }
+        public IEventTimeRepository EventTimeRepository { get; set; }
 
         private readonly IApplicationDbContext _context;
 
-        public ApplicationUnitOfWork(IApplicationDbContext dbContext, IRoomRepository roomRepository, IBookingRepository bookingRepository, IGuestRepository guestRepository) : base((DbContext)dbContext)
+        public ApplicationUnitOfWork(IApplicationDbContext dbContext, IRoomRepository roomRepository, IBookingRepository bookingRepository, IGuestRepository guestRepository, IEventTimeRepository eventTimeRepository) : base((DbContext)dbContext)
         {
             _context = (ApplicationDbContext)dbContext;
             RoomRepository = roomRepository;
             BookingRepository = bookingRepository;
             GuestRepository = guestRepository;
+            EventTimeRepository = eventTimeRepository;
         }
     }
 }

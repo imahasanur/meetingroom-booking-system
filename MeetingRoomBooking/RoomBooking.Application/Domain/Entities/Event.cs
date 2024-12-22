@@ -16,6 +16,8 @@ namespace RoomBooking.Application.Domain.Entities
         public DateTime End { get; set; }
         public string CreatedBy { get; set; }    
         public string Host { get; set; }
+        public int? MinimumTime { get; set; }
+        public int? MaximumTime { get; set; }
         public Room Room { get; set; }
         public Guid RoomId { get; set; }
         public List<Guest> Guests { get; set; }
