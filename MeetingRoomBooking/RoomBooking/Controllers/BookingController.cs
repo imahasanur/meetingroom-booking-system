@@ -253,6 +253,7 @@ namespace RoomBooking.Controllers
             return RedirectToAction("GetAll");
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try

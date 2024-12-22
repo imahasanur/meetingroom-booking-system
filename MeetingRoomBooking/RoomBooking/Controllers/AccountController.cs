@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RoomBooking.Infrastructure.Membership;
 using RoomBooking.Models.Account;
-using static System.Formats.Asn1.AsnWriter;
+using System.Security.Claims;
 
 namespace RoomBooking.Controllers
 {
@@ -13,13 +13,15 @@ namespace RoomBooking.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IServiceProvider _provider;
 
-        public AccountController(ILogger<AccountController> logger, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
+        public AccountController(ILogger<AccountController> logger, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, IServiceProvider provider)
         {
             _logger = logger;
             _signInManager = signInManager;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
+            _provider = provider;
         }
         public IActionResult Register()
         {
@@ -124,5 +126,73 @@ namespace RoomBooking.Controllers
             }
 
         }
+
+        public async Task<IActionResult> GetAll()
+        {
+            try
+            {
+                var model = new GetAllAccountViewModel();
+
+                var allUser = await model.GetAllAccountAsync(_userManager);
+                return View(allUser);   
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, "There is an error while getting all users from Identity");
+            }
+           
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var model = new EditAccountViewModel();
+            try
+            {
+                var newModel = await model.GetUserClaimAsync(id, _userManager);
+                View(newModel);
+            }
+            catch (Exception ex) { 
+                _logger.LogError($"Error: {ex.Message}");
+
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(EditAccountViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["failure"] = "Model State is not valid";
+                return View(model);
+            }
+
+            var response = string.Empty;
+            TempData.Clear();
+            try
+            {
+                response = await model.EditUserClaimAsync(_userManager, model);
+
+                if(response == "success")
+                {
+                    TempData["success"] = "Account updated successfully.";
+                }
+                else
+                {
+                    TempData["failure"] = response;
+                }
+                
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error while updating account: {ex.Message}");
+                TempData["failure"] = "An error occurred while updating the account.";
+                return View(model);
+            }
+        }
+
     }
 }
