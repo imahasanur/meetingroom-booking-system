@@ -1,6 +1,7 @@
 ﻿using RoomBooking.Application.DTO;
 using RoomBooking.Application.Services.Booking;
 using RoomBooking.Models.Booking;
+using System.ComponentModel.DataAnnotations;
 
 namespace RoomBooking.Models.Booking
 {
@@ -10,12 +11,19 @@ namespace RoomBooking.Models.Booking
         private IBookingManagementService _bookingService;
 
         public Guid Id { get; set; }
+        [Required]
         public string Name { get; set; }
+        [Required]
         public string Color { get; set; }
+        [Required]
         public string State { get; set; }
+        [Required]
         public DateTime Start { get; set; }
+        [Required]
         public DateTime End { get; set; }
+        [Required]
         public string CreatedBy { get; set; }
+        [Required]
         public string Host { get; set; }
         public Guid RoomId { get; set; }
         public string Guests { get; set; }

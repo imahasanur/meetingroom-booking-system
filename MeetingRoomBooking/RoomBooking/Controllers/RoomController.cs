@@ -195,6 +195,21 @@ namespace RoomBooking.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> EditSetting()
+        {
+            var model =new EditRoomViewModel();
+            model.ResolveDI(_provider);
+            return View();
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> EditSetting(EditRoomViewModel model)
+        {
+            return View(model);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Delete(Guid id)
         {
             try
