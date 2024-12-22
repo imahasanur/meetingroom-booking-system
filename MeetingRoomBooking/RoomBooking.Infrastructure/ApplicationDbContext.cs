@@ -114,6 +114,15 @@ namespace RoomBooking.Infrastructure
                 .HasForeignKey(k => k.RoomId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<EventTime>().HasData(new EventTime
+            {
+                Id = new Guid("6617251D-F526-40CD-B58F-7F2BFB50E8F6"),
+                MinimumTime = 15,
+                MaximumTime = 120,
+                CreatedAtUTC = new DateTime(2024, 12, 22, 0, 0, 0, DateTimeKind.Utc),
+                CreatedBy = adminIdentity,
+            });
+
         }
 
         public DbSet<Room> Room { get; set; }
