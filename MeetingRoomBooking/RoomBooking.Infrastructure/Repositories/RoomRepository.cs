@@ -25,7 +25,7 @@ namespace RoomBooking.Infrastructure.Repositories
 
         public async Task<IList<Room>> GetAllRoomAsync()
         {
-            return await GetAllAsync();
+            return await GetAsync(null,null,null,true);
         }
 
         public async Task CreateRoomAsync(Room room)

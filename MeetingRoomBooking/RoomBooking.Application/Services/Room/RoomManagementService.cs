@@ -153,5 +153,45 @@ namespace RoomBooking.Application.Services.Room
             }
 
         }
+
+        public async Task<string> EditRoomSettingAsync(EditRoomSettingDTO roomDTO)
+        {
+            string response = "";
+            try
+            {
+                var existingRoom = await _unitOfWork.RoomRepository.GetRoomAsync(roomDTO.Id);
+
+                if (existingRoom?.CreatedBy is not null)
+                {
+                    existingRoom.MaximumCapacity = roomDTO.MaximumCapacity;
+                    existingRoom.MinimumCapacity = roomDTO.MinimumCapacity;
+                    existingRoom.LastUpdatedAtUTC = DateTime.UtcNow;
+                    existingRoom.ConcurrencyToken = Guid.NewGuid();
+                }
+                else
+                {
+                    response = "not found";
+                    return response;
+                }
+
+                await _unitOfWork.RoomRepository.EditRoomAsync(existingRoom);
+                await _unitOfWork.SaveAsync();
+
+                response = "success";
+                return response;
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                response = ex.Message;
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                response = ex.Message;
+                return response;
+            }
+
+        }
     }
 }

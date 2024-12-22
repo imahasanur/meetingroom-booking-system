@@ -132,9 +132,6 @@ namespace RoomBooking.Controllers
                 {
                     model.ResolveDI(_provider);
 
-                    //var roomsModel = await model.GetAllRoomAsync();
-                    //model.PreviousRooms = roomsModel.PreviousRooms;
-
                     return View(model);
                 }
                 else
@@ -197,15 +194,63 @@ namespace RoomBooking.Controllers
         [HttpGet]
         public async Task<IActionResult> EditSetting()
         {
-            var model =new EditRoomViewModel();
-            model.ResolveDI(_provider);
-            return View();
+            TempData.Clear();
+
+            var model = new EditSettingRoomViewModel();
+
+            try
+            {
+               
+                model.ResolveDI(_provider);
+
+                model = await model.GetAllRoomAsync();
+
+                return View(model);
+            }
+            catch (Exception ex) 
+            { 
+                _logger.LogError($"{ex.Message}", ex);
+                TempData["filure"] = "Found error to fetch rooms. An error occured";
+
+                return View(model);
+            }  
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> EditSetting(EditRoomViewModel model)
+        public async Task<IActionResult> EditSetting(EditSettingRoomViewModel model)
         {
+            TempData.Clear();
+            string response = string.Empty;
+
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError("Model State is not valid in EditSettings Post method");
+
+                    return View(model);
+                }
+
+                model.ResolveDI(_provider);
+                response =await model.EditRoomAsync(model);
+
+                if (response.Equals("success"))
+                {
+                    TempData["success"] = "Room Max and Min Limit is Updated";
+                }
+                else if (response.Equals("not found"))
+                {
+                    TempData["message"] = "Room doesn't exists";
+                }
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError(ex, "Error in Updating a room min and max limit");
+                TempData["failure"] = "Error in Updating the room min and max limit";
+
+            }
+
             return View(model);
         }
 

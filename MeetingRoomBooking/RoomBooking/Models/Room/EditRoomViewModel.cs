@@ -25,7 +25,7 @@ namespace RoomBooking.Models.Room
         [Display(Name = "Room Location")]
         public string Location { get; set; }
 
-        [Range(3, 15, ErrorMessage = "The Room must hold at least 3 and at max 15 people")]
+        [Range(3, 20, ErrorMessage = "The Room must hold at least 3 and at max 20 people")]
         [Display(Name = "Room Capacity")]
         public int Capacity { get; set; }
 
