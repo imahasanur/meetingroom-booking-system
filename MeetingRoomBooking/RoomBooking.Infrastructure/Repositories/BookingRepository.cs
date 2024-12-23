@@ -11,6 +11,7 @@ using System.Linq.Expressions;
 using RoomBooking.Infrastructure.Membership;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Collections;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace RoomBooking.Infrastructure.Repositories
 {
@@ -19,6 +20,19 @@ namespace RoomBooking.Infrastructure.Repositories
 
         public BookingRepository(IApplicationDbContext context) : base((DbContext)context)
         {
+        }
+
+        public async Task<IList<Event>> GetBookingByMakerAsync(string createdBy)
+        {
+            Expression<Func<Event, bool>> expression = x => x.CreatedBy == createdBy && x.End >= DateTime.Now && x.State.Equals("pending");
+            return await GetAsync(expression, null, null, true);
+        }
+
+        public async Task<IList<Event>> CheckBookingOverlapping(DateTime start, DateTime end, Guid roomId)
+        {
+            Expression<Func<Event, bool>> expression = x => x.RoomId == roomId && ((start >= x.Start && end >= x.End) || (start <= x.Start && end >= x.End) || (start <= x.Start && end <= x.End) || (start >= x.Start && end <= x.End));
+            return await GetAsync(expression, null, null, true);
+
         }
 
         public async Task<Event> GetEventAsync(Guid id)

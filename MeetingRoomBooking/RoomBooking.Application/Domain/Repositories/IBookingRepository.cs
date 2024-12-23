@@ -8,6 +8,8 @@ namespace RoomBooking.Application.Domain.Repositories
         //Task<IList<Room>?> CheckRoomRedundancy(Guid id, string location, string name);
         //Task<IList<Room>> CheckRoomRedundancy(string location, string name);
         Task<Event> GetEventAsync(Guid id);
+        Task<IList<Event>> CheckBookingOverlapping(DateTime start, DateTime end, Guid roomId);
+        Task<IList<Event>> GetBookingByMakerAsync(string createdBy);
         Task<IList<Event>> GetBookingByIdAsync(Guid id);
         Task<IList<Event>> GetAllEventAsync(DateTime start, DateTime end, string? user);
         Task CreateBookingAsync(Event eventEntity);
