@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using RoomBooking.Infrastructure.Membership;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace RoomBooking.Models.Account
@@ -9,27 +10,38 @@ namespace RoomBooking.Models.Account
         public Guid UserId { get; set; }
         public string UserName { get; set; }
         public string ClaimType { get; set; }
-        public string ClaimValue { get; set; }
+        public List<string> ClaimValue { get; set; }
 
-        public async Task<IList<EditAccountViewModel>> GetUserClaimAsync(Guid id, UserManager<ApplicationUser> userMangaer)
+        [Required]
+        public string NewClaimValue { get; set; }
+
+        public async Task<EditAccountViewModel> GetUserClaimAsync(Guid id, UserManager<ApplicationUser> userMangaer)
         {
             var user = userMangaer.Users.FirstOrDefault(x => x.Id == id);
-            var userAllClaim = new List<EditAccountViewModel>();
+            var userAllClaim = new EditAccountViewModel();
+            
             if (user is not null)
             {
                 var userClaim =await userMangaer.GetClaimsAsync(user);
-                if (userClaim != null) { 
-                    foreach(var claim in userClaim)
+                if (userClaim != null && userClaim.Count > 0) {
+
+                    var claims = new List<string>();
+
+                    for(int i = 0; i < userClaim.Count; i++)
                     {
-                        var aClaim = new EditAccountViewModel
+                        if(i == 0)
                         {
-                            UserId = user.Id,
-                            ClaimType = claim.Type ?? string.Empty,
-                            ClaimValue = claim.Value?? string.Empty,
-                            UserName = user.Email ?? string.Empty,
-                        };
-                        userAllClaim.Add(aClaim);
+                            userAllClaim.UserId = user.Id;
+                            userAllClaim.UserName = user.Email ?? string.Empty;
+                            userAllClaim.ClaimType = userClaim[0].Type ?? string.Empty;
+                            claims.Add(userClaim[0].Value?? string.Empty);
+                            continue;
+                        }
+
+                        claims.Add(userClaim[i].Value ?? string.Empty);
+                        
                     }
+                    userAllClaim.ClaimValue = claims;
                 }
 
             }
@@ -57,10 +69,24 @@ namespace RoomBooking.Models.Account
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(model.ClaimValue))
+            if (!string.IsNullOrWhiteSpace(model.NewClaimValue))
             {
-                var newClaim = new Claim("role", model.ClaimValue);
-                await userManager.AddClaimAsync(user, newClaim);
+                if(NewClaimValue.Length <= 5)
+                {
+                    var newClaim = new Claim("role", model.NewClaimValue);
+                    await userManager.AddClaimAsync(user, newClaim);
+                }
+                else
+                {
+                    var newClaimValue = model.NewClaimValue.Split(',');
+                    foreach(var claim in newClaimValue)
+                    {
+                        var aClaim = new Claim("role", claim);
+                        await userManager.AddClaimAsync(user, aClaim);
+                    }
+
+                }
+                
             }
 
             response = "success";

@@ -151,7 +151,7 @@ namespace RoomBooking.Controllers
             try
             {
                 var newModel = await model.GetUserClaimAsync(id, _userManager);
-                View(newModel);
+                return View(newModel);
             }
             catch (Exception ex) { 
                 _logger.LogError($"Error: {ex.Message}");
@@ -171,6 +171,7 @@ namespace RoomBooking.Controllers
 
             var response = string.Empty;
             TempData.Clear();
+
             try
             {
                 response = await model.EditUserClaimAsync(_userManager, model);
@@ -189,8 +190,9 @@ namespace RoomBooking.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"Error while updating account: {ex.Message}");
-                TempData["failure"] = "An error occurred while updating the account.";
-                return View(model);
+                TempData["failure"] = "An error occurred while updating the account claims.";
+
+                return RedirectToAction("GetAll");
             }
         }
 

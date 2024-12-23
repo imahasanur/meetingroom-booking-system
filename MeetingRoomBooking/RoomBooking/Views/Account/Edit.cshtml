@@ -21,7 +21,7 @@
 
         <div class="card card-primary">
             <div class="card-header mx-auto bg-cyan">
-                <h3 class="card-title">Edit Account</h3>
+                <h3 class="card-title">Edit Account Role</h3>
             </div>
             <form asp-action="Edit" asp-controller="Account" method="post">
                 <div class="card-body">
@@ -30,18 +30,35 @@
                         <input asp-for="UserName" class="form-control" readonly />
                     </div>
                     <div class="form-group">
-                        <label asp-for="ClaimValue">Role</label>
-                        <select asp-for="ClaimValue" class="form-control">
-                            <option value="">Select Role</option>
-                            <option value="admin" selected="@Model.ClaimValue == "admin"">Admin</option>
-                            <option value="user" selected="@Model.ClaimValue == "user"">User</option>
+                        <label asp-for="ClaimValue">Current Role</label>
+                        <select  class="form-control select2 overflow-auto text-center" style="width: 100%;">
+                            @{
+                                foreach(var claim in Model.ClaimValue)
+                                {
+                                    <option value="@claim" selected="@claim" >@claim.ToUpper()</option>
+                                }
+                            }
+                           
                         </select>
-                        <span asp-validation-for="ClaimValue" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="NewClaimValue">Assign Role</label>
+                        <select asp-for="NewClaimValue" class="form-control select2 overflow-auto text-center" style="width: 100%;">
+                            
+                            <option value="admin" selected="@Model.NewClaimValue">Admin</option>
+                            <option value="user" selected="@Model.NewClaimValue">User</option>
+                            <option value="user,admin" selected="@Model.NewClaimValue">User & Admin</option>
+                        </select>
+                        <span asp-validation-for="NewClaimValue" class="text-danger"></span>
                     </div>
                 </div>
+                
                 <div class="card-footer text-center">
                     <input asp-for="UserId" type="hidden" />
-                    <button type="submit" class="btn btn-primary">Update Claim</button>
+                    <input asp-for="ClaimType" type="hidden" />
+                    <input asp-for="ClaimValue" type ="hidden" />
+                    <button type="submit" class="btn btn-primary">Update Role</button>
                 </div>
             </form>
         </div>

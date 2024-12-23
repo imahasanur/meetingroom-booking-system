@@ -22,15 +22,11 @@ namespace RoomBooking.Models.Account
         {
             var users = userManager.Users.ToList();
 
-            var userClaims = users.Select(user => userManager.GetClaimsAsync(user)).ToList();
-            var userClaimsResults = await Task.WhenAll(userClaims);
-
-           
             var allAccountModel = new List<GetAllAccountViewModel>();
-            for (int i = 0; i < users.Count; i++)
+
+            foreach (var user in users)
             {
-                var user = users[i];
-                var claims = userClaimsResults[i];
+                var claims = await userManager.GetClaimsAsync(user);
                 foreach (var claim in claims)
                 {
                     allAccountModel.Add(new GetAllAccountViewModel
