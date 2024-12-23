@@ -55,7 +55,7 @@ namespace RoomBooking.Controllers
 
         public async Task<IActionResult> Create()
         {
-            TempData.Clear();
+
             return View();
         }
 
@@ -92,31 +92,39 @@ namespace RoomBooking.Controllers
                 if (response.Equals("success"))
                 {
                     TempData["success"] = "Booking is Created";
+                    var newEvent = new ScheduleEvent
+                    {
+                        Id = model.Id,
+                        Text = model.Name,
+                        Start = model.Start,
+                        End = model.End,
+                        Resource = model.RoomId,
+                        Color = model.Color,
+                    };
+
+                    return Ok(newEvent);
                 }
                 else if (response.Equals("redundant"))
                 {
                     TempData["message"] = "Booking already exists ";
+
                 }
-                var newEvent = new ScheduleEvent
+                else
                 {
-                    Id = model.Id,
-                    Text = model.Name,
-                    Start = model.Start,
-                    End = model.End,
-                    Resource = model.RoomId,
-                    Color = model.Color,
-                };
+                    TempData["message"] = response;
 
-                return Ok(newEvent);
-
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "An Exception error occured ");
             }
 
-            return View();
+            return Ok();
         }
+
+
+
 
         [HttpPut]
         public async Task<IActionResult> Edit([FromRoute]Guid id, [FromBody] EditBookingViewModel model)

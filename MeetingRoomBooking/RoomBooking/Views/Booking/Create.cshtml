@@ -33,20 +33,22 @@
 </style>
 
 <div class ="container">
-
-    @if (TempData["success"] is not null)
+    
+    @if(TempData["success"] != null)
     {
         <div id="successMessage" class="alert alert-success alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
             <i class="icon fas fa-check"></i>
             @TempData["success"]
+            
         </div>
     }
 
-    @if (TempData["message"] is not null)
+    @if(TempData["message"] != null)
     {
         <div id="successMessage" class="alert alert-warning alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
             <i class="icon fas fa-times"></i>
             @TempData["message"]
+           
         </div>
     }
 
@@ -204,8 +206,10 @@
 
                 const params = modal.result;
                 const { data: event } = await DayPilot.Http.post("/Booking/Create", params);
-                calendar.events.add(event);
-
+                if (event != null) {
+                    calendar.events.add(event);
+                }
+                
                 await DayPilot.Http.get("/Booking/Create");
 
             },

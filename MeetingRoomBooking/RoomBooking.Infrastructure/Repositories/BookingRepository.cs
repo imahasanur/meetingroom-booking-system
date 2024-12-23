@@ -35,6 +35,14 @@ namespace RoomBooking.Infrastructure.Repositories
 
         }
 
+        public async Task<IList<Event>> CheckAnyRoomBookingOverlappingByUser(DateTime start, DateTime end, string createdBy)
+        {
+            Expression<Func<Event, bool>> expression = x => x.CreatedBy.Trim().Equals(createdBy.Trim()) && ((start >= x.Start && end >= x.End) || (start <= x.Start && end >= x.End) || (start <= x.Start && end <= x.End) || (start >= x.Start && end <= x.End));
+            return await GetAsync(expression, null, null, true);
+
+        }
+
+        
         public async Task<Event> GetEventAsync(Guid id)
         {
             return await GetByIdAsync(id);

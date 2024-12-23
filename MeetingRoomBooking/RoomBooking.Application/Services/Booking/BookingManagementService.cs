@@ -227,6 +227,14 @@ namespace RoomBooking.Application.Services.Booking
                 return response;
             }
 
+            // Check user for different room , same day overlapping meeting.
+            bookings = await _unitOfWork.BookingRepository.CheckAnyRoomBookingOverlappingByUser(eventEntity.Start, eventEntity.End, eventEntity.CreatedBy);
+            if (bookings != null && bookings.Count > 0)
+            {
+                response = "Found different room , same day overlapping meeting by a booking creator.";
+
+                return response;
+            }
 
             await _unitOfWork.BookingRepository.CreateBookingAsync(eventEntity);
             await _unitOfWork.SaveAsync();
