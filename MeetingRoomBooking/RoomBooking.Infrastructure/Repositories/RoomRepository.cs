@@ -18,10 +18,11 @@ namespace RoomBooking.Infrastructure.Repositories
         {
         }
 
-        public async Task<Room> GetRoomAsync(Guid id)
+        public async Task<Room> GetRoomAsync(Guid id, bool isTracking)
         {
-            return await GetByIdAsync(id);
+            return await GetByIdAsync(id, isTracking);
         }
+
 
         public async Task<IList<Room>> GetAllRoomAsync()
         {

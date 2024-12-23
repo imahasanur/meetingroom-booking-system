@@ -78,6 +78,7 @@ namespace RoomBooking.Controllers
                 }
 
                 var user = await _userManager.GetUserAsync(User);
+                var allUser = _userManager.Users.ToList().Select(x => x.Email).ToList();
 
                 if (user is not null)
                 {
@@ -86,7 +87,7 @@ namespace RoomBooking.Controllers
 
                 model.ResolveDI(_provider);
 
-                response = await model.CreateBookingAsync(model);
+                response = await model.CreateBookingAsync(model, allUser);
 
                 if (response.Equals("success"))
                 {

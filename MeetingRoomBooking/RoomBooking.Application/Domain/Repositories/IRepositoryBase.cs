@@ -14,7 +14,7 @@ namespace RoomBooking.Application.Domain.Repositories
     {
         Task AddAsync(TEntity entity);
         Task EditAsync(TEntity entityToUpdate);
-        Task<TEntity> GetByIdAsync(TKey id);
+        Task<TEntity> GetByIdAsync(TKey id, bool isTracking = false);
         Task RemoveAsync(Expression<Func<TEntity, bool>> filter);
         Task RemoveAsync(TEntity entityToDelete);
         Task RemoveAsync(TKey id);

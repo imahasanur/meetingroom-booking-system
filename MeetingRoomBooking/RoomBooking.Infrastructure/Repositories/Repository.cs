@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using RoomBooking.Application.Domain.Entities;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 
 namespace RoomBooking.Infrastructure.Repositories
 {
@@ -60,8 +61,18 @@ namespace RoomBooking.Infrastructure.Repositories
             
         }
 
-        public virtual async Task<TEntity> GetByIdAsync(TKey id)
+        //public virtual async Task<TEntity> GetByIdAsync(TKey id)
+        //{
+
+        //    return await _dbSet.FindAsync(id);
+        //}
+
+        public virtual async Task<TEntity> GetByIdAsync(TKey id, bool isTracking = true)
         {
+            if (isTracking == false)
+            {
+                return await _dbSet.AsNoTracking().FirstOrDefaultAsync(e => e.Id.Equals(id));
+            }
             return await _dbSet.FindAsync(id);
         }
 

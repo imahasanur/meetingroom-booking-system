@@ -17,7 +17,7 @@ namespace RoomBooking.Application.Services.Room
 
         public async Task<GetRoomDTO?> GetRoomAsync(Guid id)
         {
-            var room = await _unitOfWork.RoomRepository.GetRoomAsync(id);
+            var room = await _unitOfWork.RoomRepository.GetRoomAsync(id,true);
 
             if (room is not null)
             {
@@ -117,7 +117,7 @@ namespace RoomBooking.Application.Services.Room
             string response = "";
             try
             {
-                var existingRoom = await _unitOfWork.RoomRepository.GetRoomAsync(roomDTO.Id);
+                var existingRoom = await _unitOfWork.RoomRepository.GetRoomAsync(roomDTO.Id, true);
 
                 if (existingRoom.CreatedBy is not null)
                 {
@@ -161,7 +161,7 @@ namespace RoomBooking.Application.Services.Room
             string response = "";
             try
             {
-                var existingRoom = await _unitOfWork.RoomRepository.GetRoomAsync(roomDTO.Id);
+                var existingRoom = await _unitOfWork.RoomRepository.GetRoomAsync(roomDTO.Id,true);
 
                 if (existingRoom?.CreatedBy is not null)
                 {

@@ -17,33 +17,127 @@ namespace RoomBooking.Application.Services.Booking
             _unitOfWork = unitOfWork;
         }
 
-        //public async Task<GetRoomDTO?> GetRoomAsync(Guid id)
-        //{
-        //    var room = await _unitOfWork.RoomRepository.GetRoomAsync(id);
+        int ConvertTimeToMinutes(DateTime start, DateTime end)
+        {
+            var hourDifference = end - start;
+            var minuteDifference = (int)hourDifference.TotalMinutes;
+            return minuteDifference;
+        }
 
-        //    if (room is not null)
-        //    {
-        //        var roomDTO = new GetRoomDTO()
-        //        {
-        //            Capacity = room.Capacity,
-        //            CreatedAtUTC = room.CreatedAtUTC,
-        //            Location = room.Location,
-        //            Id = room.Id,
-        //            Name = room.Name,
-        //            Details = room.Details,
-        //            LastUpdatedAtUTC = room.LastUpdatedAtUTC,
-        //            CreatedBy = room.CreatedBy,
-        //            ConcurrencyToken = room.ConcurrencyToken
-        //        };
-        //        return roomDTO;
-        //    }
+        (bool,string) CheckBookingAttendeeLimit(int? maximumCapacity, int? minimumCapacity, int capacity, int members)
+        {
+            bool isValid = true;
+            string response = string.Empty;
+            
+            if(!(members >= minimumCapacity && members  <= maximumCapacity && members <= capacity))
+            {
+                isValid = false;
+                response = "Meetings persons exceed or less than maximum or minimum limit";
+            }
 
-        //    return null;
-        //}
+            return (isValid, response);
+        }
+
+        (bool,string) ValidateEventTimeLimit(DateTime start, DateTime end, IList<RoomBooking.Application.Domain.Entities.EventTime> eventTimeEntity)
+        {
+            var meetingTimeDifference = ConvertTimeToMinutes(start, end);
+           
+            string response = string.Empty;
+            bool isValid = true;
+
+            if (eventTimeEntity != null && eventTimeEntity.Count > 0)
+            {
+                var maximumLimit = eventTimeEntity[0].MaximumTime;
+                var minimumLimit = eventTimeEntity[0].MinimumTime;
+
+                if (meetingTimeDifference > maximumLimit)
+                {
+                    response = "Event crosses Maximum Time Limit";
+                    isValid = false;
+
+                    return (isValid, response);
+                }
+                else if (meetingTimeDifference < minimumLimit)
+                {
+
+                    response = "Event is less than Minimum Time Limit";
+                    isValid = false;
+
+                    return (isValid, response);
+                }
+                else
+                {
+                    response = "Valid time limit";
+
+                    return (isValid, response);
+                }
+            }
+            else
+            {
+                response = "Event Time limit is not set; Set it first";
+                isValid = false;
+
+                return (isValid, response);
+            }
+        }
+
+        (bool,string) ValidateMeetingAttendee(IList<string> guests, string host, IList<string> users, string bookingMaker)
+        {
+            bool isValid = true;
+            string response = string.Empty;
+
+            isValid = users.Contains(host);
 
 
+            if (isValid == true)
+            {
+                var found = users.Intersect(guests).ToList();
 
-        public async Task<string> CreateBookingAsync(CreateEventDTO eventDTO)
+                if (found.Count == guests.Count) 
+                {
+                    isValid = true;
+                    response = "All guest are valid registered users";
+                }
+                else
+                {
+                    isValid = false;
+                    response = "All guest are not valid registered users";
+                }
+            }
+            else
+            {
+                response = "Host are not valid registered user";
+                return (isValid, response);
+            }
+
+            // Check meeting creator in booking guests list or in host.
+
+            if (isValid == true) 
+            { 
+                var hasFound = guests.Contains(bookingMaker);
+                var isHost = host.Equals(bookingMaker) ? true : false;
+
+                if (hasFound == true && isHost == true)
+                {
+                    isValid = false;
+                    response = "Booking maker is a host and guest. Which should not be";
+                }
+                else if (hasFound == false && isHost == false)
+                { 
+                    isValid = false;
+                    response = "Booking maker not a host or guest";
+                }
+                else
+                {
+                    isValid = true;
+                    
+                }
+            }
+
+            return (isValid, response);
+        }
+
+        public async Task<string> CreateBookingAsync(CreateEventDTO eventDTO, IList<string> allUser)
         {
             string response = string.Empty;
 
@@ -62,15 +156,53 @@ namespace RoomBooking.Application.Services.Booking
                 Guests = eventDTO.Guests,
             };
 
+            // Check meeting booking time limit with room maximum and minimum time.
+            var eventTimeEntity = await _unitOfWork.EventTimeRepository.GetTimeLimitAsync();
+            var isValid = ValidateEventTimeLimit(eventEntity.Start, eventEntity.End, eventTimeEntity);
+            var allGuest = eventEntity.Guests.Select(x => x.User.Trim()).ToList();
+
+            if (isValid.Item1 == false)
+            {
+                return isValid.Item2;
+            }
+
+            // Check meeting booking user & guests validity in users list.
+            isValid = ValidateMeetingAttendee(allGuest, eventEntity.Host, allUser, eventEntity.CreatedBy);
+
+            if (isValid.Item1 == false)
+            {
+                return isValid.Item2;
+            }
+
+            // Check booking minimum and maximum room attendee limit.
+            var room = await _unitOfWork.RoomRepository.GetRoomAsync(eventEntity.RoomId, false);
+            if (room != null && room?.Capacity != 0)
+            {
+                isValid = CheckBookingAttendeeLimit(room.MaximumCapacity, room.MinimumCapacity, room.Capacity, allGuest.Count + 1);
+                if (isValid.Item1 == false)
+                {
+                    return isValid.Item2;
+                }
+
+            }
+            else
+            {
+                response = "Room is deleted";
+                return response;
+            }
+
+            // Check multiple pending request for request maker.
+
+
 
             await _unitOfWork.BookingRepository.CreateBookingAsync(eventEntity);
             await _unitOfWork.SaveAsync();
-
 
             response = "success";
 
             return response;
         }
+
         public async Task<IList<GetEventDTO>> GetAllEventAsync(DateTime start, DateTime end, string? user)
         {
             var allEvent = await _unitOfWork.BookingRepository.GetAllEventAsync(start, end, user);
@@ -99,20 +231,6 @@ namespace RoomBooking.Application.Services.Booking
 
         }
 
-        //public async Task DeleteRoomAsync(RoomDTO roomDTO)
-        //{
-        //    var room = new RoomBooking.Application.Domain.Entities.Room()
-        //    {
-        //        Name = roomDTO.Name,
-        //        Details = roomDTO.Details,
-        //        Location = roomDTO.Location,
-        //        Capacity = roomDTO.Capacity,
-        //        CreatedAtUTC = roomDTO.CreatedAtUTC,
-        //        CreatedBy = roomDTO.CreatedBy,
-        //    };
-        //    await _unitOfWork.RoomRepository.DeleteRoomAsync(room);
-        //    await _unitOfWork.SaveAsync();
-        //}
         public async Task<string> DeleteBookingAsync(Guid id)
         {
             string response = string.Empty;
@@ -172,7 +290,7 @@ namespace RoomBooking.Application.Services.Booking
             {
                 var existingEvent = await _unitOfWork.BookingRepository.GetBookingByIdAsync(eventDTO.Id);
 
-                if(existingEvent.Count == 0)
+                if (existingEvent.Count == 0)
                 {
                     response = "not found";
                     return response;
@@ -186,7 +304,7 @@ namespace RoomBooking.Application.Services.Booking
 
                 var existingGuests = eventEntity.Guests.ToList();
 
-                var newGuestUsers = eventDTO.AllGuest.Split(',').Select(name => name.Trim()).Where(name => !string.IsNullOrEmpty(name)).ToList(); 
+                var newGuestUsers = eventDTO.AllGuest.Split(',').Select(name => name.Trim()).Where(name => !string.IsNullOrEmpty(name)).ToList();
 
                 var guestsToRemove = existingGuests.Where(g => !newGuestUsers.Contains(g.User)).ToList();
                 var guestsToAdd = newGuestUsers.Where(user => !existingGuests.Any(g => g.User == user))
@@ -244,7 +362,7 @@ namespace RoomBooking.Application.Services.Booking
         {
             var eventEntity = await _unitOfWork.BookingRepository.GetBookingByIdAsync(id);
 
-            if(eventEntity == null || eventEntity.Count == 0)
+            if (eventEntity == null || eventEntity.Count == 0)
             {
                 return null;
             }

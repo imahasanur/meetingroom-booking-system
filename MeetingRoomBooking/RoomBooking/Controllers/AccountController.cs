@@ -178,14 +178,14 @@ namespace RoomBooking.Controllers
 
                 if(response == "success")
                 {
-                    TempData["success"] = "Account updated successfully.";
+                    TempData["success"] = "Account Role value updated successfully ";
                 }
                 else
                 {
                     TempData["failure"] = response;
                 }
                 
-                return View(model);
+                return RedirectToAction("GetAll");
             }
             catch (Exception ex)
             {
