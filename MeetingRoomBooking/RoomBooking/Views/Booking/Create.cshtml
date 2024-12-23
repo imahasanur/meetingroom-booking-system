@@ -209,8 +209,8 @@
                 if (event != null) {
                     calendar.events.add(event);
                 }
-                
-                await DayPilot.Http.get("/Booking/Create");
+                window.location.href = "/booking/create";
+                // await DayPilot.Http.get("/Booking/Create");
 
             },
             onEventMove: async (args) => {
