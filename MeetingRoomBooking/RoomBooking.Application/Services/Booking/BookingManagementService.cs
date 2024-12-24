@@ -232,6 +232,15 @@ namespace RoomBooking.Application.Services.Booking
                 return response;
             }
 
+            // Check event start time is backward or not.
+            var isBackward = eventEntity.Start > DateTime.Now ? true: false;
+            if(isBackward == false)
+            {
+                response = "Event start time can't be set backward than current time while creatig";
+
+                return response;
+            }
+
             await _unitOfWork.BookingRepository.CreateBookingAsync(eventEntity);
             await _unitOfWork.SaveAsync();
 
@@ -289,13 +298,13 @@ namespace RoomBooking.Application.Services.Booking
         }
 
 
-        public async Task<string> EditBookingAsync(EditEventDTO eventDTO)
+        public async Task<string> EditBookingAsync(EditEventDTO eventDTO, string currentUser)
         {
             string response = string.Empty;
             try
             {
                 var existingEvent = await _unitOfWork.BookingRepository.GetEventAsync(eventDTO.Id);
-                if (existingEvent.CreatedBy != null)
+                if (existingEvent != null && existingEvent?.CreatedBy != null)
                 {
                     existingEvent.Start = eventDTO.Start;
                     existingEvent.End = eventDTO.End;
@@ -305,14 +314,6 @@ namespace RoomBooking.Application.Services.Booking
                     var eventTimeEntity = await _unitOfWork.EventTimeRepository.GetTimeLimitAsync();
                     var isValid = ValidateEventTimeLimit(existingEvent.Start, existingEvent.End, eventTimeEntity);
                     var allGuest = existingEvent.Guests.Select(x => x.User.Trim()).ToList();
-
-                    if (isValid.Item1 == false)
-                    {
-                        return isValid.Item2;
-                    }
-
-                    // Check meeting booking user & guests validity in users list.
-                    isValid = ValidateMeetingAttendee(allGuest, existingEvent.Host, allUser, existingEvent.CreatedBy);
 
                     if (isValid.Item1 == false)
                     {
@@ -338,17 +339,9 @@ namespace RoomBooking.Application.Services.Booking
                         return response;
                     }
 
-                    // Check pending request for request maker.
-                    var bookings = await _unitOfWork.BookingRepository.GetBookingByMakerAsync(existingEvent.CreatedBy);
-                    if (bookings != null && bookings.Count > 0)
-                    {
-                        response = "Can't do multiple pending meeting booking request";
-
-                        return response;
-                    }
 
                     // Check user for same room , same day overlapping meeting.
-                    bookings = await _unitOfWork.BookingRepository.CheckBookingOverlapping(existingEvent.Start, existingEvent.End, existingEvent.RoomId);
+                    var bookings = await _unitOfWork.BookingRepository.CheckEditBookingOverlapping(existingEvent.Start, existingEvent.End, existingEvent.RoomId, existingEvent.Id);
                     if (bookings != null && bookings.Count > 0)
                     {
                         response = "Found same room , same day overlapping meeting.";
@@ -357,7 +350,7 @@ namespace RoomBooking.Application.Services.Booking
                     }
 
                     // Check user for different room , same day overlapping meeting.
-                    bookings = await _unitOfWork.BookingRepository.CheckAnyRoomBookingOverlappingByUser(existingEvent.Start, existingEvent.End, existingEvent.CreatedBy);
+                    bookings = await _unitOfWork.BookingRepository.CheckEditAnyRoomBookingOverlappingByUser(existingEvent.Start, existingEvent.End, existingEvent.CreatedBy, existingEvent.Id);
                     if (bookings != null && bookings.Count > 0)
                     {
                         response = "Found different room , same day overlapping meeting by a booking creator.";
@@ -365,12 +358,39 @@ namespace RoomBooking.Application.Services.Booking
                         return response;
                     }
 
+                    // Check event start time is backward or not.
+                    var isBackward = existingEvent.Start > DateTime.Now ? true : false;
+                    if (isBackward == false)
+                    {
+                        response = "Event start time can't be set backward than current time while updating";
 
+                        return response;
+                    }
+
+                    // Check user in meeting or not
+                    var isInMeeting = allGuest.Contains(currentUser);
+
+                    if (isInMeeting == false) 
+                    {
+                        if (!(currentUser.Trim().Equals(existingEvent.Host.Trim()))) 
+                        {
+                            response = "Current user are not in meeting, Can't update";
+                            return response;
+                        }
+                    }
+                   
 
                     await _unitOfWork.BookingRepository.EditBookingAsync(existingEvent);
                     await _unitOfWork.SaveAsync();
+
+                    response = "success";
                 }
-                response = "success";
+                else
+                {
+                    response = "Event doesn't exist, May be deleted.";
+                }
+                
+
                 return response;
             }
             catch (DbUpdateConcurrencyException ex)
@@ -386,7 +406,7 @@ namespace RoomBooking.Application.Services.Booking
             }
         }
 
-        public async Task<string> EditBookingByIdAsync(EditEventDTO eventDTO)
+        public async Task<string> EditBookingByIdAsync(EditEventDTO eventDTO, string currentUser, IList<string> allUser)
         {
             string response = string.Empty;
             try
@@ -408,6 +428,86 @@ namespace RoomBooking.Application.Services.Booking
                 var existingGuests = eventEntity.Guests.ToList();
 
                 var newGuestUsers = eventDTO.AllGuest.Split(',').Select(name => name.Trim()).Where(name => !string.IsNullOrEmpty(name)).ToList();
+
+
+                // Check meeting booking time limit with room maximum and minimum time.
+                var eventTimeEntity = await _unitOfWork.EventTimeRepository.GetTimeLimitAsync();
+                var isValid = ValidateEventTimeLimit(eventEntity.Start, eventEntity.End, eventTimeEntity);
+                var allGuest = newGuestUsers;
+
+                if (isValid.Item1 == false)
+                {
+                    return isValid.Item2;
+                }
+
+                // Check meeting booking user & guests validity in users list.
+                isValid = ValidateMeetingAttendee(allGuest, eventEntity.Host, allUser, eventEntity.CreatedBy);
+
+                if (isValid.Item1 == false)
+                {
+                    return isValid.Item2;
+                }
+
+
+                // Check booking minimum and maximum room attendee limit.
+                var room = await _unitOfWork.RoomRepository.GetRoomAsync(eventEntity.RoomId, false);
+
+                if (room != null && room?.Capacity != 0)
+                {
+                    isValid = CheckBookingAttendeeLimit(room.MaximumCapacity, room.MinimumCapacity, room.Capacity, allGuest.Count + 1);
+                    if (isValid.Item1 == false)
+                    {
+                        isValid.Item2 = "Booking Attendee limit mismatch with max or min limit of the the room";
+                        return isValid.Item2;
+                    }
+
+                }
+                else
+                {
+                    response = "Room is deleted";
+                    return response;
+                }
+
+
+                // Check user for same room , same day overlapping meeting.
+                var bookings = await _unitOfWork.BookingRepository.CheckEditBookingOverlapping(eventEntity.Start, eventEntity.End, eventEntity.RoomId, eventEntity.Id);
+                if (bookings != null && bookings.Count > 0)
+                {
+                    response = "Found same room , same day overlapping meeting.";
+
+                    return response;
+                }
+
+                // Check user for different room , same day overlapping meeting.
+                bookings = await _unitOfWork.BookingRepository.CheckEditAnyRoomBookingOverlappingByUser(eventEntity.Start, eventEntity.End, eventEntity.CreatedBy, eventEntity.Id);
+                if (bookings != null && bookings.Count > 0)
+                {
+                    response = "Found different room , same day overlapping meeting by a booking creator.";
+
+                    return response;
+                }
+
+                // Check event start time is backward or not.
+                var isBackward = eventEntity.Start > DateTime.Now ? true : false;
+                if (isBackward == false)
+                {
+                    response = "Event start time can't be set backward than current time while updating";
+
+                    return response;
+                }
+
+                // Check user in meeting or not
+                var isInMeeting = allGuest.Contains(currentUser);
+
+                if (isInMeeting == false)
+                {
+                    if (!(currentUser.Trim().Equals(eventEntity.Host.Trim())))
+                    {
+                        response = "Current user are not in meeting, Can't update";
+                        return response;
+                    }
+                }
+
 
                 var guestsToRemove = existingGuests.Where(g => !newGuestUsers.Contains(g.User)).ToList();
                 var guestsToAdd = newGuestUsers.Where(user => !existingGuests.Any(g => g.User == user))

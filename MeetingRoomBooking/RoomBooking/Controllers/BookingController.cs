@@ -137,7 +137,9 @@ namespace RoomBooking.Controllers
             try
             {
                 model.ResolveDI(_provider);
-                response = await model.EditBookingAsync(model);
+                var user = await _userManager.GetUserAsync(User);
+
+                response = await model.EditBookingAsync(model, user.Email);
 
                 if (response.Equals("success"))
                 {
@@ -147,6 +149,11 @@ namespace RoomBooking.Controllers
                 {
                     TempData["message"] = "Event is overlapping ";
                 }
+                else 
+                { 
+                    TempData["message"] = response;
+                }
+
                 return Ok();
             }
             catch(Exception ex)
@@ -206,8 +213,12 @@ namespace RoomBooking.Controllers
                     _logger.LogError("Model state is not valid ");
                     return View(model);
                 }
+
                 model.ResolveDI(_provider);
-                response = await model.EditBookingByIdAsync(model);
+                var user = await _userManager.GetUserAsync(User);
+                var allUser = _userManager.Users.ToList().Select(x => x.Email).ToList();
+
+                response = await model.EditBookingByIdAsync(model, user.Email, allUser);
 
                 if (response.Equals("success"))
                 {

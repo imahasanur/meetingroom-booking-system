@@ -42,7 +42,22 @@ namespace RoomBooking.Infrastructure.Repositories
 
         }
 
-        
+        public async Task<IList<Event>> CheckEditBookingOverlapping(DateTime start, DateTime end, Guid roomId, Guid eventId)
+        {
+            Expression<Func<Event, bool>> expression = x => (x.RoomId == roomId && x.Id != eventId) && ((start >= x.Start && end >= x.End) || (start <= x.Start && end >= x.End) || (start <= x.Start && end <= x.End) || (start >= x.Start && end <= x.End));
+            return await GetAsync(expression, null, null, true);
+
+        }
+
+        public async Task<IList<Event>> CheckEditAnyRoomBookingOverlappingByUser(DateTime start, DateTime end, string createdBy, Guid eventId)
+        {
+            Expression<Func<Event, bool>> expression = x => (x.CreatedBy.Trim().Equals(createdBy.Trim()) && x.Id != eventId) && ((start >= x.Start && end >= x.End) || (start <= x.Start && end >= x.End) || (start <= x.Start && end <= x.End) || (start >= x.Start && end <= x.End));
+            return await GetAsync(expression, null, null, true);
+
+        }
+
+
+
         public async Task<Event> GetEventAsync(Guid id)
         {
             return await GetByIdAsync(id);
