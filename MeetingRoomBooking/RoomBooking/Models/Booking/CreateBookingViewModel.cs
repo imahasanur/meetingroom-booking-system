@@ -38,7 +38,7 @@ namespace RoomBooking.Models.Booking
             return roomColumns;
         }
 
-        public async Task<string> CreateBookingAsync(CreateBookingViewModel model, IList<string> allUser)
+        public async Task<string> CreateBookingAsync(CreateBookingViewModel model, IList<string> allUser, string userClaim)
         {
 
             var guests = new List<Guest>();
@@ -71,7 +71,7 @@ namespace RoomBooking.Models.Booking
                 Guests = guests,
             };
 
-            var response = await _bookingService.CreateBookingAsync(bookingEvent, allUser);
+            var response = await _bookingService.CreateBookingAsync(bookingEvent, allUser, userClaim);
 
             return response;
         }

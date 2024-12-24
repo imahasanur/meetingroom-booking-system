@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using RoomBooking.Application.Domain.Entities;
 using RoomBooking.Application.DTO;
 using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 
@@ -93,7 +94,7 @@ namespace RoomBooking.Application.Services.Booking
             }
         }
 
-        (bool,string) ValidateMeetingAttendee(IList<string> guests, string host, IList<string> users, string bookingMaker)
+        (bool,string) ValidateMeetingAttendee(IList<string> guests, string host, IList<string> users, string bookingMaker, string userClaim)
         {
             bool isValid = true;
             string response = string.Empty;
@@ -124,8 +125,8 @@ namespace RoomBooking.Application.Services.Booking
 
             // Check meeting creator in booking guests list or in host.
 
-            if (isValid == true) 
-            { 
+            if (isValid == true && userClaim == "user")
+            {
                 var hasFound = guests.Contains(bookingMaker);
                 var isHost = host.Equals(bookingMaker) ? true : false;
 
@@ -135,21 +136,41 @@ namespace RoomBooking.Application.Services.Booking
                     response = "Booking maker is a host and guest. Which should not be";
                 }
                 else if (hasFound == false && isHost == false)
-                { 
+                {
                     isValid = false;
                     response = "Booking maker not a host or guest";
                 }
                 else
                 {
                     isValid = true;
-                    
+
                 }
+            }
+            else if (isValid == true && userClaim == "admin") 
+            {
+                var hasFound = guests.Contains(bookingMaker);
+                var isHost = host.Equals(bookingMaker) ? true : false;
+
+                if(hasFound == true && isHost == true)
+                {
+                    isValid = false;
+                }
+            }
+
+            //redundant guests check
+
+            var hash = new HashSet<string>();
+            var duplicates = guests.Where(i => !hash.Add(i)).ToList();
+
+            if (duplicates.Count > 0) { 
+                isValid = false;
+                response = "Guest repeated ";
             }
 
             return (isValid, response);
         }
 
-        public async Task<string> CreateBookingAsync(CreateEventDTO eventDTO, IList<string> allUser)
+        public async Task<string> CreateBookingAsync(CreateEventDTO eventDTO, IList<string> allUser, string userClaim)
         {
             string response = string.Empty;
 
@@ -179,7 +200,7 @@ namespace RoomBooking.Application.Services.Booking
             }
 
             // Check meeting booking user & guests validity in users list.
-            isValid = ValidateMeetingAttendee(allGuest, eventEntity.Host, allUser, eventEntity.CreatedBy);
+            isValid = ValidateMeetingAttendee(allGuest, eventEntity.Host, allUser, eventEntity.CreatedBy, userClaim);
 
             if (isValid.Item1 == false)
             {
@@ -206,8 +227,9 @@ namespace RoomBooking.Application.Services.Booking
             }
 
             // Check pending request for request maker.
+            
             var bookings = await _unitOfWork.BookingRepository.GetBookingByMakerAsync(eventEntity.CreatedBy);
-            if(bookings != null && bookings.Count > 0)
+            if(bookings != null && bookings.Count > 0 && userClaim != "admin")
             {
                 response = "Can't do multiple pending meeting booking request";
 
@@ -239,6 +261,12 @@ namespace RoomBooking.Application.Services.Booking
                 response = "Event start time can't be set backward than current time while creatig";
 
                 return response;
+            }
+
+            if(userClaim == "admin")
+            {
+                eventEntity.State = "approved";
+                eventEntity.Color = "#00FF00";
             }
 
             await _unitOfWork.BookingRepository.CreateBookingAsync(eventEntity);
@@ -298,7 +326,7 @@ namespace RoomBooking.Application.Services.Booking
         }
 
 
-        public async Task<string> EditBookingAsync(EditEventDTO eventDTO, string currentUser)
+        public async Task<string> EditBookingAsync(EditEventDTO eventDTO, string currentUser, string userClaim)
         {
             string response = string.Empty;
             try
@@ -309,6 +337,14 @@ namespace RoomBooking.Application.Services.Booking
                     existingEvent.Start = eventDTO.Start;
                     existingEvent.End = eventDTO.End;
                     existingEvent.RoomId = eventDTO.RoomId;
+
+                    // Check is host is the current user or not.
+                    if(existingEvent.Host.Trim().Equals(currentUser.Trim()) == false)
+                    {
+                        response = "Can't Update !Current user is not the host user";
+
+                        return response;
+                    }
 
                     // Check meeting booking time limit with room maximum and minimum time.
                     var eventTimeEntity = await _unitOfWork.EventTimeRepository.GetTimeLimitAsync();
@@ -366,18 +402,6 @@ namespace RoomBooking.Application.Services.Booking
 
                         return response;
                     }
-
-                    // Check user in meeting or not
-                    var isInMeeting = allGuest.Contains(currentUser);
-
-                    if (isInMeeting == false) 
-                    {
-                        if (!(currentUser.Trim().Equals(existingEvent.Host.Trim()))) 
-                        {
-                            response = "Current user are not in meeting, Can't update";
-                            return response;
-                        }
-                    }
                    
 
                     await _unitOfWork.BookingRepository.EditBookingAsync(existingEvent);
@@ -406,7 +430,7 @@ namespace RoomBooking.Application.Services.Booking
             }
         }
 
-        public async Task<string> EditBookingByIdAsync(EditEventDTO eventDTO, string currentUser, IList<string> allUser)
+        public async Task<string> EditBookingByIdAsync(EditEventDTO eventDTO, string currentUser, IList<string> allUser, string userClaim)
         {
             string response = string.Empty;
             try
@@ -424,11 +448,20 @@ namespace RoomBooking.Application.Services.Booking
                 eventEntity.Start = eventDTO.Start;
                 eventEntity.End = eventDTO.End;
                 eventEntity.Host = eventDTO.Host;
+                eventEntity.LastUpdatedAtUTC = DateTime.UtcNow;
 
                 var existingGuests = eventEntity.Guests.ToList();
 
                 var newGuestUsers = eventDTO.AllGuest.Split(',').Select(name => name.Trim()).Where(name => !string.IsNullOrEmpty(name)).ToList();
 
+
+                // Check is host is the current user or not.
+                if (eventEntity.Host.Trim().Equals(currentUser.Trim()) == false)
+                {
+                    response = "Can't Update !Current user is not the host user";
+
+                    return response;
+                }
 
                 // Check meeting booking time limit with room maximum and minimum time.
                 var eventTimeEntity = await _unitOfWork.EventTimeRepository.GetTimeLimitAsync();
@@ -441,7 +474,7 @@ namespace RoomBooking.Application.Services.Booking
                 }
 
                 // Check meeting booking user & guests validity in users list.
-                isValid = ValidateMeetingAttendee(allGuest, eventEntity.Host, allUser, eventEntity.CreatedBy);
+                isValid = ValidateMeetingAttendee(allGuest, eventEntity.Host, allUser, eventEntity.CreatedBy, userClaim);
 
                 if (isValid.Item1 == false)
                 {
@@ -496,18 +529,7 @@ namespace RoomBooking.Application.Services.Booking
                     return response;
                 }
 
-                // Check user in meeting or not
-                var isInMeeting = allGuest.Contains(currentUser);
-
-                if (isInMeeting == false)
-                {
-                    if (!(currentUser.Trim().Equals(eventEntity.Host.Trim())))
-                    {
-                        response = "Current user are not in meeting, Can't update";
-                        return response;
-                    }
-                }
-
+                
 
                 var guestsToRemove = existingGuests.Where(g => !newGuestUsers.Contains(g.User)).ToList();
                 var guestsToAdd = newGuestUsers.Where(user => !existingGuests.Any(g => g.User == user))

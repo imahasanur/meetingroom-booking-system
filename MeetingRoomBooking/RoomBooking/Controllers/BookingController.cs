@@ -27,6 +27,7 @@ namespace RoomBooking.Controllers
             _user = user;
         }
 
+
         public async Task<IActionResult> GetAllRoom()
         {
             var model = new CreateBookingViewModel();
@@ -78,6 +79,19 @@ namespace RoomBooking.Controllers
                 }
 
                 var user = await _userManager.GetUserAsync(User);
+                var claims = await _userManager.GetClaimsAsync(user);
+
+                var userClaim = string.Empty;
+                
+                if(claims.Count > 1)
+                {
+                    userClaim = "admin";
+                }
+                else
+                {
+                    userClaim = claims[0].Value;
+                }
+
                 var allUser = _userManager.Users.ToList().Select(x => x.Email).ToList();
 
                 if (user is not null)
@@ -87,7 +101,7 @@ namespace RoomBooking.Controllers
 
                 model.ResolveDI(_provider);
 
-                response = await model.CreateBookingAsync(model, allUser);
+                response = await model.CreateBookingAsync(model, allUser, userClaim);
 
                 if (response.Equals("success"))
                 {
@@ -138,8 +152,20 @@ namespace RoomBooking.Controllers
             {
                 model.ResolveDI(_provider);
                 var user = await _userManager.GetUserAsync(User);
+                var claims = await _userManager.GetClaimsAsync(user);
 
-                response = await model.EditBookingAsync(model, user.Email);
+                var userClaim = string.Empty;
+
+                if (claims.Count > 1)
+                {
+                    userClaim = "admin";
+                }
+                else
+                {
+                    userClaim = claims[0].Value;
+                }
+
+                response = await model.EditBookingAsync(model, user.Email, userClaim);
 
                 if (response.Equals("success"))
                 {
@@ -220,7 +246,20 @@ namespace RoomBooking.Controllers
                 var user = await _userManager.GetUserAsync(User);
                 var allUser = _userManager.Users.ToList().Select(x => x.Email).ToList();
 
-                response = await model.EditBookingByIdAsync(model, user.Email, allUser);
+                var claims = await _userManager.GetClaimsAsync(user);
+
+                var userClaim = string.Empty;
+
+                if (claims.Count > 1)
+                {
+                    userClaim = "admin";
+                }
+                else
+                {
+                    userClaim = claims[0].Value;
+                }
+
+                response = await model.EditBookingByIdAsync(model, user.Email, allUser, userClaim);
 
                 if (response.Equals("success"))
                 {

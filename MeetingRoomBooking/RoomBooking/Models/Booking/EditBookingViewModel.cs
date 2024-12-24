@@ -35,7 +35,7 @@ namespace RoomBooking.Models.Booking
             _bookingService = provider.GetService<IBookingManagementService>();
         }
 
-        public async Task<string> EditBookingAsync(EditBookingViewModel model, string currentUser)
+        public async Task<string> EditBookingAsync(EditBookingViewModel model, string currentUser, string userClaim)
         {
             var eventDTO = new EditEventDTO()
             {
@@ -45,12 +45,12 @@ namespace RoomBooking.Models.Booking
                 RoomId = model.RoomId,
             };
 
-            var response = await _bookingService.EditBookingAsync(eventDTO, currentUser);
+            var response = await _bookingService.EditBookingAsync(eventDTO, currentUser, userClaim);
 
             return response;
         }
 
-        public async Task<string> EditBookingByIdAsync(EditBookingViewModel model, string currentUser, IList<string> allUser)
+        public async Task<string> EditBookingByIdAsync(EditBookingViewModel model, string currentUser, IList<string> allUser, string userClaim)
         {
             var eventDTO = new EditEventDTO()
             {
@@ -63,7 +63,7 @@ namespace RoomBooking.Models.Booking
                 AllGuest = model.Guests
             };
 
-            var response = await _bookingService.EditBookingByIdAsync(eventDTO, currentUser, allUser);
+            var response = await _bookingService.EditBookingByIdAsync(eventDTO, currentUser, allUser, userClaim);
 
             return response;
         }
