@@ -20,6 +20,7 @@ namespace RoomBooking.Models.Room
         public string CreatedBy { get; set; }
         public int? MinimumCapacity { get; set; }
         public int? MaximumCapacity { get; set; }
+        public string? UserClaim { get; set; }
         public DateTime CreatedAtUTC { get; set; }
         public DateTime? LastUpdatedAtUTC { get; set; }
 
@@ -28,7 +29,7 @@ namespace RoomBooking.Models.Room
             _roomService = provider.GetService<IRoomManagementService>();
         }
 
-        public async Task<IList<GetAllRoomViewModel>> GetAllRoomAsync()
+        public async Task<IList<GetAllRoomViewModel>> GetAllRoomAsync(string userClaim)
         {
             var rooms = await _roomService.GetAllRoomAsync();
             var roomsViewModel = new List<GetAllRoomViewModel>();
@@ -46,6 +47,7 @@ namespace RoomBooking.Models.Room
                     LastUpdatedAtUTC = room.LastUpdatedAtUTC,
                     MinimumCapacity = room.MinimumCapacity,
                     MaximumCapacity = room.MaximumCapacity,
+                    UserClaim = userClaim
                 };
                 roomsViewModel.Add(viewModel);
             };

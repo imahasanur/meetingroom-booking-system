@@ -85,7 +85,7 @@ namespace RoomBooking.Infrastructure.Repositories
             Expression<Func<Event, bool>> expression = null;
             Func<IQueryable<Event>, IIncludableQueryable<Event, object>> include = q => q.Include(e => e.Room).Include(e => e.Guests);
 
-            if(userClaim == "admin")
+            if(userClaim != null && userClaim == "admin")
             {
                 expression = x => (start.Date <= x.Start.Date && end.Date >= x.End.Date);
 

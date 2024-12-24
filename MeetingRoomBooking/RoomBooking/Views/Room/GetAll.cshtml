@@ -62,14 +62,19 @@
                             <td>@room.MaximumCapacity</td>
                             <td>@room.Details</td>
                             <td>
-                                <a href="@Url.Action("Edit", "Room", new { id = room.Id })" class="btn btn-sm btn-primary">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
-                                <a href="@Url.Action("Delete", "Room", new { id = room.Id })"
-                                   class="btn btn-sm btn-danger"
-                                   onclick="return confirm('Want to delete this room? @room.Location @room.Name');">
-                                    <i class="fas fa-trash-alt"></i> Delete
-                                </a>
+                                @{
+                                    if(room.UserClaim == "admin")
+                                    {
+                                        <a href="@Url.Action("Edit", "Room", new { id = room.Id })" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <a href="@Url.Action("Delete", "Room", new { id = room.Id })" class="btn btn-sm btn-danger"
+                                           onclick="return confirm('Want to delete this room? @room.Location @room.Name');">
+                                            <i class="fas fa-trash-alt"></i> Delete
+                                        </a>
+                                    }
+                                }
+                                
                             </td>
                         </tr>
                         serial++;

@@ -36,9 +36,23 @@ namespace RoomBooking.Controllers
         {
             try
             {
+                var user = await _userManager.GetUserAsync(User);
+                var claims = await _userManager.GetClaimsAsync(user);
+
+                var userClaim = string.Empty;
+
+                if (claims.Count > 1)
+                {
+                    userClaim = "admin";
+                }
+                else
+                {
+                    userClaim = claims[0].Value;
+                }
+
                 var model = new GetAllRoomViewModel();
                 model.ResolveDI(_provider);
-                var allRooms = await model.GetAllRoomAsync();
+                var allRooms = await model.GetAllRoomAsync(userClaim);
                 return View(allRooms);
             }
             catch (Exception ex)
@@ -202,6 +216,20 @@ namespace RoomBooking.Controllers
             {
                
                 model.ResolveDI(_provider);
+
+                var user = await _userManager.GetUserAsync(User);
+                var claims = await _userManager.GetClaimsAsync(user);
+
+                var userClaim = string.Empty;
+
+                if (claims.Count > 1)
+                {
+                    userClaim = "admin";
+                }
+                else
+                {
+                    userClaim = claims[0].Value;
+                }
 
                 model = await model.GetAllRoomAsync();
 

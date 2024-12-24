@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using System.Threading;
+@using System.Security.Claims;
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -60,75 +62,88 @@
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class
                              with font-awesome or any other icon font library -->
-                        <li class="nav-item menu-open">
-                            <a href="#" class="nav-link active">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <p>
-                                    Dashboard
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Room" asp-action="Create">
-                                        <i class="nav-icon fas fa-plus-circle"></i>
+                        @{
+                            if (User.Identity.IsAuthenticated)
+                            {
+                                string userClaim = ((ClaimsIdentity)User.Identity).FindFirst("role").Value;
+                                <h2>user Claim : @userClaim</h2>
+                                <li class="nav-item menu-open">
+                                    <a href="#" class="nav-link active">
+                                        <i class="nav-icon fas fa-tachometer-alt"></i>
                                         <p>
-                                            Add Room
+                                            Dashboard
+                                            <i class="right fas fa-angle-left"></i>
                                         </p>
                                     </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Room" asp-action="GetAll">
-                                        <i class="nav-icon fas fa-boxes"></i>
-                                        <p>
-                                            All Room
-                                        </p>
-                                    </a>
-                                </li>
+                                    <ul class="nav nav-treeview">
 
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Room" asp-action="SetLimit">
-                                        <i class="nav-icon fas fa-user-friends"></i>
-                                        <p>
-                                            Set Attendee Limit
-                                        </p>
-                                    </a>
+                                        @if(userClaim.Equals("admin"))
+                                        {
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-controller="Room" asp-action="Create">
+                                                    <i class="nav-icon fas fa-plus-circle"></i>
+                                                    <p>
+                                                        Add Room
+                                                    </p>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-controller="Room" asp-action="SetLimit">
+                                                    <i class="nav-icon fas fa-user-friends"></i>
+                                                    <p>
+                                                        Set Attendee Limit
+                                                    </p>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-controller="EventTime" asp-action="Edit">
+                                                    <i class="nav-icon fas fa-edit"></i>
+                                                    <p>
+                                                        Set Time Limit
+                                                    </p>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-controller="Account" asp-action="GetAll">
+                                                    <i class="nav-icon fas fa-users"></i>
+                                                    <p>
+                                                        All User
+                                                    </p>
+                                                </a>
+                                            </li>
+                                        }
+
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-controller="Room" asp-action="GetAll">
+                                                <i class="nav-icon fas fa-boxes"></i>
+                                                <p>
+                                                    All Room
+                                                </p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-controller="Booking" asp-action="Create">
+                                                <i class="nav-icon fas fa-marker "></i>
+                                                <p>
+                                                    Create Booking
+                                                </p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-controller="Booking" asp-action="GetAll">
+                                                <i class="nav-icon fas fa-handshake-alt-slash"></i>
+                                                <p>
+                                                    All Booking
+                                                </p>
+                                            </a>
+                                        </li>
+                                        
+                                    </ul>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="EventTime" asp-action="Edit">
-                                        <i class="nav-icon fas fa-edit"></i>
-                                        <p>
-                                            Set Time Limit
-                                        </p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Booking" asp-action="Create">
-                                        <i class="nav-icon fas fa-marker "></i>
-                                        <p>
-                                            Create Booking
-                                        </p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Booking" asp-action="GetAll">
-                                        <i class="nav-icon fas fa-handshake-alt-slash"></i>
-                                        <p>
-                                            All Booking
-                                        </p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Account" asp-action="GetAll">
-                                        <i class="nav-icon fas fa-users"></i>
-                                        <p>
-                                            All User 
-                                        </p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                       
+                            
+                            }
+                         } 
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
