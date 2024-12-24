@@ -80,10 +80,17 @@ namespace RoomBooking.Infrastructure.Repositories
             await EditAsync(eventEntity);
         }
 
-        public async Task<IList<Event>> GetAllEventAsync(DateTime start, DateTime end, string? user)
+        public async Task<IList<Event>> GetAllEventAsync(DateTime start, DateTime end, string? user, string? userClaim)
         {
             Expression<Func<Event, bool>> expression = null;
             Func<IQueryable<Event>, IIncludableQueryable<Event, object>> include = q => q.Include(e => e.Room).Include(e => e.Guests);
+
+            if(userClaim == "admin")
+            {
+                expression = x => (start.Date <= x.Start.Date && end.Date >= x.End.Date);
+
+                return await GetAsync(expression, include);
+            }
 
             if (user is not null)
             {

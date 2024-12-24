@@ -27,6 +27,8 @@ namespace RoomBooking.Models.Booking
         public string Host { get; set; }
         public Guid RoomId { get; set; }
         public string Guests { get; set; }
+
+        public string? UserClaim { get; set; }
         public DateTime CreatedAtUTC { get; set; }
         public DateTime? LastUpdatedAtUTC { get; set; }
 
@@ -43,6 +45,7 @@ namespace RoomBooking.Models.Booking
                 Start = model.Start,
                 End = model.End,
                 RoomId = model.RoomId,
+                
             };
 
             var response = await _bookingService.EditBookingAsync(eventDTO, currentUser, userClaim);

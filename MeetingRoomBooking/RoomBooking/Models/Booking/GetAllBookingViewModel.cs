@@ -20,6 +20,7 @@ namespace RoomBooking.Models.Booking
         public string Host { get; set; }
         public Guid RoomId { get; set; }
         public List<Guest> Guests { get; set; }
+        public string? UserClaim { get; set; }
         public RoomBooking.Application.Domain.Entities.Room Room { get; set; }
         public DateTime CreatedAtUTC { get; set; }
 
@@ -30,20 +31,20 @@ namespace RoomBooking.Models.Booking
 
         public async Task<IList<ScheduleEvent>> GetAllEventAsync(DateTime start, DateTime end)
         {
-            var allEvents = await _bookingService.GetAllEventAsync(start, end,null);
+            var allEvents = await _bookingService.GetAllEventAsync(start, end,null, null);
             var events = allEvents.Select(x => new ScheduleEvent { Id = x.Id, Start = x.Start, End = x.End, Resource = x.RoomId, Text = x.Name , Color = x.Color }).ToList();
 
             return events;
 
         }
 
-        public async Task<IList<GetAllBookingViewModel>> GetAllEventAsync(string user)
+        public async Task<IList<GetAllBookingViewModel>> GetAllEventAsync(string user, string userClaim)
         {
             DateTime start = DateTime.Now;
             DateTime end = DateTime.Now.AddYears(1);
 
-            var allEvents = await _bookingService.GetAllEventAsync(start, end, user);
-            var getAllBooking = allEvents.Select(x => new GetAllBookingViewModel {Id = x.Id, Name = x.Name, Start = x.Start, End = x.End, Color = x.Color, CreatedBy = x.CreatedBy, State = x.State, Host = x.Host, Guests = x.Guests, RoomId = x.RoomId, Room = x.Room }).ToList();
+            var allEvents = await _bookingService.GetAllEventAsync(start, end, user, userClaim);
+            var getAllBooking = allEvents.Select(x => new GetAllBookingViewModel {Id = x.Id, Name = x.Name, Start = x.Start, End = x.End, Color = x.Color, CreatedBy = x.CreatedBy, State = x.State, Host = x.Host, Guests = x.Guests, RoomId = x.RoomId, Room = x.Room, UserClaim = userClaim }).ToList();
             return getAllBooking;
         }
 

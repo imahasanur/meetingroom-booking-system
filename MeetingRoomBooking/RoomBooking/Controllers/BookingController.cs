@@ -204,7 +204,24 @@ namespace RoomBooking.Controllers
 
                 model = await model.GetEventByIdAsync(id);
 
-              
+                var user = await _userManager.GetUserAsync(User);
+                var allUser = _userManager.Users.ToList().Select(x => x.Email).ToList();
+
+                var claims = await _userManager.GetClaimsAsync(user);
+
+                var userClaim = string.Empty;
+
+                if (claims.Count > 1)
+                {
+                    userClaim = "admin";
+                }
+                else
+                {
+                    userClaim = claims[0].Value;
+                }
+
+                model.UserClaim = userClaim;
+
 
                 if (model?.CreatedBy is not null)
                 {
@@ -323,8 +340,20 @@ namespace RoomBooking.Controllers
                 model.ResolveDI(_provider);
 
                 var user = await _userManager.GetUserAsync(User);
+                var claims = await _userManager.GetClaimsAsync(user);
 
-                var allEvent = await model.GetAllEventAsync(user.UserName);
+                var userClaim = string.Empty;
+
+                if (claims.Count > 1)
+                {
+                    userClaim = "admin";
+                }
+                else
+                {
+                    userClaim = claims[0].Value;
+                }
+
+                var allEvent = await model.GetAllEventAsync(user.UserName, userClaim);
 
                 return View(allEvent);
             }

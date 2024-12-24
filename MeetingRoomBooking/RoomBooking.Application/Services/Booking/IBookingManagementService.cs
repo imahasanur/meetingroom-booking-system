@@ -11,7 +11,7 @@ namespace RoomBooking.Application.Services.Booking
     {
 
         Task<string> CreateBookingAsync(CreateEventDTO eventDTO, IList<string> allUser, string userClaim);
-        Task<IList<GetEventDTO>> GetAllEventAsync(DateTime start, DateTime end, string? user);
+        Task<IList<GetEventDTO>> GetAllEventAsync(DateTime start, DateTime end, string? user, string? userClaim);
 
         Task<string> EditBookingAsync(EditEventDTO eventDTO, string currentUser, string userClaim);
         Task<string> EditBookingByIdAsync(EditEventDTO eventDTO, string currentUser, IList<string> allUser, string userClaim);

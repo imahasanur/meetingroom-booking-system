@@ -277,9 +277,9 @@ namespace RoomBooking.Application.Services.Booking
             return response;
         }
 
-        public async Task<IList<GetEventDTO>> GetAllEventAsync(DateTime start, DateTime end, string? user)
+        public async Task<IList<GetEventDTO>> GetAllEventAsync(DateTime start, DateTime end, string? user, string? userClaim)
         {
-            var allEvent = await _unitOfWork.BookingRepository.GetAllEventAsync(start, end, user);
+            var allEvent = await _unitOfWork.BookingRepository.GetAllEventAsync(start, end, user, userClaim);
             var eventsDTO = new List<GetEventDTO>();
 
             for (int i = 0; i < allEvent.Count; i++)
@@ -304,6 +304,34 @@ namespace RoomBooking.Application.Services.Booking
             return eventsDTO;
 
         }
+
+        //public async Task<IList<GetEventDTO>> GetAllEventAsync(DateTime start, DateTime end, string? user, string userClaim)
+        //{
+        //    var allEvent = await _unitOfWork.BookingRepository.GetAllEventAsync(start, end, user, userClaim);
+        //    var eventsDTO = new List<GetEventDTO>();
+
+        //    for (int i = 0; i < allEvent.Count; i++)
+        //    {
+        //        var scheduleEvent = allEvent[i];
+        //        var eventDTO = new GetEventDTO()
+        //        {
+        //            Id = scheduleEvent.Id,
+        //            Name = scheduleEvent.Name,
+        //            Color = scheduleEvent.Color,
+        //            State = scheduleEvent.State,
+        //            Start = scheduleEvent.Start,
+        //            End = scheduleEvent.End,
+        //            RoomId = scheduleEvent.RoomId,
+        //            CreatedBy = scheduleEvent.CreatedBy,
+        //            Host = scheduleEvent.Host,
+        //            Guests = scheduleEvent.Guests,
+        //            Room = scheduleEvent.Room,
+        //        };
+        //        eventsDTO.Add(eventDTO);
+        //    }
+        //    return eventsDTO;
+
+        //}
 
         public async Task<string> DeleteBookingAsync(Guid id)
         {
@@ -337,6 +365,15 @@ namespace RoomBooking.Application.Services.Booking
                     existingEvent.Start = eventDTO.Start;
                     existingEvent.End = eventDTO.End;
                     existingEvent.RoomId = eventDTO.RoomId;
+
+
+                    // Check the state pending or approved
+                    if( existingEvent.State == "approved" && userClaim == "user")
+                    {
+                        response = "Approved request can't be updated by user";
+                        
+                        return response;
+                    }
 
                     // Check is host is the current user or not.
                     if(existingEvent.Host.Trim().Equals(currentUser.Trim()) == false)
@@ -437,18 +474,29 @@ namespace RoomBooking.Application.Services.Booking
             {
                 var existingEvent = await _unitOfWork.BookingRepository.GetBookingByIdAsync(eventDTO.Id);
 
-                if (existingEvent.Count == 0)
+                if (existingEvent is null || existingEvent.Count == 0)
                 {
                     response = "not found";
                     return response;
                 }
 
                 var eventEntity = existingEvent[0];
+
                 eventEntity.Name = eventDTO.Name;
                 eventEntity.Start = eventDTO.Start;
                 eventEntity.End = eventDTO.End;
                 eventEntity.Host = eventDTO.Host;
+                eventEntity.State = eventDTO.State;
                 eventEntity.LastUpdatedAtUTC = DateTime.UtcNow;
+
+                if(eventDTO.State == "approved")
+                {
+                    eventEntity.Color = "#00FF00";
+                }
+                else if(eventDTO.State == "pending")
+                {
+                    eventEntity.Color = "#f1c232";
+                }
 
                 var existingGuests = eventEntity.Guests.ToList();
 

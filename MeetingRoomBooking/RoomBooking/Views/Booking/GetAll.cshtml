@@ -63,17 +63,45 @@
                             <td>@meeting.Room.Location @meeting.Room.Name</td>
                             <td>@meeting.State</td>
                             <td>
-                                <a href="@Url.Action("Edit", "Booking", new { id = meeting.Id })" class="btn btn-sm btn-primary">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
                                 @{
-                                    if (meeting.State.Equals("pending"))
+                                    if(meeting.UserClaim == "user")
                                     {
-                                        <a href="@Url.Action("Delete", "Booking", new { id = meeting.Id })"
-                                           class="btn btn-sm btn-danger"
-                                           onclick="return confirm('Want to delete this meeting? @meeting.Name ');">
-                                            <i class="fas fa-trash-alt"></i> Delete
-                                        </a>
+                                        if(meeting.State == "pending")
+                                        {
+                                            <a href="@Url.Action("Edit", "Booking", new { id = meeting.Id })" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+
+                                            <a href="@Url.Action("Delete", "Booking", new { id = meeting.Id })"
+                                               class="btn btn-sm btn-danger"
+                                               onclick="return confirm('Want to delete this meeting? @meeting.Name ');">
+                                                <i class="fas fa-trash-alt"></i> Delete
+                                            </a>
+                                        }
+                                    }
+                                    else if(meeting.UserClaim == "admin")
+                                    {
+                                        if (meeting.State == "pending")
+                                        {
+                                            <a href="@Url.Action("Edit", "Booking", new { id = meeting.Id })" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+
+                                            <a href="@Url.Action("Delete", "Booking", new { id = meeting.Id })"
+                                               class="btn btn-sm btn-danger"
+                                               onclick="return confirm('Want to delete this meeting? @meeting.Name ');">
+                                                <i class="fas fa-trash-alt"></i> Delete
+                                            </a>
+                                        }
+                                        else if (meeting.State == "approved")
+                                        {
+
+                                            <a href="@Url.Action("Delete", "Booking", new { id = meeting.Id })"
+                                               class="btn btn-sm btn-danger"
+                                               onclick="return confirm('Want to delete this meeting? @meeting.Name ');">
+                                                <i class="fas fa-trash-alt"></i> Delete
+                                            </a>
+                                        }
                                     }
                                 }
                                 
@@ -85,7 +113,7 @@
                 else
                 {
                     <tr>
-                        <td colspan="6" class="text-center">No meetings available.</td>
+                        <td colspan="8" class="text-center">No meetings available.</td>
                     </tr>
                 }
             </tbody>
