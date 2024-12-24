@@ -29,24 +29,20 @@ namespace RoomBooking.Application.Services.Booking
             bool isValid = true;
             string response = string.Empty;
             
-            if(maximumCapacity != 0 && (!(members >= minimumCapacity && members  <= maximumCapacity && members <= capacity)))
+            if(maximumCapacity == null && minimumCapacity == null && (members > capacity))
+            {
+                isValid = false;
+            }
+            else if(maximumCapacity != null && minimumCapacity == null && (!(members  <= maximumCapacity && members <= capacity)))
             {
                 isValid = false;
                 
             }
-            else if(maximumCapacity == 0 && (members < minimumCapacity && members <= capacity))
+            else if(maximumCapacity == null && minimumCapacity != null && (members < minimumCapacity && members <= capacity))
             {
                 isValid = false;
             }
-            else if(maximumCapacity == 0 && minimumCapacity == 0 && (members > capacity ))
-            {
-                isValid = false;
-            }
-            else if((maximumCapacity != 0 || minimumCapacity != 0) &&(members > capacity || members < minimumCapacity || members > maximumCapacity)) 
-            {
-                isValid = false;
-            }
-            else if(members > capacity)
+            else if(members < minimumCapacity || (members > maximumCapacity ) || members > capacity)
             {
                 isValid = false;
             }
@@ -278,7 +274,7 @@ namespace RoomBooking.Application.Services.Booking
 
             var eventEntity = await _unitOfWork.BookingRepository.GetBookingAsync(id);
 
-            if (eventEntity.CreatedBy is null)
+            if (eventEntity == null || eventEntity.CreatedBy is null)
             {
                 response = "not found";
                 return response;
@@ -304,6 +300,72 @@ namespace RoomBooking.Application.Services.Booking
                     existingEvent.Start = eventDTO.Start;
                     existingEvent.End = eventDTO.End;
                     existingEvent.RoomId = eventDTO.RoomId;
+
+                    // Check meeting booking time limit with room maximum and minimum time.
+                    var eventTimeEntity = await _unitOfWork.EventTimeRepository.GetTimeLimitAsync();
+                    var isValid = ValidateEventTimeLimit(existingEvent.Start, existingEvent.End, eventTimeEntity);
+                    var allGuest = existingEvent.Guests.Select(x => x.User.Trim()).ToList();
+
+                    if (isValid.Item1 == false)
+                    {
+                        return isValid.Item2;
+                    }
+
+                    // Check meeting booking user & guests validity in users list.
+                    isValid = ValidateMeetingAttendee(allGuest, existingEvent.Host, allUser, existingEvent.CreatedBy);
+
+                    if (isValid.Item1 == false)
+                    {
+                        return isValid.Item2;
+                    }
+
+                    // Check booking minimum and maximum room attendee limit.
+                    var room = await _unitOfWork.RoomRepository.GetRoomAsync(existingEvent.RoomId, false);
+
+                    if (room != null && room?.Capacity != 0)
+                    {
+                        isValid = CheckBookingAttendeeLimit(room.MaximumCapacity, room.MinimumCapacity, room.Capacity, allGuest.Count + 1);
+                        if (isValid.Item1 == false)
+                        {
+                            isValid.Item2 = "Booking Attendee limit mismatch with max or min limit of the the room";
+                            return isValid.Item2;
+                        }
+
+                    }
+                    else
+                    {
+                        response = "Room is deleted";
+                        return response;
+                    }
+
+                    // Check pending request for request maker.
+                    var bookings = await _unitOfWork.BookingRepository.GetBookingByMakerAsync(existingEvent.CreatedBy);
+                    if (bookings != null && bookings.Count > 0)
+                    {
+                        response = "Can't do multiple pending meeting booking request";
+
+                        return response;
+                    }
+
+                    // Check user for same room , same day overlapping meeting.
+                    bookings = await _unitOfWork.BookingRepository.CheckBookingOverlapping(existingEvent.Start, existingEvent.End, existingEvent.RoomId);
+                    if (bookings != null && bookings.Count > 0)
+                    {
+                        response = "Found same room , same day overlapping meeting.";
+
+                        return response;
+                    }
+
+                    // Check user for different room , same day overlapping meeting.
+                    bookings = await _unitOfWork.BookingRepository.CheckAnyRoomBookingOverlappingByUser(existingEvent.Start, existingEvent.End, existingEvent.CreatedBy);
+                    if (bookings != null && bookings.Count > 0)
+                    {
+                        response = "Found different room , same day overlapping meeting by a booking creator.";
+
+                        return response;
+                    }
+
+
 
                     await _unitOfWork.BookingRepository.EditBookingAsync(existingEvent);
                     await _unitOfWork.SaveAsync();
