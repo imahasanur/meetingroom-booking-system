@@ -221,6 +221,7 @@
                     roomId: args.newResource
                 };
                 await DayPilot.Http.put(`/Booking/Edit/${args.e.id()}`, params);
+                window.location.href = "/Booking/Create";
                 calendar.update();
                 calendar.events.load(`/Booking/GetAllEvent/${args.newStart} ${args.newEnd}`);
             },
@@ -232,6 +233,7 @@
                     roomId: args.e.data.resource
                 };
                 await DayPilot.Http.put(`/Booking/Edit/${args.e.id()}`, params);
+                window.location.href = "/Booking/Create";
                 calendar.update();
                 calendar.events.load(`/Booking/GetAllEvent/${args.newStart} ${args.newEnd}`);
             },

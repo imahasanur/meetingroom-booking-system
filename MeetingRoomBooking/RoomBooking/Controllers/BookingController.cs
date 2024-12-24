@@ -127,7 +127,7 @@ namespace RoomBooking.Controllers
 
 
         [HttpPut]
-        public async Task<IActionResult> Edit([FromRoute]Guid id, [FromBody] EditBookingViewModel model)
+        public async Task Edit([FromRoute]Guid id, [FromBody] EditBookingViewModel model)
         {
 
             string response = string.Empty;
@@ -144,6 +144,7 @@ namespace RoomBooking.Controllers
                 if (response.Equals("success"))
                 {
                     TempData["success"] = "Event is Updated";
+                    
                 }
                 else if (response.Equals("redundant"))
                 {
@@ -154,14 +155,15 @@ namespace RoomBooking.Controllers
                     TempData["message"] = response;
                 }
 
-                return Ok();
+                
             }
             catch(Exception ex)
             {
                 _logger.LogError(ex,"Error in editing the event on event move action");
                 TempData["failure"] = "Error in Updating the Event";
-                return BadRequest();
+                
             }
+            
         }
 
         [HttpGet]
@@ -170,16 +172,16 @@ namespace RoomBooking.Controllers
             try
             {
                 var model = new EditBookingViewModel();
+
                 model.ResolveDI(_provider);
+                TempData.Clear();
 
                 model = await model.GetEventByIdAsync(id);
 
-                TempData.Clear();
+              
 
                 if (model?.CreatedBy is not null)
                 {
-                    model.ResolveDI(_provider);
-
                     return View(model);
                 }
                 else
