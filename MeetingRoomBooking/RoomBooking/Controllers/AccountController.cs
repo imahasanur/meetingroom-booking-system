@@ -132,8 +132,8 @@ namespace RoomBooking.Controllers
             try
             {
                 var model = new GetAllAccountViewModel();
-
                 var allUser = await model.GetAllAccountAsync(_userManager);
+
                 return View(allUser);   
             }
             catch (Exception ex)
@@ -158,6 +158,7 @@ namespace RoomBooking.Controllers
             catch (Exception ex) { 
                 _logger.LogError($"Error: {ex.Message}");
             }
+
             return View(model);
         }
 
@@ -167,6 +168,7 @@ namespace RoomBooking.Controllers
             if (!ModelState.IsValid)
             {
                 TempData["failure"] = "Model State is not valid";
+
                 return View(model);
             }
 
@@ -196,6 +198,5 @@ namespace RoomBooking.Controllers
                 return RedirectToAction("GetAll");
             }
         }
-
     }
 }

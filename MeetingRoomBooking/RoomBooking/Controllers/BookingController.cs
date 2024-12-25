@@ -1,4 +1,5 @@
 ﻿using DotNetEnv;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol;
@@ -6,10 +7,12 @@ using RoomBooking.Application.Domain.Entities;
 using RoomBooking.Infrastructure.Membership;
 using RoomBooking.Models.Booking;
 using RoomBooking.Models.Room;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace RoomBooking.Controllers
 {
+    [Authorize]
     public class BookingController : Controller
     {
         private readonly ILogger<BookingController> _logger;
@@ -143,9 +146,7 @@ namespace RoomBooking.Controllers
         [HttpPut]
         public async Task Edit([FromRoute]Guid id, [FromBody] EditBookingViewModel model)
         {
-
             string response = string.Empty;
-
             TempData.Clear();
 
             try
@@ -156,7 +157,7 @@ namespace RoomBooking.Controllers
 
                 var userClaim = string.Empty;
 
-                if (claims.Count > 1)
+                if(claims.Count > 1)
                 {
                     userClaim = "admin";
                 }
@@ -167,12 +168,12 @@ namespace RoomBooking.Controllers
 
                 response = await model.EditBookingAsync(model, user.Email, userClaim);
 
-                if (response.Equals("success"))
+                if(response.Equals("success"))
                 {
                     TempData["success"] = "Event is Updated";
                     
                 }
-                else if (response.Equals("redundant"))
+                else if(response.Equals("redundant"))
                 {
                     TempData["message"] = "Event is overlapping ";
                 }
@@ -180,16 +181,12 @@ namespace RoomBooking.Controllers
                 { 
                     TempData["message"] = response;
                 }
-
-                
             }
             catch(Exception ex)
             {
                 _logger.LogError(ex,"Error in editing the event on event move action");
                 TempData["failure"] = "Error in Updating the Event";
-                
             }
-            
         }
 
         [HttpGet]
@@ -211,7 +208,7 @@ namespace RoomBooking.Controllers
 
                 var userClaim = string.Empty;
 
-                if (claims.Count > 1)
+                if(claims.Count > 1)
                 {
                     userClaim = "admin";
                 }
@@ -222,8 +219,7 @@ namespace RoomBooking.Controllers
 
                 model.UserClaim = userClaim;
 
-
-                if (model?.CreatedBy is not null)
+                if(model?.CreatedBy is not null)
                 {
                     return View(model);
                 }
@@ -241,19 +237,17 @@ namespace RoomBooking.Controllers
             }
 
             return RedirectToAction("GetAll");
-
         }
 
         [HttpPost]
         public async Task<IActionResult> Edit(EditBookingViewModel model)
         {
             TempData.Clear();
-
             string response = string.Empty;
 
             try
             {
-                if (!ModelState.IsValid)
+                if(!ModelState.IsValid)
                 {
                     _logger.LogError("Model state is not valid ");
                     return View(model);
@@ -281,8 +275,9 @@ namespace RoomBooking.Controllers
                 if (response.Equals("success"))
                 {
                     TempData["success"] = "Booking is Updated";
+                    return RedirectToAction("GetAll");
                 }
-                else if (response.Equals("not found"))
+                else if(response.Equals("not found"))
                 {
                     TempData["message"] = "Booking is deleted already ";
                 }
@@ -297,6 +292,7 @@ namespace RoomBooking.Controllers
                 _logger.LogError(ex, "There is an exception in meeting edit action");
                 TempData["failure"] = "Booking is not updated , an error occured";
             }
+
             return View(model);
         }
 
@@ -362,8 +358,6 @@ namespace RoomBooking.Controllers
                 _logger.LogError($"{ex.Message}");
                 return View();
             }
-
-           
         }
     }
 }

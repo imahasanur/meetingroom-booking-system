@@ -70,7 +70,6 @@
                                 var roleClaims = claimsIdentity.FindAll("role").Select(c => c.Value).ToList();
 
                                 bool isAdmin = roleClaims.Contains("admin");
-                                <h2>Is admin:[ @isAdmin ]</h2>
 
                                 <li class="nav-item menu-open">
                                     <a href="#" class="nav-link active">

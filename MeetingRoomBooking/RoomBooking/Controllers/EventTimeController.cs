@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RoomBooking.Application.Domain.Entities;
 using RoomBooking.Application.DTO;
@@ -10,6 +11,7 @@ using RoomBooking.Models.Room;
 
 namespace RoomBooking.Controllers
 {
+    [Authorize]
     public class EventTimeController : Controller
     {
         private readonly ILogger<EventTimeController> _logger;
@@ -26,7 +28,6 @@ namespace RoomBooking.Controllers
             _userManager = userManager;
             _user = user;
         }
-
 
         [HttpGet]
         public async Task<IActionResult> Edit()
@@ -84,12 +85,11 @@ namespace RoomBooking.Controllers
                 }
 
                 model.ResolveDI(_provider);
-
                 response = await model.EditEventTimeLimitAsync(model);
 
                 TempData.Clear();
 
-                if (response == "success")
+                if(response == "success")
                 {
                     TempData["success"] = "Event Time limit has updated";
                     return View(model);

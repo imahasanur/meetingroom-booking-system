@@ -305,34 +305,6 @@ namespace RoomBooking.Application.Services.Booking
 
         }
 
-        //public async Task<IList<GetEventDTO>> GetAllEventAsync(DateTime start, DateTime end, string? user, string userClaim)
-        //{
-        //    var allEvent = await _unitOfWork.BookingRepository.GetAllEventAsync(start, end, user, userClaim);
-        //    var eventsDTO = new List<GetEventDTO>();
-
-        //    for (int i = 0; i < allEvent.Count; i++)
-        //    {
-        //        var scheduleEvent = allEvent[i];
-        //        var eventDTO = new GetEventDTO()
-        //        {
-        //            Id = scheduleEvent.Id,
-        //            Name = scheduleEvent.Name,
-        //            Color = scheduleEvent.Color,
-        //            State = scheduleEvent.State,
-        //            Start = scheduleEvent.Start,
-        //            End = scheduleEvent.End,
-        //            RoomId = scheduleEvent.RoomId,
-        //            CreatedBy = scheduleEvent.CreatedBy,
-        //            Host = scheduleEvent.Host,
-        //            Guests = scheduleEvent.Guests,
-        //            Room = scheduleEvent.Room,
-        //        };
-        //        eventsDTO.Add(eventDTO);
-        //    }
-        //    return eventsDTO;
-
-        //}
-
         public async Task<string> DeleteBookingAsync(Guid id)
         {
             string response = string.Empty;
@@ -366,11 +338,10 @@ namespace RoomBooking.Application.Services.Booking
                     existingEvent.End = eventDTO.End;
                     existingEvent.RoomId = eventDTO.RoomId;
 
-
                     // Check the state pending or approved
-                    if( existingEvent.State == "approved" && userClaim == "user")
+                    if( existingEvent.State == "approved")
                     {
-                        response = "Approved request can't be updated by user";
+                        response = "Approved request can't be updated";
                         
                         return response;
                     }
@@ -502,9 +473,8 @@ namespace RoomBooking.Application.Services.Booking
 
                 var newGuestUsers = eventDTO.AllGuest.Split(',').Select(name => name.Trim()).Where(name => !string.IsNullOrEmpty(name)).ToList();
 
-
                 // Check is host is the current user or not.
-                if (eventEntity.Host.Trim().Equals(currentUser.Trim()) == false)
+                if (eventEntity.Host.Trim().Equals(currentUser.Trim()) == false && userClaim != "admin")
                 {
                     response = "Can't Update !Current user is not the host user";
 

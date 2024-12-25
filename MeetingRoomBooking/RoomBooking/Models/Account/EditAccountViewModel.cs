@@ -20,11 +20,11 @@ namespace RoomBooking.Models.Account
             var user = userMangaer.Users.FirstOrDefault(x => x.Id == id);
             var userAllClaim = new EditAccountViewModel();
             
-            if (user is not null)
+            if(user is not null)
             {
                 var userClaim =await userMangaer.GetClaimsAsync(user);
-                if (userClaim != null && userClaim.Count > 0) {
-
+                if(userClaim != null && userClaim.Count > 0) 
+                {
                     var claims = new List<string>();
 
                     for(int i = 0; i < userClaim.Count; i++)
@@ -39,12 +39,12 @@ namespace RoomBooking.Models.Account
                         }
 
                         claims.Add(userClaim[i].Value ?? string.Empty);
-                        
                     }
                     userAllClaim.ClaimValue = claims;
                 }
 
             }
+
             return userAllClaim;
         }
 
@@ -84,9 +84,7 @@ namespace RoomBooking.Models.Account
                         var aClaim = new Claim("role", claim);
                         await userManager.AddClaimAsync(user, aClaim);
                     }
-
                 }
-                
             }
 
             response = "success";

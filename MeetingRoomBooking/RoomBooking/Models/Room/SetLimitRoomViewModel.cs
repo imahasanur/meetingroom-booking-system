@@ -58,4 +58,3 @@ namespace RoomBooking.Models.Room
 
     }
 }
-

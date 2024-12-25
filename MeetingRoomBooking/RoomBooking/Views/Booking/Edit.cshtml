@@ -85,7 +85,8 @@
                     <input asp-for="Id" value="@Model.Id" type="hidden">
                     <input asp-for="CreatedBy" value="@Model.CreatedBy" type="hidden">
                     <input asp-for="State" value="@Model.State" type="hidden">
-                    <input asp-for="Color" value="@Model.Color" type = "hidden">
+                    <input asp-for="Color" value="@Model.Color" type="hidden">
+                    <input asp-for="UserClaim" value="@Model.UserClaim" type="hidden">
                 </div>
                 <div class="card-footer text-center">
                     <button type="submit" class="btn btn-primary" onclick="validateForm(event)">Edit Booking</button>
@@ -100,6 +101,7 @@
     <partial name="_ValidationScriptsPartial" />
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@3.5.0/build/global/luxon.min.js"></script>
 
     <script>
 
@@ -155,15 +157,15 @@
 
             const endPicker = flatpickr("#end-time", {
                 enableTime: true,
-                dateFormat: "d-M-y h:i:s K",
+                dateFormat: "M/d/y h:i:s K",
                 time_24hr: false,
                 minuteIncrement: 15,
             });
 
             const startPicker = flatpickr("#start-time", {
                 enableTime: true,
-                dateFormat: "d-M-y h:i:s K",
-            time_24hr: false,
+                dateFormat: "M/d/y h:i:s K",
+                time_24hr: false,
                 minuteIncrement: 15,
                 onChange: function (selectedDates) {
                     if (selectedDates.length > 0) {
@@ -175,6 +177,7 @@
 
                         endPicker.set("minDate", minDate);
                         endPicker.set("maxDate", maxDate);
+
                     }
                 }
             });

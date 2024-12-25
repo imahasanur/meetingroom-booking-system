@@ -80,9 +80,6 @@ namespace RoomBooking.Models.Room
             return model;
         }
 
-       
-
-       
         public async Task<string> EditRoomAsync(EditRoomViewModel model)
         {
             var room = new EditRoomDTO()

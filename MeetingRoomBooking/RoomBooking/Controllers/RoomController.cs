@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RoomBooking.Application.Domain.Entities;
 using RoomBooking.Application.DTO;
@@ -9,6 +10,7 @@ using RoomBooking.Models.Room;
 
 namespace RoomBooking.Controllers
 {
+    [Authorize]
     public class RoomController : Controller
     {
         private readonly ILogger<RoomController> _logger;
@@ -58,9 +60,9 @@ namespace RoomBooking.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "There is an exception while performing Get All room operation");
+
                 return View();
             }
-            
         }
 
         [HttpGet]
@@ -87,7 +89,7 @@ namespace RoomBooking.Controllers
         {
             var user = await _userManager.GetUserAsync(User);
 
-            if (user is not null) 
+            if(user is not null) 
             {
                 model.CreatedBy = user.Email;
             }
@@ -103,7 +105,7 @@ namespace RoomBooking.Controllers
 
                     response = await model.CreateRoomAsync(model);
 
-                    if (response.Equals("success"))
+                    if(response.Equals("success"))
                     {
                         TempData["success"] = "Room is Created";
                     }
@@ -198,9 +200,9 @@ namespace RoomBooking.Controllers
                     return View(model);
                 }
             }
-
             _logger.LogWarning("ModelState is not valid");
             ModelState.AddModelError(string.Empty, "Model State is not valid");
+
             return View(model);
         }
 
@@ -212,7 +214,6 @@ namespace RoomBooking.Controllers
 
             try
             {
-               
                 model.ResolveDI(_provider);
 
                 var user = await _userManager.GetUserAsync(User);
@@ -220,7 +221,7 @@ namespace RoomBooking.Controllers
 
                 var userClaim = string.Empty;
 
-                if (claims.Count > 1)
+                if(claims.Count > 1)
                 {
                     userClaim = "admin";
                 }
@@ -252,7 +253,7 @@ namespace RoomBooking.Controllers
 
             try
             {
-                if (!ModelState.IsValid)
+                if(!ModelState.IsValid)
                 {
                     _logger.LogError("Model State is not valid in EditSettings Post method");
 
@@ -262,7 +263,7 @@ namespace RoomBooking.Controllers
                 model.ResolveDI(_provider);
                 response =await model.EditRoomAsync(model);
 
-                if (response.Equals("success"))
+                if(response.Equals("success"))
                 {
                     TempData["success"] = "Room Max and Min Limit is Updated";
                 }
@@ -297,7 +298,7 @@ namespace RoomBooking.Controllers
 
                 TempData.Clear();
 
-                if (room?.CreatedBy is not null)
+                if(room?.CreatedBy is not null)
                 {
                     await model.DeleteRoomAsync(room);
                     
