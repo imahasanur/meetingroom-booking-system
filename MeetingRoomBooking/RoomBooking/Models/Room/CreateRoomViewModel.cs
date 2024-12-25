@@ -16,8 +16,8 @@ namespace RoomBooking.Models.Room
 
         [DataType(DataType.Text)]
         [Display(Name = "Room Name")]
-        [RegularExpression(@"^[A - B]{1}[1 - 2]{1}",ErrorMessage ="One char from A/B and one char from 1/2")]
-        [Required(ErrorMessage = "Accepted Combination [A1, B1, A2, B2] ..")]
+        [RegularExpression(@"^[A - B]{1}[1 - 3]{1}",ErrorMessage ="One char from A/B and one char from 1/2/3")]
+        [Required(ErrorMessage = "Accepted Combination [A1, B1, A2, B2, A3, B3,..] ..")]
         public string Name { get; set; }
 
         [Required]
@@ -25,7 +25,7 @@ namespace RoomBooking.Models.Room
         [Display(Name = "Room Location")]
         public string Location { get; set; }
 
-        [Range(3, 15, ErrorMessage = "The Room must hold at least 3 and at max 15 people")]
+        [Range(3, 20, ErrorMessage = "The Room must hold at least 3 and at max 20 people")]
         [Display(Name = "Room Capacity")]
         public int Capacity { get; set; }
 
@@ -40,16 +40,6 @@ namespace RoomBooking.Models.Room
         public void ResolveDI(IServiceProvider provider)
         {
             _roomService = provider.GetService<IRoomManagementService>();
-        }
-
-        public async Task<CreateRoomViewModel> GetAllRoomAsync()
-        {
-            var rooms = await _roomService.GetAllRoomAsync();
-            var model = new CreateRoomViewModel()
-            {
-                PreviousRooms = rooms
-            };
-            return model;
         }
 
         public async Task<string> CreateRoomAsync(CreateRoomViewModel model)

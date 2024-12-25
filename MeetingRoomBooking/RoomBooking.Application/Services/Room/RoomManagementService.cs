@@ -176,6 +176,17 @@ namespace RoomBooking.Application.Services.Room
                     return response;
                 }
 
+                if(existingRoom.MaximumCapacity <= existingRoom.MinimumCapacity)
+                {
+                    response = "Minimum capacity can't be greater or equal to max capacity.";
+                    return response;
+                }
+                else if(existingRoom.Capacity < existingRoom.MaximumCapacity)
+                {
+                    response = "Maximum Capacity can't cross total room capacity";
+                    return response;
+                }
+
                 await _unitOfWork.RoomRepository.EditRoomAsync(existingRoom);
                 await _unitOfWork.SaveAsync();
 

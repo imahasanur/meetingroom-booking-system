@@ -29,32 +29,20 @@
             <form asp-controller="Room" asp-action="Create" asp-area="" asp-route-returnUrl="Room/Create" method="post" asp-antiforgery="true" >
                 <div class="card-body">
                     <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-                    <div class="form-group">
-                        <label>All Available Rooms</label>
-                        <select class="form-control select2 overflow-auto text-center" style="width: 100%;">
-                            <option selected="selected">All Rooms</option>
-                            @if(Model.PreviousRooms is not null)
-                            {
-                                foreach(var room in Model.PreviousRooms)
-                                {
-                                    <option>@room.Location @room.Name</option>
-                                }
-                            }
-                        </select>
-                    </div>
-
+                    
                     <div class="form-group">
                         <label>Select Available Floors</label>
                         <select class="form-control select2 overflow-auto text-center" style="width: 100%;" asp-for = "Location">
-                            <option value = "Level-3" asp-for = "Location"> Level-3</option>
-                            <option value = "Level-4" asp-for = "Location"> Level-4</option>
-                            <option value = "Level-5" asp-for = "Location"> Level-5</option>
+                            <option value= "Level-2" asp-for= "Location"> Level-2</option>
+                            <option value= "Level-3" asp-for= "Location"> Level-3</option>
+                            <option value= "Level-4" asp-for= "Location"> Level-4</option>
+                            <option value= "Level-5" asp-for= "Location"> Level-5</option>
                         </select>
                         <span asp-validation-for="Location" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Name">Room Name</label>
-                        <input asp-for="Name" type="text" class="form-control" id="" autocomplete="given-name" aria-required="true" placeholder="Room name limited to A1, B1, A2, B2 avoid prefix and suffix space" required>
+                        <input asp-for="Name" type="text" class="form-control" id="" autocomplete="given-name" aria-required="true" placeholder="Room name limited to A1, B1, A2, B2, A3, B3 avoid prefix and suffix space" required>
                         <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
                     <div class="form-group">

@@ -148,14 +148,15 @@ namespace RoomBooking.Controllers
         public async Task<IActionResult> Edit(Guid id)
         {
             var model = new EditAccountViewModel();
+
             try
             {
                 var newModel = await model.GetUserClaimAsync(id, _userManager);
+
                 return View(newModel);
             }
             catch (Exception ex) { 
                 _logger.LogError($"Error: {ex.Message}");
-
             }
             return View(model);
         }

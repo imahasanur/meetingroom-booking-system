@@ -70,9 +70,8 @@ namespace RoomBooking.Controllers
             {
                 var model = new CreateRoomViewModel();
                 model.ResolveDI(_provider);
-                var rooms = await model.GetAllRoomAsync();
 
-                return View(rooms);
+                return View(model);
             }
             catch (Exception ex) 
             {
@@ -208,8 +207,7 @@ namespace RoomBooking.Controllers
         [HttpGet]
         public async Task<IActionResult> SetLimit()
         {
-            TempData.Clear();
-
+            
             var model = new SetLimitRoomViewModel();
 
             try
@@ -246,6 +244,7 @@ namespace RoomBooking.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SetLimit(SetLimitRoomViewModel model)
         {
             TempData.Clear();
@@ -257,7 +256,7 @@ namespace RoomBooking.Controllers
                 {
                     _logger.LogError("Model State is not valid in EditSettings Post method");
 
-                    return View(model);
+                    return RedirectToAction("SetLimit");
                 }
 
                 model.ResolveDI(_provider);
@@ -271,6 +270,10 @@ namespace RoomBooking.Controllers
                 {
                     TempData["message"] = "Room doesn't exists";
                 }
+                else
+                {
+                    TempData["message"] = response;
+                }
             }
             catch (Exception ex) 
             {
@@ -279,7 +282,7 @@ namespace RoomBooking.Controllers
 
             }
 
-            return View(model);
+            return RedirectToAction("SetLimit");
         }
 
         [HttpGet]
