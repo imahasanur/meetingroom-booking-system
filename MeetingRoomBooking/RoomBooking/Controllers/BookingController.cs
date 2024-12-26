@@ -104,11 +104,14 @@ namespace RoomBooking.Controllers
 
                 model.ResolveDI(_provider);
 
+                model.Start = model.Start.AddMinutes(1);
+
                 response = await model.CreateBookingAsync(model, allUser, userClaim);
 
                 if (response.Equals("success"))
                 {
                     TempData["success"] = "Booking is Created";
+
                     var newEvent = new ScheduleEvent
                     {
                         Id = model.Id,
@@ -165,6 +168,8 @@ namespace RoomBooking.Controllers
                 {
                     userClaim = claims[0].Value;
                 }
+
+                model.Start = model.Start.AddMinutes(1);
 
                 response = await model.EditBookingAsync(model, user.Email, userClaim);
 
@@ -269,6 +274,8 @@ namespace RoomBooking.Controllers
                 {
                     userClaim = claims[0].Value;
                 }
+   
+                model.Start = model.Start.AddDays(1);
 
                 response = await model.EditBookingByIdAsync(model, user.Email, allUser, userClaim);
 

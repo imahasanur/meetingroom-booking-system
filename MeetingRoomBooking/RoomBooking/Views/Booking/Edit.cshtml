@@ -158,6 +158,7 @@
             const endPicker = flatpickr("#end-time", {
                 enableTime: true,
                 dateFormat: "M/d/y h:i:s K",
+                altFormat: "d-m-Y h:i:s K",
                 time_24hr: false,
                 minuteIncrement: 15,
             });
@@ -165,6 +166,7 @@
             const startPicker = flatpickr("#start-time", {
                 enableTime: true,
                 dateFormat: "M/d/y h:i:s K",
+                altFormat: "d-m-Y h:i:s K",
                 time_24hr: false,
                 minuteIncrement: 15,
                 onChange: function (selectedDates) {
