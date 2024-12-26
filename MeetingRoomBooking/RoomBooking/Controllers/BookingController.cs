@@ -169,8 +169,6 @@ namespace RoomBooking.Controllers
                     userClaim = claims[0].Value;
                 }
 
-                model.Start = model.Start.AddMinutes(1);
-
                 response = await model.EditBookingAsync(model, user.Email, userClaim);
 
                 if(response.Equals("success"))
@@ -226,6 +224,7 @@ namespace RoomBooking.Controllers
 
                 if(model?.CreatedBy is not null)
                 {
+
                     return View(model);
                 }
                 else
@@ -275,7 +274,7 @@ namespace RoomBooking.Controllers
                     userClaim = claims[0].Value;
                 }
    
-                model.Start = model.Start.AddDays(1);
+                model.Start = model.Start.AddMinutes(1);
 
                 response = await model.EditBookingByIdAsync(model, user.Email, allUser, userClaim);
 
