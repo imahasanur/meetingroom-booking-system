@@ -47,7 +47,7 @@
                 </tr>
             </thead>
             <tbody>
-                @if (Model != null && Model.Count > 0)
+                @if (Model != null && Model?.Count > 0)
                 {
                     int serial = 1;
                     foreach (var room in Model)
@@ -82,7 +82,14 @@
                 else
                 {
                     <tr>
-                        <td colspan="6" class="text-center">No rooms available.</td>
+                        <td class="text-center">No rooms available.</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
                 }
             </tbody>

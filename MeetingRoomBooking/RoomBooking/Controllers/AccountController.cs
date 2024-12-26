@@ -23,6 +23,7 @@ namespace RoomBooking.Controllers
             _httpContextAccessor = httpContextAccessor;
             _provider = provider;
         }
+
         public IActionResult Register()
         {
             var model = new RegisterAccountViewModel();

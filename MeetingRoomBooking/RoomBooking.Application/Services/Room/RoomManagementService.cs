@@ -95,19 +95,23 @@ namespace RoomBooking.Application.Services.Room
             return response;
         }
 
-        public async Task DeleteRoomAsync(RoomDTO roomDTO)
+        public async Task<string> DeleteRoomAsync(Guid id)
         {
-            var room = new RoomBooking.Application.Domain.Entities.Room()
+            var room = await _unitOfWork.RoomRepository.GetRoomAsync(id, true);
+
+            string response = string.Empty;
+
+            if(room == null || room?.CreatedBy == null)
             {
-                Name = roomDTO.Name,
-                Details = roomDTO.Details,
-                Location = roomDTO.Location,
-                Capacity = roomDTO.Capacity,
-                CreatedAtUTC = roomDTO.CreatedAtUTC,
-                CreatedBy = roomDTO.CreatedBy,
-            };
+                response = "Room not found , May be deleted.";
+                return response;
+            }
             await _unitOfWork.RoomRepository.DeleteRoomAsync(room);
             await _unitOfWork.SaveAsync();
+
+            response = "success";
+
+            return response;
         }
 
 

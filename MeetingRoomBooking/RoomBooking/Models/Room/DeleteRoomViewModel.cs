@@ -26,45 +26,37 @@ namespace RoomBooking.Models.Room
             _roomService = provider.GetService<IRoomManagementService>();
         }
 
-        public async Task<DeleteRoomViewModel> GetRoomAsync(Guid id)
+        //public async Task<DeleteRoomViewModel> GetRoomAsync(Guid id)
+        //{
+        //    var room = await _roomService.GetRoomAsync(id);
+
+        //    if (room is null || room?.CreatedBy is null)
+        //    {
+        //        var roomViewModel = new DeleteRoomViewModel();
+        //        return roomViewModel;
+        //    }
+        //    var viewModel = new DeleteRoomViewModel
+        //    {
+        //        Id = room.Id,
+        //        Name = room.Name,
+        //        Location = room.Location,
+        //        Capacity = room.Capacity,
+        //        Details = room.Details,
+        //        CreatedBy = room.CreatedBy,
+        //        CreatedAtUTC = room.CreatedAtUTC,
+        //        LastUpdatedAtUTC = room.LastUpdatedAtUTC
+        //    };
+
+        //    return viewModel;
+        //}
+
+        public async Task<string> DeleteRoomAsync(Guid id)
         {
-            var room = await _roomService.GetRoomAsync(id);
+            string response = string.Empty;
 
-            if (room is null || room?.CreatedBy is null)
-            {
-                var roomViewModel = new DeleteRoomViewModel();
-                return roomViewModel;
-            }
-            var viewModel = new DeleteRoomViewModel
-            {
-                Id = room.Id,
-                Name = room.Name,
-                Location = room.Location,
-                Capacity = room.Capacity,
-                Details = room.Details,
-                CreatedBy = room.CreatedBy,
-                CreatedAtUTC = room.CreatedAtUTC,
-                LastUpdatedAtUTC = room.LastUpdatedAtUTC
-            };
+            response = await _roomService.DeleteRoomAsync(id);
 
-            return viewModel;
-        }
-
-        public async Task DeleteRoomAsync(DeleteRoomViewModel viewModel)
-        {
-            var room = new RoomDTO
-            {
-                Id = viewModel.Id,
-                Name = viewModel.Name,
-                Location = viewModel.Location,
-                Capacity = viewModel.Capacity,
-                Details = viewModel.Details,
-                CreatedBy = viewModel.CreatedBy,
-                CreatedAtUTC = viewModel.CreatedAtUTC,
-                LastUpdatedAtUTC= viewModel.LastUpdatedAtUTC
-            };
-
-            await _roomService.DeleteRoomAsync(room);
+            return response;
         }
     }
 }

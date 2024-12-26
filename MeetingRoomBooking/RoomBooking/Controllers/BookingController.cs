@@ -31,11 +31,20 @@ namespace RoomBooking.Controllers
         }
 
 
+        public async Task<IActionResult> NotFound()
+        {
+            return View();
+        }
+
         public async Task<IActionResult> GetAllRoom()
         {
             var model = new CreateBookingViewModel();
             model.ResolveDI(_provider);
             var rooms = await model.GetAllRoomAsync();
+            if(rooms.Count == 0)
+            {
+                return RedirectToAction("Create");
+            }
 
             return Ok(rooms);
         }
@@ -224,7 +233,7 @@ namespace RoomBooking.Controllers
 
                 if(model?.CreatedBy is not null)
                 {
-
+                    
                     return View(model);
                 }
                 else
@@ -291,6 +300,7 @@ namespace RoomBooking.Controllers
                 {
                     TempData["message"] = response; 
                 }
+
                 return View(model);
             }
             catch(Exception ex)

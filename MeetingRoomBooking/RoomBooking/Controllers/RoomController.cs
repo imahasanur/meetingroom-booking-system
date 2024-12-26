@@ -114,7 +114,7 @@ namespace RoomBooking.Controllers
                         TempData["message"] = "Room already exists ";
                     }
 
-                    return View(model);
+                    return RedirectToAction("Create");
                 }
                 catch (Exception ex)
                 {
@@ -294,22 +294,19 @@ namespace RoomBooking.Controllers
                 var model = new DeleteRoomViewModel();
                 model.ResolveDI(_provider);
 
-                var room = await model.GetRoomAsync(id);
-
                 TempData.Clear();
+                string response = string.Empty;
 
-                if(room?.CreatedBy is not null)
+                response = await model.DeleteRoomAsync(id);
+
+                if (response == "success")
                 {
-                    await model.DeleteRoomAsync(room);
-                    
                     TempData["success"] = "Room is Deleted";
                 }
                 else
                 {
-                    TempData["message"] = "Room doesn't exist . Already deleted";
+                    TempData["message"] = response;
                 }
-
-                return RedirectToAction("GetAll");
             }
             catch(Exception ex)
             {
