@@ -23,6 +23,7 @@ namespace RoomBooking.Models.Account
             if(user is not null)
             {
                 var userClaim =await userMangaer.GetClaimsAsync(user);
+
                 if(userClaim != null && userClaim.Count > 0) 
                 {
                     var claims = new List<string>();
@@ -42,7 +43,6 @@ namespace RoomBooking.Models.Account
                     }
                     userAllClaim.ClaimValue = claims;
                 }
-
             }
 
             return userAllClaim;
@@ -63,13 +63,13 @@ namespace RoomBooking.Models.Account
 
             foreach (var claim in existingClaims)
             {
-                if (claim.Type == "role" && (claim.Value == "admin" || claim.Value == "user"))
+                if(claim.Type == "role" && (claim.Value == "admin" || claim.Value == "user"))
                 {
                     await userManager.RemoveClaimAsync(user, claim);
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(model.NewClaimValue))
+            if(!string.IsNullOrWhiteSpace(model.NewClaimValue))
             {
                 if(NewClaimValue.Length <= 5)
                 {
@@ -86,7 +86,6 @@ namespace RoomBooking.Models.Account
                     }
                 }
             }
-
             response = "success";
 
             return response;

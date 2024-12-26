@@ -11,7 +11,5 @@ namespace RoomBooking.Application.Services.EventTime
     {
         Task<string> EditEventTimeLimitAsync(EditEventTimeDTO eventTimeDTO);
         Task<GetEventTimeDTO> GetTimeLimitAsync();
-
-
     }
 }

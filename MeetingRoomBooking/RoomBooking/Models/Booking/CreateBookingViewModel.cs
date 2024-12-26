@@ -40,7 +40,6 @@ namespace RoomBooking.Models.Booking
 
         public async Task<string> CreateBookingAsync(CreateBookingViewModel model, IList<string> allUser, string userClaim)
         {
-
             var guests = new List<Guest>();
             var temp = model.Guests.Split(',');
 
@@ -75,7 +74,6 @@ namespace RoomBooking.Models.Booking
 
             return response;
         }
-
     }
 
     public class RoomColumn

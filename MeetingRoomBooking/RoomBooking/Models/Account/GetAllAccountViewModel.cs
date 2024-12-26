@@ -16,8 +16,6 @@ namespace RoomBooking.Models.Account
         public string ClaimType { get; set; }
         public string ClaimValue { get; set; }
 
-
-
         public async Task<IList<GetAllAccountViewModel>> GetAllAccountAsync(UserManager<ApplicationUser> userManager)
         {
             var users = userManager.Users.ToList();

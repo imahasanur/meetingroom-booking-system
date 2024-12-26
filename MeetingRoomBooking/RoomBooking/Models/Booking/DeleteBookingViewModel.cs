@@ -20,6 +20,5 @@ namespace RoomBooking.Models.Booking
             var response = await _bookingService.DeleteBookingAsync(id);
             return response;
         }
-
     }
 }

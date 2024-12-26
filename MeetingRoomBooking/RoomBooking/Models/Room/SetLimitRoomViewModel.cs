@@ -40,7 +40,6 @@ namespace RoomBooking.Models.Room
             return model;
         }
 
-
         public async Task<string> EditRoomAsync(SetLimitRoomViewModel model)
         {
             var room = new EditRoomSettingDTO()
