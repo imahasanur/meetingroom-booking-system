@@ -16,16 +16,16 @@ namespace RoomBooking.Models.Room
 
         [DataType(DataType.Text)]
         [Display(Name = "Room Name")]
-        [RegularExpression(@"^[A - B]{1}[1 - 2]{1}", ErrorMessage = "One char from A/B and one char from 1/2")]
-        [Required(ErrorMessage = "Accepted Combination [A1, B1, A2, B2] ..")]
-        public string Name { get; set; }
+        [RegularExpression(@"^[A-B][1-3]$", ErrorMessage = "One char from A/B and one char from 1/2/3")]
+        [Required(ErrorMessage = "Accepted Combination [A1, B1, A2, B2, A3, B3] ..")]
+        public string Name { get; set; }  
 
         [Required]
         [DataType(DataType.Text)]
         [Display(Name = "Room Location")]
         public string Location { get; set; }
 
-        [Range(3, 20, ErrorMessage = "The Room must hold at least 3 and at max 20 people")]
+        [Range(3, 25 ,ErrorMessage = "The Room must hold at least 3 and at max 25 people")]
         [Display(Name = "Room Capacity")]
         public int Capacity { get; set; }
 
@@ -36,6 +36,13 @@ namespace RoomBooking.Models.Room
         public string CreatedBy { get; set; }
         public DateTime CreatedAtUTC { get; set; }
         public DateTime? LastUpdatedAtUTC { get; set; }
+
+        [Range(2, 25, ErrorMessage = "The Room must hold at least 2 and at max 25 people")]
+        public int? MinimumCapacity { get; set; }
+
+        [Range(2, 25, ErrorMessage = "The Room must hold at least 2 and at max 25 people")]
+        public int? MaximumCapacity { get; set; }
+
         public Guid ConcurrencyToken { get; set; }
 
         public IList<GetRoomDTO>? PreviousRooms { get; set; }
@@ -63,6 +70,8 @@ namespace RoomBooking.Models.Room
                 Details = room.Details,
                 CreatedBy = room.CreatedBy,
                 CreatedAtUTC = room.CreatedAtUTC,
+                MaximumCapacity = room.MaximumCapacity,
+                MinimumCapacity = room.MinimumCapacity,
                 LastUpdatedAtUTC = room.LastUpdatedAtUTC,
                 ConcurrencyToken = room.ConcurrencyToken
             };
@@ -91,6 +100,8 @@ namespace RoomBooking.Models.Room
                 CreatedAtUTC = DateTime.UtcNow,
                 CreatedBy = model.CreatedBy,
                 Details = model.Details,
+                MaximumCapacity = model.MaximumCapacity,
+                MinimumCapacity = model.MinimumCapacity,
                 LastUpdatedAtUTC = DateTime.UtcNow,
                 ConcurrencyToken = model.ConcurrencyToken
             };

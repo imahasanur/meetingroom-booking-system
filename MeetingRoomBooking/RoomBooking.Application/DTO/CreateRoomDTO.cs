@@ -14,6 +14,8 @@ namespace RoomBooking.Application.DTO
         public required string Details { get; set; }
         public required string CreatedBy { get; set; }
         public required DateTime CreatedAtUTC { get; set; }
+        public int? MaximumCapacity { get; set; }
+        public int? MinimumCapacity { get; set; }
 
     }
 }

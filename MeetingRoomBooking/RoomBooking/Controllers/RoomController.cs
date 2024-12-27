@@ -113,6 +113,10 @@ namespace RoomBooking.Controllers
                     {
                         TempData["message"] = "Room already exists ";
                     }
+                    else
+                    {
+                        TempData["message"] = response;
+                    }
 
                     return RedirectToAction("Create");
                 }
@@ -170,7 +174,7 @@ namespace RoomBooking.Controllers
         public async Task<IActionResult> Edit(EditRoomViewModel model)
         {
 
-            if (ModelState.IsValid)
+            if(ModelState.IsValid)
             {
                 string response = string.Empty;
 
@@ -189,8 +193,12 @@ namespace RoomBooking.Controllers
                     {
                         TempData["message"] = "Room is already exists";
                     }
+                    else
+                    {
+                        TempData["message"] = response;
+                    }
                     
-                    return View(model);
+                    return RedirectToAction("GetAll");
                 }
                 catch (Exception ex)
                 {
@@ -206,85 +214,6 @@ namespace RoomBooking.Controllers
             return View(model);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> SetLimit()
-        {
-            
-            var model = new SetLimitRoomViewModel();
-
-            try
-            {
-                model.ResolveDI(_provider);
-
-                var user = await _userManager.GetUserAsync(User);
-                var claims = await _userManager.GetClaimsAsync(user);
-
-                var userClaim = string.Empty;
-
-                if(claims.Count > 1)
-                {
-                    userClaim = "admin";
-                }
-                else
-                {
-                    userClaim = claims[0].Value;
-                }
-
-                model = await model.GetAllRoomAsync();
-
-                return View(model);
-            }
-            catch (Exception ex) 
-            { 
-                _logger.LogError($"{ex.Message}", ex);
-                TempData["filure"] = "Found error to fetch rooms. An error occured";
-
-                return View(model);
-            }  
-        }
-
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SetLimit(SetLimitRoomViewModel model)
-        {
-            TempData.Clear();
-            string response = string.Empty;
-
-            try
-            {
-                if(!ModelState.IsValid)
-                {
-                    _logger.LogError("Model State is not valid in EditSettings Post method");
-
-                    return RedirectToAction("SetLimit");
-                }
-
-                model.ResolveDI(_provider);
-                response =await model.EditRoomAsync(model);
-
-                if(response.Equals("success"))
-                {
-                    TempData["success"] = "Room Max and Min Limit is Updated";
-                }
-                else if (response.Equals("not found"))
-                {
-                    TempData["message"] = "Room doesn't exists";
-                }
-                else
-                {
-                    TempData["message"] = response;
-                }
-            }
-            catch (Exception ex) 
-            {
-                _logger.LogError(ex, "Error in Updating a room min and max limit");
-                TempData["failure"] = "Error in Updating the room min and max limit";
-
-            }
-
-            return RedirectToAction("SetLimit");
-        }
 
         [HttpGet]
         public async Task<IActionResult> Delete(Guid id)
@@ -311,7 +240,7 @@ namespace RoomBooking.Controllers
             catch(Exception ex)
             {
                 _logger.LogError(ex, "Delete operation failed ");
-                TempData["failure"] = "Room Deletion failed";
+                TempData["failure"] = $"Room can't be deleted, May have events on this room";
             }
 
             return RedirectToAction("GetAll");

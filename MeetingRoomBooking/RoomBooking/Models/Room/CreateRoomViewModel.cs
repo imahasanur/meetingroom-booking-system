@@ -16,7 +16,7 @@ namespace RoomBooking.Models.Room
 
         [DataType(DataType.Text)]
         [Display(Name = "Room Name")]
-        [RegularExpression(@"^[A - B]{1}[1 - 3]{1}",ErrorMessage ="One char from A/B and one char from 1/2/3")]
+        [RegularExpression(@"^[A-B][1-3]$", ErrorMessage ="One char from A/B and one char from 1/2/3")]
         [Required(ErrorMessage = "Accepted Combination [A1, B1, A2, B2, A3, B3,..] ..")]
         public string Name { get; set; }
 
@@ -25,7 +25,7 @@ namespace RoomBooking.Models.Room
         [Display(Name = "Room Location")]
         public string Location { get; set; }
 
-        [Range(3, 20, ErrorMessage = "The Room must hold at least 3 and at max 20 people")]
+        [Range(5, 25, ErrorMessage = "The Room capacity will at least 5 and at max 25 people")]
         [Display(Name = "Room Capacity")]
         public int Capacity { get; set; }
 
@@ -34,6 +34,12 @@ namespace RoomBooking.Models.Room
         [Display(Name = "Room Details")]
         public string Details { get; set; }
         public string? CreatedBy { get; set; }
+
+        [Range(2, 25, ErrorMessage = "The Room must hold at least 2 and at max 25 people")]
+        public int? MinimumCapacity { get; set; }
+
+        [Range(2, 25, ErrorMessage = "The Room must hold at least 2 and at max 25 people")]
+        public int? MaximumCapacity { get; set; }
 
         public IList<GetRoomDTO>? PreviousRooms { get; set; }
 
@@ -50,8 +56,10 @@ namespace RoomBooking.Models.Room
                 Location = model.Location,
                 Capacity = model.Capacity,
                 CreatedAtUTC = DateTime.UtcNow,
-                CreatedBy = model.CreatedBy,
-                Details = model.Details
+                CreatedBy = model?.CreatedBy,
+                Details = model.Details,
+                MaximumCapacity = model?.MaximumCapacity ?? 0, 
+                MinimumCapacity = model?.MinimumCapacity ?? 0,
             };
             var response = await _roomService.CreateRoomAsync(room);
             return response;

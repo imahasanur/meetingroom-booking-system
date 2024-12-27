@@ -36,20 +36,6 @@
             <form asp-controller="Room" asp-action="Edit" asp-area="" asp-route-returnUrl="Room/Edit" method="post" asp-antiforgery="true">
                 <div class="card-body">
                     <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-@*                     <div class="form-group">
-                        <label>All Available Rooms</label>
-                        <select class="form-control select2 overflow-auto text-center" style="width: 100%;">
-                            <option selected="selected">All Rooms</option>
-                            @if (Model.PreviousRooms is not null)
-                            {
-                                foreach (var room in Model.PreviousRooms)
-                                {
-                                    <option>@room.Location @room.Name</option>
-                                }
-                            }
-                        </select>
-                    </div> *@
-
                     <div class="form-group">
                         <label>Select Available Floors</label>
                         <select class="form-control select2 overflow-auto text-center" style="width: 100%;" asp-for="Location">
@@ -74,17 +60,28 @@
                         <input asp-for="Details" type="text" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Write Room Facility" required>
                         <span asp-validation-for="Details" class="text-danger"></span>
                     </div>
-                </div>
-                <div class="form-group">
-                    <input asp-for="Id" value="@Model.Id" type="hidden">
-                    <input asp-for="CreatedAtUTC" value="@Model.CreatedAtUTC " type="hidden">
-                    <input asp-for="LastUpdatedAtUTC" value="@Model.LastUpdatedAtUTC" type="hidden">
-                    <input asp-for="CreatedBy" value="@Model.CreatedBy" type="hidden">
-                    <input asp-for="PreviousRooms" value="@Model.PreviousRooms" type="hidden">
-                    <input asp-for="ConcurrencyToken" value="@Model.ConcurrencyToken" type="hidden">
-                </div>
-                <div class="card-footer text-center">
-                    <button type="submit" class="btn btn-primary">Edit Room</button>
+                
+                    <div class="form-group">
+                        <label asp-for="MinimumCapacity">Minimum Attendee Capacity</label>
+                        <input asp-for="MinimumCapacity" type="number" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Write Meeting minimum attendee capacity" min="2" max="25">
+                        <span asp-validation-for="MinimumCapacity" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="MaximumCapacity">Maximum Attendee Capacity</label>
+                        <input asp-for="MaximumCapacity" type="number" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Write Meeting maximum attendee capacity" min="2" max="25">
+                        <span asp-validation-for="MaximumCapacity" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input asp-for="Id" value="@Model?.Id" type="hidden">
+                        <input asp-for="CreatedAtUTC" value="@Model?.CreatedAtUTC " type="hidden">
+                        <input asp-for="LastUpdatedAtUTC" value="@Model?.LastUpdatedAtUTC" type="hidden">
+                        <input asp-for="CreatedBy" value="@Model?.CreatedBy" type="hidden">
+                        <input asp-for="PreviousRooms" value="@Model?.PreviousRooms" type="hidden">
+                        <input asp-for="ConcurrencyToken" value="@Model?.ConcurrencyToken" type="hidden">
+                    </div>
+                    <div class="card-footer text-center">
+                        <button type="submit" class="btn btn-primary">Edit Room</button>
+                    </div>
                 </div>
             </form>
         </div>
