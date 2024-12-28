@@ -66,9 +66,9 @@
                                 {
                                     if (meeting.State == "pending")
                                     {
-                                        <form asp-action="Edit" method="post" class="stateForm">
-                                            <input type="hidden" asp-for="@meeting.Id" />
-                                            <select asp-for="@meeting.State" class="form-control" onchange="this.form.submit()">
+                                        <form asp-action="EditBooking" method="post" class="stateForm">
+                                            <input type="hidden" name="Id" value="@meeting.Id" />
+                                            <select name="State" class="form-control" onchange="this.form.submit()">
                                                 <option value="pending" selected>Pending</option>
                                                 <option value="approved">Approved</option>
                                             </select>

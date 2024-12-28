@@ -1,4 +1,5 @@
-﻿using DotNetEnv;
+﻿using Azure;
+using DotNetEnv;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using RoomBooking.Models.Booking;
 using RoomBooking.Models.Room;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics.X86;
 
 namespace RoomBooking.Controllers
 {
@@ -90,32 +92,19 @@ namespace RoomBooking.Controllers
                     return View();
                 }
 
-                var user = await _userManager.GetUserAsync(User);
-                var claims = await _userManager.GetClaimsAsync(user);
-
-                var userClaim = string.Empty;
-                
-                if(claims.Count > 1)
-                {
-                    userClaim = "admin";
-                }
-                else
-                {
-                    userClaim = claims[0].Value;
-                }
-
+                var user = await GetUserClaim();
                 var allUser = _userManager.Users.ToList().Select(x => x.Email).ToList();
 
-                if (user is not null)
+                if (user is not (null,null))
                 {
-                    model.CreatedBy = user.Email;
+                    model.CreatedBy = user.Item1;
                 }
 
                 model.ResolveDI(_provider);
 
                 model.Start = model.Start.AddMinutes(1);
 
-                response = await model.CreateBookingAsync(model, allUser, userClaim);
+                response = await model.CreateBookingAsync(model, allUser, user.Item2);
 
                 if (response.Equals("success"))
                 {
@@ -141,7 +130,6 @@ namespace RoomBooking.Controllers
                 else
                 {
                     TempData["message"] = response;
-
                 }
             }
             catch (Exception ex)
@@ -164,21 +152,10 @@ namespace RoomBooking.Controllers
             try
             {
                 model.ResolveDI(_provider);
-                var user = await _userManager.GetUserAsync(User);
-                var claims = await _userManager.GetClaimsAsync(user);
 
-                var userClaim = string.Empty;
+                var user = await GetUserClaim();
 
-                if(claims.Count > 1)
-                {
-                    userClaim = "admin";
-                }
-                else
-                {
-                    userClaim = claims[0].Value;
-                }
-
-                response = await model.EditBookingAsync(model, user.Email, userClaim);
+                response = await model.EditBookingAsync(model, user.Item1, user.Item2);
 
                 if(response.Equals("success"))
                 {
@@ -213,23 +190,11 @@ namespace RoomBooking.Controllers
 
                 model = await model.GetEventByIdAsync(id);
 
-                var user = await _userManager.GetUserAsync(User);
                 var allUser = _userManager.Users.ToList().Select(x => x.Email).ToList();
 
-                var claims = await _userManager.GetClaimsAsync(user);
+                var user =await GetUserClaim();
 
-                var userClaim = string.Empty;
-
-                if(claims.Count > 1)
-                {
-                    userClaim = "admin";
-                }
-                else
-                {
-                    userClaim = claims[0].Value;
-                }
-
-                model.UserClaim = userClaim;
+                model.UserClaim = user.Item2;
 
                 if(model?.CreatedBy is not null)
                 {
@@ -267,25 +232,20 @@ namespace RoomBooking.Controllers
                 }
 
                 model.ResolveDI(_provider);
-                var user = await _userManager.GetUserAsync(User);
                 var allUser = _userManager.Users.ToList().Select(x => x.Email).ToList();
 
-                var claims = await _userManager.GetClaimsAsync(user);
+                var user = await GetUserClaim();
 
-                var userClaim = string.Empty;
+                var startTime = model.Start;
+                var minutes = startTime.Minute;
+                var even = minutes % 15 == 0 ? true : false;
 
-                if (claims.Count > 1)
+                if (even == true)
                 {
-                    userClaim = "admin";
+                    model.Start = model.Start.AddMinutes(1);
                 }
-                else
-                {
-                    userClaim = claims[0].Value;
-                }
-   
-                model.Start = model.Start.AddMinutes(1);
-
-                response = await model.EditBookingByIdAsync(model, user.Email, allUser, userClaim);
+                
+                response = await model.EditBookingByIdAsync(model, user.Item1, allUser, user.Item2);
 
                 if (response.Equals("success"))
                 {
@@ -310,6 +270,51 @@ namespace RoomBooking.Controllers
             }
 
             return View(model);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> EditBooking(Guid Id, string State)
+        {
+            string response = string.Empty;
+
+            try
+            {
+                var model = new EditBookingViewModel();
+
+                model.ResolveDI(_provider);
+                TempData.Clear();
+
+                model = await model.GetEventByIdAsync(Id);
+
+                var allUser = _userManager.Users.ToList().Select(x => x.Email).ToList();
+
+                var user = await GetUserClaim();
+
+                model.State = State;
+                model.ResolveDI(_provider);
+
+                response = await model.EditBookingByIdAsync(model, user.Item1, allUser, user.Item2);
+
+                if (response.Equals("success"))
+                {
+                    TempData["success"] = "Booking is Updated";
+                }
+                else if (response.Equals("not found"))
+                {
+                    TempData["message"] = "Booking is deleted already, Not found ";
+                }
+                else
+                {
+                    TempData["message"] = response;
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "There is an error while tried to update booking state.");
+            }
+
+            return RedirectToAction("GetAll");
         }
 
 
@@ -351,29 +356,36 @@ namespace RoomBooking.Controllers
                 var model = new GetAllBookingViewModel();
                 model.ResolveDI(_provider);
 
-                var user = await _userManager.GetUserAsync(User);
-                var claims = await _userManager.GetClaimsAsync(user);
+                var user = await GetUserClaim();
 
-                var userClaim = string.Empty;
-
-                if (claims.Count > 1)
-                {
-                    userClaim = "admin";
-                }
-                else
-                {
-                    userClaim = claims[0].Value;
-                }
-
-                var allEvent = await model.GetAllEventAsync(user.UserName, userClaim);
+                var allEvent = await model.GetAllEventAsync(user.Item1, user.Item2);
 
                 return View(allEvent);
             }
             catch (Exception ex)
             {
                 _logger.LogError($"{ex.Message}");
+
                 return View();
             }
+        }
+
+        public async Task<(string,string)> GetUserClaim()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var claims = await _userManager.GetClaimsAsync(user);
+
+            var userClaim = string.Empty;
+
+            if (claims.Count > 1)
+            {
+                userClaim = "admin";
+            }
+            else
+            {
+                userClaim = claims[0].Value;
+            }
+            return (user.Email, userClaim);
         }
     }
 }
