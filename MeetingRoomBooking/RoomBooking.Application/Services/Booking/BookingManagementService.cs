@@ -273,7 +273,16 @@ namespace RoomBooking.Application.Services.Booking
             if(userClaim == "admin")
             {
                 eventEntity.State = "approved";
-                eventEntity.Color = "#00FF00";
+                var slectedRoom = await _unitOfWork.RoomRepository.GetRoomAsync(eventEntity.RoomId, false);
+                if (slectedRoom != null) { 
+                    eventEntity.Color = slectedRoom.Color;
+                }
+                else
+                {
+                    response = "Selected room already deleted not found";
+
+                    return response;
+                }
             }
 
             await _unitOfWork.BookingRepository.CreateBookingAsync(eventEntity);
@@ -506,11 +515,16 @@ namespace RoomBooking.Application.Services.Booking
 
                 if(eventDTO.State == "approved")
                 {
-                    eventEntity.Color = "#00FF00";
+                    var oneRoom = await _unitOfWork.RoomRepository.GetRoomAsync(eventDTO.RoomId,false);
+                    if (oneRoom != null)
+                    { 
+                        eventEntity.Color = oneRoom.Color;
+                    }
+                    
                 }
                 else if(eventDTO.State == "pending")
                 {
-                    eventEntity.Color = "#f1c232";
+                    eventEntity.Color = "#FFA500";
                 }
 
                 var existingGuests = eventEntity.Guests.ToList();
@@ -600,7 +614,16 @@ namespace RoomBooking.Application.Services.Booking
                     return response;
                 }
 
-                
+                // Change color for accepted request.
+                if(eventEntity.State == "approved")
+                {
+                    var selectedRoom = await _unitOfWork.RoomRepository.GetRoomAsync(eventDTO.RoomId, false);
+
+                    if(selectedRoom != null)
+                    {
+                        eventEntity.Color = selectedRoom.Color;
+                    }
+                }
 
                 var guestsToRemove = existingGuests.Where(g => !newGuestUsers.Contains(g.User)).ToList();
                 var guestsToAdd = newGuestUsers.Where(user => !existingGuests.Any(g => g.User == user))

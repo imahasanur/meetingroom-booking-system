@@ -56,6 +56,11 @@
                         <span asp-validation-for="Details" class="text-danger"></span>
                     </div>
                     <div class="form-group">
+                        <label asp-for="Color">Room Color</label>
+                        <input asp-for="Color" type="text" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Write Room Color Hexadecimal format Ex:#FF0000" required>
+                        <span asp-validation-for="Color" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
                         <label asp-for="MinimumCapacity">Minimum Attendee Capacity</label>
                         <input asp-for="MinimumCapacity" type="number" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Write Meeting minimum attendee capacity" min="2" max="25">
                         <span asp-validation-for="MinimumCapacity" class="text-danger"></span>

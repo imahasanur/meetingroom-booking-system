@@ -87,8 +87,10 @@
                     <input asp-for="State" value="@Model.State" type="hidden">
                     <input asp-for="Color" value="@Model.Color" type="hidden">
                     <input asp-for="UserClaim" value="@Model.UserClaim" type="hidden">
+                    <input type="hidden" asp-for="RoomId" value="@Model.RoomId">
                 </div>
                 <div class="card-footer text-center">
+                    
                     <button type="submit" class="btn btn-primary" onclick="validateForm(event)">Edit Booking</button>
                 </div>
             </form>

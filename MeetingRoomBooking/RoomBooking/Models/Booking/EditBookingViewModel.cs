@@ -62,7 +62,8 @@ namespace RoomBooking.Models.Booking
                 Start = model.Start,
                 End = model.End,
                 Host = model.Host,
-                AllGuest = model.Guests
+                AllGuest = model.Guests,
+                RoomId = model.RoomId,
             };
 
             var response = await _bookingService.EditBookingByIdAsync(eventDTO, currentUser, allUser, userClaim);
@@ -93,7 +94,8 @@ namespace RoomBooking.Models.Booking
                 End = eventDTO.End,
                 CreatedBy = eventDTO.CreatedBy,
                 Host = eventDTO.Host,
-                Guests = guests
+                Guests = guests,
+                RoomId = eventDTO.RoomId,
             };
             return editBookingModel;
         }

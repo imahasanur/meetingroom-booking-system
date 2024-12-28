@@ -66,6 +66,7 @@ namespace RoomBooking.Application.Services.Room
                     Id = room.Id,
                     Name = room.Name,
                     Details = room.Details,
+                    Color = room.Color,
                     LastUpdatedAtUTC = room.LastUpdatedAtUTC,
                     CreatedBy = room.CreatedBy,
                     MaximumCapacity = room.MaximumCapacity,
@@ -95,6 +96,7 @@ namespace RoomBooking.Application.Services.Room
                     Id = room.Id,
                     Name = room.Name,
                     Details = room.Details,
+                    Color = room.Color,
                     LastUpdatedAtUTC = room.LastUpdatedAtUTC,
                     CreatedBy = room.CreatedBy,
                     MinimumCapacity = room.MinimumCapacity,
@@ -117,6 +119,7 @@ namespace RoomBooking.Application.Services.Room
                 CreatedBy = roomDTO.CreatedBy,
                 MinimumCapacity = roomDTO.MinimumCapacity,
                 MaximumCapacity = roomDTO.MaximumCapacity,
+                Color = roomDTO.Color,
                 ConcurrencyToken = Guid.NewGuid()
             };
 
@@ -183,6 +186,7 @@ namespace RoomBooking.Application.Services.Room
                         return response;
                     }
 
+                    existingRoom.Color = roomDTO.Color;
                     existingRoom.Location = roomDTO.Location;
                     existingRoom.Capacity = roomDTO.Capacity;
                     existingRoom.Details = roomDTO.Details;

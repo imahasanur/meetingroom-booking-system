@@ -43,6 +43,7 @@
                     <th>Min Limit</th>
                     <th>Max Limit</th>
                     <th>Details</th>
+                    <th>Color</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -60,6 +61,7 @@
                             <td>@room.MinimumCapacity</td>
                             <td>@room.MaximumCapacity</td>
                             <td>@room.Details</td>
+                            <td>@room.Color</td>
                             <td>
                                 @{
                                     if(room.UserClaim == "admin")
@@ -83,6 +85,7 @@
                 {
                     <tr>
                         <td class="text-center">No rooms available.</td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>

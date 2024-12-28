@@ -21,6 +21,7 @@ namespace RoomBooking.Models.Room
         public int? MinimumCapacity { get; set; }
         public int? MaximumCapacity { get; set; }
         public string? UserClaim { get; set; }
+        public string Color { get; set; }
         public DateTime CreatedAtUTC { get; set; }
         public DateTime? LastUpdatedAtUTC { get; set; }
 
@@ -43,6 +44,7 @@ namespace RoomBooking.Models.Room
                     Capacity = room.Capacity,
                     Details = room.Details,
                     CreatedBy = room.CreatedBy,
+                    Color = room.Color,
                     CreatedAtUTC = room.CreatedAtUTC,
                     LastUpdatedAtUTC = room.LastUpdatedAtUTC,
                     MinimumCapacity = room.MinimumCapacity,

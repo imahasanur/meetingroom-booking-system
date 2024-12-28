@@ -14,6 +14,7 @@ namespace RoomBooking.Application.DTO
         public required int Capacity { get; set; }
         public required string Details { get; set; }
         public required string CreatedBy { get; set; }
+        public required string Color { get; set; }
         public int? MaximumCapacity { get; set; }
         public int? MinimumCapacity { get; set; }
         public Guid ConcurrencyToken { get; set; }

@@ -33,6 +33,10 @@ namespace RoomBooking.Models.Room
         [DataType(DataType.Text)]
         [Display(Name = "Room Details")]
         public string Details { get; set; }
+
+        [Required]
+        [DataType(DataType.Text)]
+        public string Color { get; set; }   
         public string CreatedBy { get; set; }
         public DateTime CreatedAtUTC { get; set; }
         public DateTime? LastUpdatedAtUTC { get; set; }
@@ -69,6 +73,7 @@ namespace RoomBooking.Models.Room
                 Capacity = room.Capacity,
                 Details = room.Details,
                 CreatedBy = room.CreatedBy,
+                Color = room.Color,
                 CreatedAtUTC = room.CreatedAtUTC,
                 MaximumCapacity = room.MaximumCapacity,
                 MinimumCapacity = room.MinimumCapacity,
@@ -100,6 +105,7 @@ namespace RoomBooking.Models.Room
                 CreatedAtUTC = DateTime.UtcNow,
                 CreatedBy = model.CreatedBy,
                 Details = model.Details,
+                Color = model.Color,
                 MaximumCapacity = model.MaximumCapacity,
                 MinimumCapacity = model.MinimumCapacity,
                 LastUpdatedAtUTC = DateTime.UtcNow,
