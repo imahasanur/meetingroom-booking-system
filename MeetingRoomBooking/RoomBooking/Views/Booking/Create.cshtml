@@ -3,7 +3,9 @@
 @{
     ViewData["Title"] = "Create Booking";
 }
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/repeater.js/1.2.1/repeater.min.css">
+
 <style>
     .scheduler_default_main_demo {
         display: none !important;
@@ -35,10 +37,12 @@
 <div class ="container">
 
     @{
-        if(Model?.Count == 0)
+        if (Model?.Count == 0) // Check if no rooms are available
         {
-            <h2 class="alert-danger">Room Not found</h2>
-            <h3 class="alert-default-warning">Create a Room For further operation </h3>
+            <div class="notFoundMessage">
+                <h2 class="alert-danger">Room Not Found</h2>
+                <h3 class="alert-default-warning">Create a Room For Further Operation</h3>
+            </div>
         }
     }
     
@@ -283,7 +287,19 @@
             async loadResources() {
 
                 const { data: rooms } = await DayPilot.Http.get(`/Booking/GetAllRoom`);
+
                 console.log("Rooms :", rooms);
+
+                if (rooms.length === 0) 
+                {
+
+                    $(".notFoundMessage").show();
+                } 
+                else
+                {
+                    $(".notFoundMessage").hide();
+                }
+
                 const columns = rooms.map(room => ({ id: room.id, name: room.name }));
                 console.log("Columns : ", columns);
                 calendar.columns = columns;

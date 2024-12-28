@@ -124,7 +124,6 @@ namespace RoomBooking.Application.Services.Booking
             }
 
             // Check meeting creator in booking guests list or in host.
-
             if (isValid == true && userClaim == "user")
             {
                 var hasFound = guests.Contains(bookingMaker);
@@ -143,7 +142,6 @@ namespace RoomBooking.Application.Services.Booking
                 else
                 {
                     isValid = true;
-
                 }
             }
             else if (isValid == true && userClaim == "admin") 
@@ -226,18 +224,18 @@ namespace RoomBooking.Application.Services.Booking
                 return response;
             }
 
-            // Check pending request for request maker.
+            //// Check pending request for request maker.
             
-            var bookings = await _unitOfWork.BookingRepository.GetBookingByMakerAsync(eventEntity.CreatedBy);
-            if(bookings != null && bookings.Count > 0 && userClaim != "admin")
-            {
-                response = "Can't do multiple pending meeting booking request";
+            //var bookings = await _unitOfWork.BookingRepository.GetBookingByMakerAsync(eventEntity.CreatedBy);
+            //if(bookings != null && bookings.Count > 0 && userClaim != "admin")
+            //{
+            //    response = "Can't do multiple pending meeting booking request";
 
-                return response;
-            }
+            //    return response;
+            //}
 
             // Check user for same room , same day overlapping meeting.
-            bookings = await _unitOfWork.BookingRepository.CheckBookingOverlapping(eventEntity.Start, eventEntity.End, eventEntity.RoomId);
+            var bookings = await _unitOfWork.BookingRepository.CheckBookingOverlapping(eventEntity.Start, eventEntity.End, eventEntity.RoomId);
             if(bookings != null && bookings.Count > 0)
             {
                 response = "Found same room , same day overlapping meeting.";

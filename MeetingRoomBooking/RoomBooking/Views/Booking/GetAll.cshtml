@@ -61,7 +61,29 @@
                             <td>@meeting.Host</td>
                             <td>@meeting.CreatedBy</td>
                             <td>@meeting.Room.Location @meeting.Room.Name</td>
-                            <td>@meeting.State</td>
+                            <td>
+                                @if (meeting.UserClaim == "admin")
+                                {
+                                    if (meeting.State == "pending")
+                                    {
+                                        <form asp-action="Edit" method="post" class="stateForm">
+                                            <input type="hidden" asp-for="@meeting.Id" />
+                                            <select asp-for="@meeting.State" class="form-control" onchange="this.form.submit()">
+                                                <option value="pending" selected>Pending</option>
+                                                <option value="approved">Approved</option>
+                                            </select>
+                                        </form>
+                                    }
+                                    else if (meeting.State == "approved")
+                                    {
+                                        <span class="badge badge-success">Approved</span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="badge badge-info">@meeting.State</span>
+                                }
+                            </td>
                             <td>
                                 @{
                                     if(meeting.UserClaim == "user")
