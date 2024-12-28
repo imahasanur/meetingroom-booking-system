@@ -31,33 +31,45 @@ namespace RoomBooking.Infrastructure.Repositories
 
         public async Task<IList<Event>> CheckBookingOverlapping(DateTime start, DateTime end, Guid roomId)
         {
-            Expression<Func<Event, bool>> expression = x => x.RoomId == roomId && ((start >= x.Start && end >= x.End && start <= x.End) || (start <= x.Start && end >= x.End) || (start <= x.Start && end <= x.End) || (start >= x.Start && end <= x.End));
+            Expression<Func<Event, bool>> expression = x => x.RoomId == roomId && ((start >= x.Start && end >= x.End && start <= x.End) || (start <= x.Start && end >= x.End) || (start <= x.Start && end <= x.End && end >= x.Start) || (start >= x.Start && end <= x.End));
             return await GetAsync(expression, null, null, true);
 
         }
 
         public async Task<IList<Event>> CheckAnyRoomBookingOverlappingByUser(DateTime start, DateTime end, string createdBy)
         {
-            Expression<Func<Event, bool>> expression = x => x.CreatedBy.Trim().Equals(createdBy.Trim()) && ((start >= x.Start && end >= x.End && start <= x.End) || (start <= x.Start && end >= x.End) || (start <= x.Start && end <= x.End) || (start >= x.Start && end <= x.End));
+            Expression<Func<Event, bool>> expression = x => x.CreatedBy.Trim().Equals(createdBy.Trim()) && ((start >= x.Start && end >= x.End && start <= x.End) || (start <= x.Start && end >= x.End) || (start <= x.Start && end <= x.End && end >= x.Start) || (start >= x.Start && end <= x.End));
+            return await GetAsync(expression, null, null, true);
+
+        }
+
+        public async Task<IList<Event>> CheckAnyRoomBookingOverlappingByHost(DateTime start, DateTime end, string host)
+        {
+            Expression<Func<Event, bool>> expression = x => x.Host.Trim().Equals(host.Trim()) && ((start >= x.Start && end >= x.End && start <= x.End) || (start <= x.Start && end >= x.End) || (start <= x.Start && end <= x.End && end >= x.Start) || (start >= x.Start && end <= x.End));
             return await GetAsync(expression, null, null, true);
 
         }
 
         public async Task<IList<Event>> CheckEditBookingOverlapping(DateTime start, DateTime end, Guid roomId, Guid eventId)
         {
-            Expression<Func<Event, bool>> expression = x => (x.RoomId == roomId && x.Id != eventId) && ((start >= x.Start && end >= x.End && start <= x.End) || (start <= x.Start && end >= x.End) || (start <= x.Start && end <= x.End) || (start >= x.Start && end <= x.End));
+            Expression<Func<Event, bool>> expression = x => (x.RoomId == roomId && x.Id != eventId) && ((start >= x.Start && end >= x.End && start <= x.End) || (start <= x.Start && end >= x.End) || (start <= x.Start && end <= x.End && end >= x.Start) || (start >= x.Start && end <= x.End));
             return await GetAsync(expression, null, null, true);
 
         }
 
         public async Task<IList<Event>> CheckEditAnyRoomBookingOverlappingByUser(DateTime start, DateTime end, string createdBy, Guid eventId)
         {
-            Expression<Func<Event, bool>> expression = x => (x.CreatedBy.Trim().Equals(createdBy.Trim()) && x.Id != eventId) && ((start >= x.Start && end >= x.End && start <= x.End) || (start <= x.Start && end >= x.End) || (start <= x.Start && end <= x.End) || (start >= x.Start && end <= x.End));
+            Expression<Func<Event, bool>> expression = x => (x.CreatedBy.Trim().Equals(createdBy.Trim()) && x.Id != eventId) && ((start >= x.Start && end >= x.End && start <= x.End) || (start <= x.Start && end >= x.End) || (start <= x.Start && end <= x.End && end >= x.Start) || (start >= x.Start && end <= x.End));
             return await GetAsync(expression, null, null, true);
 
         }
 
+        public async Task<IList<Event>> CheckEditAnyRoomBookingOverlappingByHost(DateTime start, DateTime end, string host, Guid eventId)
+        {
+            Expression<Func<Event, bool>> expression = x => (x.Host.Trim().Equals(host.Trim()) && x.Id != eventId) && ((start >= x.Start && end >= x.End && start <= x.End) || (start <= x.Start && end >= x.End) || (start <= x.Start && end <= x.End && end >= x.Start) || (start >= x.Start && end <= x.End));
+            return await GetAsync(expression, null, null, true);
 
+        }
 
         public async Task<Event> GetEventAsync(Guid id)
         {
@@ -94,7 +106,7 @@ namespace RoomBooking.Infrastructure.Repositories
 
             if (user is not null)
             {
-                expression = x => (start.Date <= x.Start.Date && end.Date >= x.End.Date) && (x.Host == user || x.Guests.Any(x => x.User == user) || x.CreatedBy == user);
+                expression = x => (start.Date <= x.Start.Date && end.Date >= x.End.Date) && (x.Host == user || x.CreatedBy == user);
 
                 return await GetAsync(expression, include);
             }
@@ -105,6 +117,21 @@ namespace RoomBooking.Infrastructure.Repositories
                 return await GetAsync(expression, null);
             }
 
+        }
+
+        public async Task<IList<Event>> GetAllGuestEventAsync(DateTime start, DateTime end, string? user, string? userClaim)
+        {
+            Expression<Func<Event, bool>> expression = null;
+            Func<IQueryable<Event>, IIncludableQueryable<Event, object>> include = q => q.Include(e => e.Room).Include(e => e.Guests);
+
+            if (user is not null)
+            {
+                expression = x => (start.Date <= x.Start.Date && end.Date >= x.End.Date) && (x.Guests.Any(x => x.User == user));
+
+                return await GetAsync(expression, include);
+            }
+
+            return null;
         }
 
         public async Task CreateBookingAsync(Event eventEntity)

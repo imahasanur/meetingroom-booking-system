@@ -46,6 +46,16 @@ namespace RoomBooking.Models.Booking
             var getAllBooking = allEvents.Select(x => new GetAllBookingViewModel {Id = x.Id, Name = x.Name, Start = x.Start, End = x.End, Color = x.Color, CreatedBy = x.CreatedBy, State = x.State, Host = x.Host, Guests = x.Guests, RoomId = x.RoomId, Room = x.Room, UserClaim = userClaim }).ToList();
             return getAllBooking;
         }
+
+        public async Task<IList<GetAllBookingViewModel>> GetAllGuestEventAsync(string user, string userClaim)
+        {
+            DateTime start = DateTime.Now;
+            DateTime end = DateTime.Now.AddYears(1);
+
+            var allEvents = await _bookingService.GetAllGuestEventAsync(start, end, user, userClaim);
+            var getAllBooking = allEvents.Select(x => new GetAllBookingViewModel { Id = x.Id, Name = x.Name, Start = x.Start, End = x.End, Color = x.Color, CreatedBy = x.CreatedBy, State = x.State, Host = x.Host, Guests = x.Guests, RoomId = x.RoomId, Room = x.Room, UserClaim = userClaim }).ToList();
+            return getAllBooking;
+        }
     }
 
     public class ScheduleEvent

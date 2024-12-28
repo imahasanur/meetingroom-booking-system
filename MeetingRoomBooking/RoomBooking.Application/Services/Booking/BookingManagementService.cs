@@ -30,20 +30,20 @@ namespace RoomBooking.Application.Services.Booking
             bool isValid = true;
             string response = string.Empty;
             
-            if(maximumCapacity == null && minimumCapacity == null && (members > capacity))
+            if(maximumCapacity == 0 && minimumCapacity == 0 && (members > capacity))
             {
                 isValid = false;
             }
-            else if(maximumCapacity != null && minimumCapacity == null && (!(members  <= maximumCapacity && members <= capacity)))
+            else if(maximumCapacity != 0 && minimumCapacity == 0 && (!(members  <= maximumCapacity && members <= capacity)))
             {
                 isValid = false;
                 
             }
-            else if(maximumCapacity == null && minimumCapacity != null && (members < minimumCapacity && members <= capacity))
+            else if(maximumCapacity == 0 && minimumCapacity != 0 && (members < minimumCapacity && members <= capacity))
             {
                 isValid = false;
             }
-            else if(members < minimumCapacity || (members > maximumCapacity ) || members > capacity)
+            else if(maximumCapacity != 0 && minimumCapacity != 0 && (members < minimumCapacity || (members > maximumCapacity ) || members > capacity))
             {
                 isValid = false;
             }
@@ -252,6 +252,15 @@ namespace RoomBooking.Application.Services.Booking
                 return response;
             }
 
+            // Check Host user for different room , same day overlapping meeting.
+            bookings = await _unitOfWork.BookingRepository.CheckAnyRoomBookingOverlappingByHost(eventEntity.Start, eventEntity.End, eventEntity.Host);
+            if (bookings != null && bookings.Count > 0)
+            {
+                response = "Found different room , same day overlapping meeting by a host.";
+
+                return response;
+            }
+
             // Check event start time is backward or not.
             var isBackward = eventEntity.Start > DateTime.Now ? true: false;
             if(isBackward == false)
@@ -278,6 +287,34 @@ namespace RoomBooking.Application.Services.Booking
         public async Task<IList<GetEventDTO>> GetAllEventAsync(DateTime start, DateTime end, string? user, string? userClaim)
         {
             var allEvent = await _unitOfWork.BookingRepository.GetAllEventAsync(start, end, user, userClaim);
+            var eventsDTO = new List<GetEventDTO>();
+
+            for (int i = 0; i < allEvent.Count; i++)
+            {
+                var scheduleEvent = allEvent[i];
+                var eventDTO = new GetEventDTO()
+                {
+                    Id = scheduleEvent.Id,
+                    Name = scheduleEvent.Name,
+                    Color = scheduleEvent.Color,
+                    State = scheduleEvent.State,
+                    Start = scheduleEvent.Start,
+                    End = scheduleEvent.End,
+                    RoomId = scheduleEvent.RoomId,
+                    CreatedBy = scheduleEvent.CreatedBy,
+                    Host = scheduleEvent.Host,
+                    Guests = scheduleEvent.Guests,
+                    Room = scheduleEvent.Room,
+                };
+                eventsDTO.Add(eventDTO);
+            }
+            return eventsDTO;
+
+        }
+
+        public async Task<IList<GetEventDTO>> GetAllGuestEventAsync(DateTime start, DateTime end, string? user, string? userClaim)
+        {
+            var allEvent = await _unitOfWork.BookingRepository.GetAllGuestEventAsync(start, end, user, userClaim);
             var eventsDTO = new List<GetEventDTO>();
 
             for (int i = 0; i < allEvent.Count; i++)
@@ -396,6 +433,15 @@ namespace RoomBooking.Application.Services.Booking
                     if (bookings != null && bookings.Count > 0)
                     {
                         response = "Found different room , same day overlapping meeting by a booking creator.";
+
+                        return response;
+                    }
+
+                    // Check Host for different room , same day overlapping meeting.
+                    bookings = await _unitOfWork.BookingRepository.CheckEditAnyRoomBookingOverlappingByHost(existingEvent.Start, existingEvent.End, existingEvent.Host, existingEvent.Id);
+                    if (bookings != null && bookings.Count > 0)
+                    {
+                        response = "Found different room , same day overlapping meeting by a host.";
 
                         return response;
                     }
@@ -532,6 +578,15 @@ namespace RoomBooking.Application.Services.Booking
                 if (bookings != null && bookings.Count > 0)
                 {
                     response = "Found different room , same day overlapping meeting by a booking creator.";
+
+                    return response;
+                }
+
+                // Check host for different room , same day overlapping meeting.
+                bookings = await _unitOfWork.BookingRepository.CheckEditAnyRoomBookingOverlappingByHost(eventEntity.Start, eventEntity.End, eventEntity.Host, eventEntity.Id);
+                if (bookings != null && bookings.Count > 0)
+                {
+                    response = "Found different room , same day overlapping meeting by a host.";
 
                     return response;
                 }

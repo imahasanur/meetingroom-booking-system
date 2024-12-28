@@ -1,5 +1,6 @@
 ﻿@using RoomBooking.Models.Booking;
 @model List<RoomBooking.Models.Booking.GetAllBookingViewModel>
+@using System.Security.Claims;
 @{
     ViewData["Title"] = "Create Booking";
 }
@@ -35,15 +36,29 @@
 </style>
 
 <div class ="container">
+    
+    @{
+        string userClaim = string.Empty;
+        var roleClaims = User.Claims.Where(c => c.Type == "role").Select(c => c.Value).ToList();
+
+        if (roleClaims.Count > 1)
+        {
+            userClaim = "admin";
+        }
+        else
+        {
+            userClaim = "user";
+        }
+    }
+
 
     @{
-        if (Model?.Count == 0) // Check if no rooms are available
-        {
-            <div class="notFoundMessage">
-                <h2 class="alert-danger">Room Not Found</h2>
-                <h3 class="alert-default-warning">Create a Room For Further Operation</h3>
-            </div>
-        }
+
+        <div class="notFoundMessage">
+            <h2 class="alert-danger">Room Not Found</h2>
+            <h3 class="alert-default-warning">Create a Room For Further Operation</h3>
+        </div>
+        
     }
     
     @if(TempData["success"] != null)
@@ -162,18 +177,6 @@
             viewType: "Resources",
             durationBarVisible: true,
             cellDuration: 15,
-            // contextMenu: new DayPilot.Menu({
-            //     items: [
-            //         // {
-            //         //     text: "Delete",
-            //         //     onClick: async (args) => {
-            //         //         const e = args.source;
-            //         //         const { data } = await DayPilot.Http.delete(`/Booking/Delete/${e.id()}`);
-            //         //         calendar.events.remove(e.id());
-            //         //     }
-            //         // }
-            //     ]
-            // }),
             onTimeRangeSelected: async (args) => {
 
                 const form = [
@@ -193,6 +196,21 @@
                         name: "Guests Email " , id: "Guests", onValidate: validateEmailRequired, type: "text"
                     },
                 ];
+
+                const formTwo = [
+                    {
+                        name: "Event Name", id: "Name", onValidate: validateTextRequired, type: "text"
+                    },
+                    {
+                        name: "Start Date & Time", id: "Start", type: "dateFormat", disabled: true
+                    },
+                    {
+                        name: "End Date & Time", id: "End", type: "dateFormat", disabled: true
+                    },
+                    {
+                        name: "Guests Email ", id: "Guests", onValidate: validateEmailRequired, type: "text"
+                    },
+                ];
                 
 
                 const data = {
@@ -203,15 +221,24 @@
                     RoomId: args.resource,
                     Host: "enter host email",
                     CreatedAtUTC: new DayPilot.Date(),
-                    CreatedBy: "user@gamil.com",
+                    CreatedBy: "admin@gmail.com",
                     State: "pending",
                     Guests: "Enter email in a comma seperated way [Ex: ab@gmail.com, bd@yahoo.com, dc@gmail.c]"
 
                 };
 
+                var requiredForm;
 
-                const modal = await DayPilot.Modal.form(form, data);
+                if ("@userClaim" == "user") {
+                    requiredForm = formTwo;
+                }
+                else {
+                    requiredForm = form;
+                }
+
+                const modal = await DayPilot.Modal.form(requiredForm, data);
                 calendar.clearSelection();
+
                 if (modal.canceled) {
                     return;
                 }
@@ -222,8 +249,7 @@
                     calendar.events.add(event);
                 }
                 window.location.href = "/booking/create";
-                // await DayPilot.Http.get("/Booking/Create");
-
+              
             },
             onEventMove: async (args) => {
                 const params = {
@@ -329,5 +355,12 @@
             }
         };
         app.init();
+    </script>
+
+    <script>
+        $(document).ready(function () {
+           
+            
+        });
     </script>
 }

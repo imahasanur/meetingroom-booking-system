@@ -97,6 +97,11 @@ namespace RoomBooking.Controllers
 
                 if (user is not (null,null))
                 {
+                    if(user.Item2 == "user")
+                    {
+                        model.Host = user.Item1;
+                    }
+
                     model.CreatedBy = user.Item1;
                 }
 
@@ -139,8 +144,6 @@ namespace RoomBooking.Controllers
 
             return Ok();
         }
-
-
 
 
         [HttpPut]
@@ -359,6 +362,28 @@ namespace RoomBooking.Controllers
                 var user = await GetUserClaim();
 
                 var allEvent = await model.GetAllEventAsync(user.Item1, user.Item2);
+
+                return View(allEvent);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex.Message}");
+
+                return View();
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetGuestMeetings()
+        {
+            try
+            {
+                var model = new GetAllBookingViewModel();
+                model.ResolveDI(_provider);
+
+                var user = await GetUserClaim();
+
+                var allEvent = await model.GetAllGuestEventAsync(user.Item1, user.Item2);
 
                 return View(allEvent);
             }
