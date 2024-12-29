@@ -39,6 +39,9 @@ namespace RoomBooking.Models.Room
         public string Color { get; set; }   
         public string CreatedBy { get; set; }
         public DateTime CreatedAtUTC { get; set; }
+        [Required]
+        [DataType(DataType.Text)]
+        public string FontColor { get; set; }
         public DateTime? LastUpdatedAtUTC { get; set; }
 
         [Range(2, 25, ErrorMessage = "The Room must hold at least 2 and at max 25 people")]
@@ -74,6 +77,7 @@ namespace RoomBooking.Models.Room
                 Details = room.Details,
                 CreatedBy = room.CreatedBy,
                 Color = room.Color,
+                FontColor = room.FontColor,
                 CreatedAtUTC = room.CreatedAtUTC,
                 MaximumCapacity = room.MaximumCapacity,
                 MinimumCapacity = room.MinimumCapacity,
@@ -106,6 +110,7 @@ namespace RoomBooking.Models.Room
                 CreatedBy = model.CreatedBy,
                 Details = model.Details,
                 Color = model.Color,
+                FontColor = model.FontColor,
                 MaximumCapacity = model.MaximumCapacity,
                 MinimumCapacity = model.MinimumCapacity,
                 LastUpdatedAtUTC = DateTime.UtcNow,

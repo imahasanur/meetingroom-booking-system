@@ -15,6 +15,7 @@ namespace RoomBooking.Models.Booking
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Color { get; set; }
+        public string FontColor { get; set; }
         public string State { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
@@ -33,7 +34,7 @@ namespace RoomBooking.Models.Booking
         public async Task<List<RoomColumn>> GetAllRoomAsync()
         {
             var rooms = await _roomService.GetAllRoomAsync();
-            var roomColumns = rooms.Select(x => new RoomColumn{ Name = $"{x.Location} {x.Name}", Id = x.Id }).ToList();
+            var roomColumns = rooms.Select(x => new RoomColumn{ Name = $"{x.Location} {x.Name} ({x.Capacity}[{x.MinimumCapacity},{x.MinimumCapacity}])", Id = x.Id, Color = x.Color }).ToList();
 
             return roomColumns;
         }
@@ -64,6 +65,7 @@ namespace RoomBooking.Models.Booking
                 CreatedBy = model.CreatedBy,
                 Host = model.Host,
                 Color = model.Color,
+                FontColor = model.FontColor,
                 CreatedAtUTC = model.CreatedAtUTC,
                 State = model.State,
                 RoomId = model.RoomId,
@@ -80,5 +82,6 @@ namespace RoomBooking.Models.Booking
     {
         public string Name { get; set; }
         public Guid Id { get; set; }
+        public string Color { get; set; }
     }
 }

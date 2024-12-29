@@ -22,20 +22,25 @@
         color: white;
     }
 
+    .calendar_default_rowheader {
+        font-weight: bold;
+    }
+/* 
     .wrap {
         display: flex;
     }
 
     .left {
-        margin-right: 10px;
+        margin-right: 20%;
+        margin
     }
 
     .right {
-        flex-grow: 1;
-    }
+        flex-grow: 5;
+    } */
 </style>
 
-<div class ="container">
+<div>
     
     @{
         string userClaim = string.Empty;
@@ -79,14 +84,31 @@
         </div>
     }
 
-    <div class="wrap">
-        <div class="left">
+@*     <div class="wrap row">
+        <div class="left col-md-2 col-sm-3 p-2 m-2">
             <div id="nav"></div>
         </div>
-        <div class="right">
+        <div class="right col-md-8 col-sm-8">
+            <div id="dp"></div>
+        </div>
+    </div> *@
+    <div class="wrap row">
+
+        <div class="nav-icon col-1 text-center p-1">
+            <button id="toggleNav" class="btn btn-primary">
+                <i class="far fa-calendar-check"></i>
+            </button>
+        </div>
+
+        <div id="navSection" class="left col-2 d-none">
+            <div id="nav"></div>
+        </div>
+
+        <div id="calendarSection" class="right col-11 p-3">
             <div id="dp"></div>
         </div>
     </div>
+
 </div>
 
 @section Scripts{
@@ -98,6 +120,22 @@
             $('#successMessage').on('click', function () {
                 $(this).hide();
             });
+
+            const navSection = $("#navSection");
+            const calendarSection = $("#calendarSection");
+
+            $("#toggleNav").on("mouseenter", function () {
+                if (navSection.hasClass("d-none")) {
+                   
+                    navSection.removeClass("d-none").addClass("col-2");
+                    calendarSection.removeClass("col-11").addClass("col-9");
+                } else {
+                    
+                    navSection.addClass("d-none").removeClass("col-2");
+                    calendarSection.removeClass("col-9").addClass("col-11");
+                }
+            });
+
         });
     </script>
 
@@ -223,6 +261,7 @@
                     CreatedAtUTC: new DayPilot.Date(),
                     CreatedBy: "admin@gmail.com",
                     State: "pending",
+                    FontColor: "#ffffff",
                     Guests: "Enter email in a comma seperated way [Ex: ab@gmail.com, bd@yahoo.com, dc@gmail.c]"
 
                 };
@@ -326,7 +365,7 @@
                     $(".notFoundMessage").hide();
                 }
 
-                const columns = rooms.map(room => ({ id: room.id, name: room.name }));
+                const columns = rooms.map(room => ({ id: room.id, name: room.name, backColor: room.color}));
                 console.log("Columns : ", columns);
                 calendar.columns = columns;
                 calendar.update();

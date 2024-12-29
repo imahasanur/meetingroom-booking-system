@@ -18,6 +18,7 @@ namespace RoomBooking.Models.Room
         public int Capacity { get; set; }
         public string Details { get; set; }
         public string CreatedBy { get; set; }
+        public string FontColor { get; set; }
         public DateTime CreatedAtUTC { get; set; }
         public DateTime? LastUpdatedAtUTC { get; set; }
 
@@ -25,30 +26,6 @@ namespace RoomBooking.Models.Room
         {
             _roomService = provider.GetService<IRoomManagementService>();
         }
-
-        //public async Task<DeleteRoomViewModel> GetRoomAsync(Guid id)
-        //{
-        //    var room = await _roomService.GetRoomAsync(id);
-
-        //    if (room is null || room?.CreatedBy is null)
-        //    {
-        //        var roomViewModel = new DeleteRoomViewModel();
-        //        return roomViewModel;
-        //    }
-        //    var viewModel = new DeleteRoomViewModel
-        //    {
-        //        Id = room.Id,
-        //        Name = room.Name,
-        //        Location = room.Location,
-        //        Capacity = room.Capacity,
-        //        Details = room.Details,
-        //        CreatedBy = room.CreatedBy,
-        //        CreatedAtUTC = room.CreatedAtUTC,
-        //        LastUpdatedAtUTC = room.LastUpdatedAtUTC
-        //    };
-
-        //    return viewModel;
-        //}
 
         public async Task<string> DeleteRoomAsync(Guid id)
         {

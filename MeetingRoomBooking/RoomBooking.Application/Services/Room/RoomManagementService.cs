@@ -69,6 +69,7 @@ namespace RoomBooking.Application.Services.Room
                     Color = room.Color,
                     LastUpdatedAtUTC = room.LastUpdatedAtUTC,
                     CreatedBy = room.CreatedBy,
+                    FontColor = room.FontColor,
                     MaximumCapacity = room.MaximumCapacity,
                     MinimumCapacity = room.MinimumCapacity,
                     ConcurrencyToken = room.ConcurrencyToken
@@ -99,6 +100,7 @@ namespace RoomBooking.Application.Services.Room
                     Color = room.Color,
                     LastUpdatedAtUTC = room.LastUpdatedAtUTC,
                     CreatedBy = room.CreatedBy,
+                    FontColor= room.FontColor,
                     MinimumCapacity = room.MinimumCapacity,
                     MaximumCapacity = room.MaximumCapacity,
                 };
@@ -117,6 +119,7 @@ namespace RoomBooking.Application.Services.Room
                 Capacity = roomDTO.Capacity,
                 CreatedAtUTC = roomDTO.CreatedAtUTC,
                 CreatedBy = roomDTO.CreatedBy,
+                FontColor = roomDTO.FontColor,
                 MinimumCapacity = roomDTO.MinimumCapacity,
                 MaximumCapacity = roomDTO.MaximumCapacity,
                 Color = roomDTO.Color,
@@ -191,6 +194,7 @@ namespace RoomBooking.Application.Services.Room
                     existingRoom.Capacity = roomDTO.Capacity;
                     existingRoom.Details = roomDTO.Details;
                     existingRoom.LastUpdatedAtUTC = DateTime.UtcNow;
+                    existingRoom.FontColor = roomDTO.FontColor;
                     existingRoom.Name = roomDTO.Name;
                     existingRoom.MaximumCapacity = roomDTO.MaximumCapacity;
                     existingRoom.MinimumCapacity = roomDTO.MinimumCapacity;

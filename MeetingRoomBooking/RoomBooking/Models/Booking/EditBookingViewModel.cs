@@ -16,6 +16,8 @@ namespace RoomBooking.Models.Booking
         [Required]
         public string Color { get; set; }
         [Required]
+        public string FontColor { get; set; }
+        [Required]
         public string State { get; set; }
         [Required]
         public DateTime Start { get; set; }
@@ -64,6 +66,7 @@ namespace RoomBooking.Models.Booking
                 Host = model.Host,
                 AllGuest = model.Guests,
                 RoomId = model.RoomId,
+                FontColor = model.FontColor,
             };
 
             var response = await _bookingService.EditBookingByIdAsync(eventDTO, currentUser, allUser, userClaim);
@@ -96,6 +99,7 @@ namespace RoomBooking.Models.Booking
                 Host = eventDTO.Host,
                 Guests = guests,
                 RoomId = eventDTO.RoomId,
+                FontColor = eventDTO.FontColor,
             };
             return editBookingModel;
         }

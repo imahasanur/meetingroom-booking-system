@@ -13,6 +13,7 @@ namespace RoomBooking.Models.Booking
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Color { get; set; }
+        public string FontColor { get; set; }
         public string State { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
@@ -32,7 +33,7 @@ namespace RoomBooking.Models.Booking
         public async Task<IList<ScheduleEvent>> GetAllEventAsync(DateTime start, DateTime end)
         {
             var allEvents = await _bookingService.GetAllEventAsync(start, end,null, null);
-            var events = allEvents.Select(x => new ScheduleEvent { Id = x.Id, Start = x.Start, End = x.End, Resource = x.RoomId, Text = x.Name , Color = x.Color }).ToList();
+            var events = allEvents.Select(x => new ScheduleEvent { Id = x.Id, Start = x.Start, End = x.End, Resource = x.RoomId, Text = x.Name , Color = x.Color, FontColor= x.FontColor }).ToList();
 
             return events;
         }
@@ -43,7 +44,7 @@ namespace RoomBooking.Models.Booking
             DateTime end = DateTime.Now.AddYears(1);
 
             var allEvents = await _bookingService.GetAllEventAsync(start, end, user, userClaim);
-            var getAllBooking = allEvents.Select(x => new GetAllBookingViewModel {Id = x.Id, Name = x.Name, Start = x.Start, End = x.End, Color = x.Color, CreatedBy = x.CreatedBy, State = x.State, Host = x.Host, Guests = x.Guests, RoomId = x.RoomId, Room = x.Room, UserClaim = userClaim }).ToList();
+            var getAllBooking = allEvents.Select(x => new GetAllBookingViewModel {Id = x.Id, Name = x.Name, Start = x.Start, End = x.End, Color = x.Color, CreatedBy = x.CreatedBy, State = x.State, Host = x.Host, Guests = x.Guests, RoomId = x.RoomId, Room = x.Room, UserClaim = userClaim, FontColor = x.FontColor }).ToList();
             return getAllBooking;
         }
 
@@ -66,6 +67,7 @@ namespace RoomBooking.Models.Booking
         public DateTime End { get; set; }
         public Guid Resource { get; set; }
         public string Color { get; set; }
+        public string FontColor { get; set; }
         
     }
 }

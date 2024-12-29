@@ -38,6 +38,10 @@ namespace RoomBooking.Models.Room
         [DataType(DataType.Text)]
         public string Color { get; set; }
 
+        [Required]
+        [DataType(DataType.Text)]
+        public string FontColor { get; set; }
+
         public string? CreatedBy { get; set; }
 
         [Range(2, 25, ErrorMessage = "The Room must hold at least 2 and at max 25 people")]
@@ -66,6 +70,7 @@ namespace RoomBooking.Models.Room
                 Color = model.Color,
                 MaximumCapacity = model?.MaximumCapacity ?? 0, 
                 MinimumCapacity = model?.MinimumCapacity ?? 0,
+                FontColor = model.FontColor,
             };
             var response = await _roomService.CreateRoomAsync(room);
             return response;

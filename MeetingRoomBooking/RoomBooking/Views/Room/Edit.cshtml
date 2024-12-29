@@ -66,6 +66,11 @@
                         <span asp-validation-for="Color" class="text-danger"></span>
                     </div>
                     <div class="form-group">
+                        <label asp-for="FontColor">Room Font Color</label>
+                        <input asp-for="FontColor" type="text" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Write Room Font Color Hexadecimal format Ex:#FF0000" required>
+                        <span asp-validation-for="FontColor" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
                         <label asp-for="MinimumCapacity">Minimum Attendee Capacity</label>
                         <input asp-for="MinimumCapacity" type="number" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Write Meeting minimum attendee capacity" min="2" max="25">
                         <span asp-validation-for="MinimumCapacity" class="text-danger"></span>
@@ -84,7 +89,7 @@
                         <input asp-for="ConcurrencyToken" value="@Model?.ConcurrencyToken" type="hidden">
                     </div>
                     <div class="card-footer text-center">
-                        <button type="submit" class="btn btn-primary">Edit Room</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
                     </div>
                 </div>
             </form>

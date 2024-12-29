@@ -14,6 +14,7 @@ namespace RoomBooking.Application.Domain.Entities
         public string Location { get; set; }
         public int Capacity { get; set; }
         public string Color { get; set; }
+        public string FontColor { get; set; }
         public string Details { get; set; }
         public string CreatedBy { get; set; }
         public Guid ConcurrencyToken { get; set; }

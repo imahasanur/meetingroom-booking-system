@@ -88,6 +88,7 @@
                     <input asp-for="Color" value="@Model.Color" type="hidden">
                     <input asp-for="UserClaim" value="@Model.UserClaim" type="hidden">
                     <input type="hidden" asp-for="RoomId" value="@Model.RoomId">
+                    <input type="hidden" asp-for="FontColor" value="@Model.FontColor">
                 </div>
                 <div class="card-footer text-center">
                     
@@ -163,7 +164,6 @@
 
             $("form").on("submit", function (event) {
                 validateForm(event);
-                // disableFormButtons();
             });
 
             if (`@TempData.ContainsKey("message")` && "@TempData["message"]" !== "") {
