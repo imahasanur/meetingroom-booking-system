@@ -7,7 +7,7 @@
 
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Meeting Booking Details</h3>
+        <h3 class="card-title">Meeting Details As a Guest</h3>
     </div>
     @if (TempData["success"] is not null)
     {
@@ -56,8 +56,8 @@
                         <tr>
                             <td>@serial</td>
                             <td>@meeting.Name</td>
-                            <td>@meeting.Start</td>
-                            <td>@meeting.End</td>
+                            <td>@meeting.Start.ToString("yyyy-MM-dd HH:mm:ss.ff")</td>
+                            <td>@meeting.End.ToString("yyyy-MM-dd HH:mm:ss.ff")</td>
                             <td>@meeting.Host</td>
                             <td>@meeting.CreatedBy</td>
                             <td>@meeting.Room.Location @meeting.Room.Name</td>
@@ -160,8 +160,8 @@
                         "next": "» Next"
                     },
                     "info": "Showing _START_ to _END_ of _TOTAL_ entries",
-                    "infoEmpty": "No Room is not available",
-                    "lengthMenu": "All Romms Entries"
+                    "infoEmpty": "No meeting found",
+                    "lengthMenu": "All Meeting Entries as Guest"
                 }
             });
         });
