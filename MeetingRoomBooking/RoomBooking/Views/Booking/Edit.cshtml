@@ -41,7 +41,7 @@
 
                     <div class="form-group">
                         <label asp-for="Name">Event Name</label>
-                        <input asp-for="Name" type="text" class="form-control" id="" autocomplete="given-name" aria-required="true" placeholder="Event Name" required>
+                        <input asp-for="Name" type="text" class="form-control" id="event-name" autocomplete="given-name" aria-required="true" placeholder="Event Name" required>
                         <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
                     <div class="form-group">
@@ -57,20 +57,20 @@
 
                     <div class="form-group">
                         <label asp-for="Host">Meeting Host</label>
-                        <input asp-for="Host" type="email" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Meeting host.." required>
+                        <input asp-for="Host" type="email" class="form-control" id="event-host" autocomplete="on" aria-required="true" placeholder="Meeting host.." required>
                         <span asp-validation-for="Host" class="text-danger"></span>
                     </div>
                     @{
                         if(Model.UserClaim != null && Model.UserClaim == "admin")
                         {
-                            <div class="form-group">
-                                <label>Change State</label>
-                                <select class="form-control select2 overflow-auto text-center" style="width: 100%;" asp-for="State">
-                                    <option value="pending" asp-for="State"> Pending</option>
-                                    <option value="approved" asp-for="State"> Approved</option>
-                                </select>
-                                <span asp-validation-for="State" class="text-danger"></span>
-                            </div>
+                                            <div class="form-group">
+                                                <label>Change State</label>
+                                                <select class="form-control select2 overflow-auto text-center" id="event-state" style="width: 100%;" asp-for="State">
+                                                    <option value="pending" asp-for="State"> Pending</option>
+                                                    <option value="approved" asp-for="State"> Approved</option>
+                                                </select>
+                                                <span asp-validation-for="State" class="text-danger"></span>
+                                            </div>
                         }
                     }
 
@@ -91,7 +91,7 @@
                 </div>
                 <div class="card-footer text-center">
                     
-                    <button type="submit" class="btn btn-primary" onclick="validateForm(event)">Edit Booking</button>
+                    <button type="submit" class="btn btn-primary" id ="submitBtn" onclick="validateForm(event)">Save</button>
                 </div>
             </form>
         </div>
@@ -103,8 +103,6 @@
     <partial name="_ValidationScriptsPartial" />
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/luxon@3.5.0/build/global/luxon.min.js"></script>
-
     <script>
 
         function validateEmailRequired(event, val) {
@@ -148,15 +146,29 @@
             }
         }
 
+        function disableFormButtons() {
+            $("#submitBtn").hide();
+            $("#start-time").prop('disabled', true);
+            $("#end-time").prop("disabled", true);
+            $("#event-name").prop("disabled", true);
+            $("#event-host").prop("disabled", true);
+            $("#guests").prop("disabled", true);
+            $("#event-state").prop("disabled", true);
+        }
+
         $(document).ready(function () {
             $('#message').on('click', function () {
                 $(this).hide();
             });
 
             $("form").on("submit", function (event) {
-                validateForm(event); 
+                validateForm(event);
+                // disableFormButtons();
             });
 
+            if (`@TempData.ContainsKey("message")` && "@TempData["message"]" !== "") {
+                disableFormButtons();
+            }
             // "M/d/y h:i:s K",
 
             const endPicker = flatpickr("#end-time", {

@@ -33,11 +33,6 @@ namespace RoomBooking.Controllers
         }
 
 
-        public async Task<IActionResult> NotFound()
-        {
-            return View();
-        }
-
         public async Task<IActionResult> GetAllRoom()
         {
             var model = new CreateBookingViewModel();
@@ -231,6 +226,7 @@ namespace RoomBooking.Controllers
                 if(!ModelState.IsValid)
                 {
                     _logger.LogError("Model state is not valid ");
+                    TempData[response] = "Model State is not valid";
                     return View(model);
                 }
 
