@@ -12,7 +12,7 @@ namespace RoomBooking.Application.DTO
         public required Guid Id { get; set; }
         public required string Name { get; set; }
         public required string Color { get; set; }
-        public required string FontColor { get; set; }
+        public string FontColor { get; set; }
         public required string State { get; set; }
         public required DateTime Start { get; set; }
         public required DateTime End { get; set; }

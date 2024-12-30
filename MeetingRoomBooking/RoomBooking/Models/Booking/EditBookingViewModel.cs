@@ -15,8 +15,8 @@ namespace RoomBooking.Models.Booking
         public string Name { get; set; }
         [Required]
         public string Color { get; set; }
-        [Required]
-        public string FontColor { get; set; }
+
+        public string? FontColor { get; set; }
         [Required]
         public string State { get; set; }
         [Required]

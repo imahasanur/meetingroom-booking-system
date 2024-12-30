@@ -226,7 +226,7 @@ namespace RoomBooking.Controllers
                 if(!ModelState.IsValid)
                 {
                     _logger.LogError("Model state is not valid ");
-                    TempData[response] = "Model State is not valid";
+                    TempData["message"] = "Model State is not valid";
                     return View(model);
                 }
 

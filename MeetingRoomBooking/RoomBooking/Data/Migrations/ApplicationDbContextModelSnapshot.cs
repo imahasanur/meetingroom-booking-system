@@ -42,10 +42,6 @@ namespace RoomBooking.Data.Migrations
                     b.Property<DateTime>("End")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("FontColor")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Host")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -77,7 +73,7 @@ namespace RoomBooking.Data.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("Event");
+                    b.ToTable("Event", (string)null);
                 });
 
             modelBuilder.Entity("RoomBooking.Application.Domain.Entities.EventTime", b =>
@@ -107,7 +103,7 @@ namespace RoomBooking.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Time");
+                    b.ToTable("Time", (string)null);
 
                     b.HasData(
                         new
@@ -143,7 +139,7 @@ namespace RoomBooking.Data.Migrations
 
                     b.HasIndex("EventId");
 
-                    b.ToTable("Guest");
+                    b.ToTable("Guest", (string)null);
                 });
 
             modelBuilder.Entity("RoomBooking.Application.Domain.Entities.Room", b =>
@@ -197,7 +193,7 @@ namespace RoomBooking.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Room");
+                    b.ToTable("Room", (string)null);
                 });
 
             modelBuilder.Entity("RoomBooking.Infrastructure.Membership.ApplicationRole", b =>
@@ -340,7 +336,7 @@ namespace RoomBooking.Data.Migrations
                         {
                             Id = new Guid("6c23fda7-ae43-439e-b7f9-7d30868cb399"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fe3ab9c2-671d-41cc-9ca6-fb11b0b32a5f",
+                            ConcurrencyStamp = "c16c0e8e-9bd4-494a-a0dc-06d9e72384c3",
                             CreatedAtUtc = new DateTime(2024, 12, 11, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
@@ -350,7 +346,7 @@ namespace RoomBooking.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMi4HlJUr5KiEByt/tem7eHh0WFHFtJYMk8voMpzcHEzCUiPb/km7nvL+UT5Zzx7zg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIF6k2oZd3dKWwwqAt+ihnVG3XVVye4X8z07WYm7I7s+lknVPKRLtJbvXVb3k5glfQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,

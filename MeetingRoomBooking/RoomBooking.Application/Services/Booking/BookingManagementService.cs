@@ -155,8 +155,7 @@ namespace RoomBooking.Application.Services.Booking
                 }
             }
 
-            //redundant guests check
-
+            // Redundant guests check.
             var hash = new HashSet<string>();
             var duplicates = guests.Where(i => !hash.Add(i)).ToList();
 
@@ -177,7 +176,6 @@ namespace RoomBooking.Application.Services.Booking
                 Id = eventDTO.Id,
                 Name = eventDTO.Name,
                 Color = eventDTO.Color,
-                FontColor = eventDTO.FontColor,
                 State = eventDTO.State,
                 Start = eventDTO.Start,
                 End = eventDTO.End,
@@ -237,6 +235,7 @@ namespace RoomBooking.Application.Services.Booking
 
             // Check user for same room , same day overlapping meeting.
             var bookings = await _unitOfWork.BookingRepository.CheckBookingOverlapping(eventEntity.Start, eventEntity.End, eventEntity.RoomId);
+
             if(bookings != null && bookings.Count > 0)
             {
                 response = "Found same room , same day overlapping meeting.";
@@ -280,26 +279,12 @@ namespace RoomBooking.Application.Services.Booking
                 
                 if (slectedRoom != null) { 
                     eventEntity.Color = slectedRoom.Color;
-                    eventEntity.FontColor = slectedRoom.FontColor;
                 }
                 else
                 {
                     response = "Selected room already deleted not found";
 
                     return response;
-                }
-            }
-            else
-            {
-                if(slectedRoom  == null)
-                {
-                    response = "Room not found";
-
-                    return response;
-                }
-                else
-                {
-                    eventEntity.FontColor = slectedRoom.FontColor;
                 }
             }
 
@@ -323,8 +308,8 @@ namespace RoomBooking.Application.Services.Booking
                 {
                     Id = scheduleEvent.Id,
                     Name = scheduleEvent.Name,
-                    Color = scheduleEvent.Color,
-                    FontColor = scheduleEvent.FontColor,
+                    Color = scheduleEvent.State == "approved" ? scheduleEvent.Room.Color : scheduleEvent.Color,
+                    FontColor = scheduleEvent.Room.FontColor,
                     State = scheduleEvent.State,
                     Start = scheduleEvent.Start,
                     End = scheduleEvent.End,
@@ -336,8 +321,8 @@ namespace RoomBooking.Application.Services.Booking
                 };
                 eventsDTO.Add(eventDTO);
             }
-            return eventsDTO;
 
+            return eventsDTO;
         }
 
         public async Task<IList<GetEventDTO>> GetAllGuestEventAsync(DateTime start, DateTime end, string? user, string? userClaim)
@@ -352,9 +337,9 @@ namespace RoomBooking.Application.Services.Booking
                 {
                     Id = scheduleEvent.Id,
                     Name = scheduleEvent.Name,
-                    Color = scheduleEvent.Color,
+                    Color = scheduleEvent.State == "approved" ? scheduleEvent.Room.Color : scheduleEvent.Color,
                     State = scheduleEvent.State,
-                    FontColor = scheduleEvent.FontColor,
+                    FontColor = scheduleEvent.Room.FontColor,
                     Start = scheduleEvent.Start,
                     End = scheduleEvent.End,
                     RoomId = scheduleEvent.RoomId,
@@ -365,8 +350,8 @@ namespace RoomBooking.Application.Services.Booking
                 };
                 eventsDTO.Add(eventDTO);
             }
-            return eventsDTO;
 
+            return eventsDTO;
         }
 
         public async Task<string> DeleteBookingAsync(Guid id)
@@ -402,7 +387,7 @@ namespace RoomBooking.Application.Services.Booking
                     existingEvent.Start = eventDTO.Start;
                     existingEvent.End = eventDTO.End;
                     existingEvent.RoomId = eventDTO.RoomId;
-                    existingEvent.FontColor = eventDTO.FontColor;
+                  
 
                     // Check the state pending or approved
                     if( existingEvent.State == "approved")
@@ -413,7 +398,7 @@ namespace RoomBooking.Application.Services.Booking
                     }
 
                     // Check is host is the current user or not.
-                    if(existingEvent.Host.Trim().Equals(currentUser.Trim()) == false)
+                    if(existingEvent.Host.Trim().Equals(currentUser.Trim()) == false && userClaim == "user")
                     {
                         response = "Can't Update !Current user is not the host user";
 
@@ -486,20 +471,6 @@ namespace RoomBooking.Application.Services.Booking
                         return response;
                     }
 
-                    // Set event text color while updating the room
-                    var selectedRoom = await _unitOfWork.RoomRepository.GetRoomAsync(existingEvent.RoomId, false);
-                    if (selectedRoom != null)
-                    {
-                        existingEvent.FontColor = selectedRoom.FontColor;
-                    }
-                    else
-                    {
-                        response = "Can't update,Corresponding room not found";
-
-                        return response;
-                    }
-                   
-
                     await _unitOfWork.BookingRepository.EditBookingAsync(existingEvent);
                     await _unitOfWork.SaveAsync();
 
@@ -546,7 +517,7 @@ namespace RoomBooking.Application.Services.Booking
                 eventEntity.End = eventDTO.End;
                 eventEntity.Host = eventDTO.Host;
                 eventEntity.State = eventDTO.State;
-                eventEntity.FontColor = eventDTO.FontColor;
+                
                 eventEntity.LastUpdatedAtUTC = DateTime.UtcNow;
 
                 if(eventDTO.State == "approved")
@@ -662,18 +633,6 @@ namespace RoomBooking.Application.Services.Booking
                     }
                 }
 
-                // Set event text color while updating the room
-                if (selectedRoom != null)
-                {
-                    eventEntity.FontColor = selectedRoom.FontColor;
-                }
-                else
-                {
-                    response = "Can't update,Corresponding room not found";
-
-                    return response;
-                }
-
                 var guestsToRemove = existingGuests.Where(g => !newGuestUsers.Contains(g.User)).ToList();
                 var guestsToAdd = newGuestUsers.Where(user => !existingGuests.Any(g => g.User == user))
                     .Select(user => new Guest
@@ -742,7 +701,7 @@ namespace RoomBooking.Application.Services.Booking
                 Start = eventEntity[0].Start,
                 End = eventEntity[0].End,
                 Color = eventEntity[0].Color,
-                FontColor = eventEntity[0].FontColor,
+               
                 RoomId = eventEntity[0].RoomId,
                 Guests = eventEntity[0].Guests,
                 CreatedBy = eventEntity[0].CreatedBy,

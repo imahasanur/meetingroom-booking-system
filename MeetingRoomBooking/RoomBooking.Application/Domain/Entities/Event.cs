@@ -11,7 +11,6 @@ namespace RoomBooking.Application.Domain.Entities
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Color { get; set; }
-        public string FontColor { get; set; }
         public string State { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
