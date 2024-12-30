@@ -25,19 +25,7 @@
     .calendar_default_rowheader {
         font-weight: bold;
     }
-/* 
-    .wrap {
-        display: flex;
-    }
 
-    .left {
-        margin-right: 20%;
-        margin
-    }
-
-    .right {
-        flex-grow: 5;
-    } */
 </style>
 
 <div>
@@ -84,14 +72,24 @@
         </div>
     }
 
-@*     <div class="wrap row">
-        <div class="left col-md-2 col-sm-3 p-2 m-2">
-            <div id="nav"></div>
+
+    <div class="d-flex justify-content-center">
+        <div class="col-md-4">
+            <label for="viewTypeSelect" class="form-label">Select View Type:</label>
+            <select id="viewTypeSelect" class="form-select">
+                <option value="Day">Day</option>
+                <option value="Resources" selected>Resources</option>
+            </select>
         </div>
-        <div class="right col-md-8 col-sm-8">
-            <div id="dp"></div>
+        <div class="col-md-4 d-none" id="resourceSelectorContainer">
+            <label for="resourceSelect" class="form-label">Select Resource:</label>
+            <select id="resourceSelect" class="form-select">
+               
+            </select>
         </div>
-    </div> *@
+
+    </div>
+
     <div class="wrap row">
 
         <div class="nav-icon col-1 text-center p-1">
@@ -115,30 +113,7 @@
     <partial name="_ValidationScriptsPartial" />
     <script src="~/daypilot/daypilot-all.min.js" asp-append-version="true"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.repeater/1.2.1/jquery.repeater.min.js" asp-append-version="true"></script>
-    <script>
-        $(document).ready(function () {
-            $('#successMessage').on('click', function () {
-                $(this).hide();
-            });
-
-            const navSection = $("#navSection");
-            const calendarSection = $("#calendarSection");
-
-            $("#toggleNav").on("mouseenter", function () {
-                if (navSection.hasClass("d-none")) {
-                   
-                    navSection.removeClass("d-none").addClass("col-2");
-                    calendarSection.removeClass("col-11").addClass("col-9");
-                } else {
-                    
-                    navSection.addClass("d-none").removeClass("col-2");
-                    calendarSection.removeClass("col-9").addClass("col-11");
-                }
-            });
-
-        });
-    </script>
-
+   
     <script>
         
         function validateTextRequired(args) {
@@ -262,7 +237,7 @@
                     CreatedBy: "admin@gmail.com",
                     State: "pending",
                     FontColor: "#ffffff",
-                    Guests: "Enter email in a comma seperated way [Ex: ab@gmail.com, bd@yahoo.com, dc@gmail.c]"
+                    Guests: "Enter email in a comma seperated way [Ex: ab@gmail.com, bd@yahoo.com]"
 
                 };
 
@@ -282,7 +257,16 @@
                     return;
                 }
 
+                
                 const params = modal.result;
+
+                // New added code.
+                const selectedResource = document.getElementById("resourceSelect").value;
+                if (selectedResource !== "") {
+                    params.RoomId = selectedResource;
+                }
+
+
                 const { data: event } = await DayPilot.Http.post("/Booking/Create", params);
                 if (event != null) {
                     calendar.events.add(event);
@@ -342,7 +326,15 @@
                 calendar.startDate = args.day;
                 app.loadEvents(args.day);
                 calendar.update();
-                calendar.events.load(`/Booking/GetAllEvent/${args.day} ${args.day}`);   
+                const seletctedViewType = loadViewType();
+                if (seletctedViewType !== "Day") {
+                    calendar.events.load(`/Booking/GetAllEvent/${args.day} ${args.day}`);
+                }
+                else{
+                    const id = loadDayResource();
+                    calendar.events.load(`/Booking/GetAllEvents/${args.day} ${args.day} ${id}`);
+                }
+               
 
             }
         });
@@ -354,6 +346,16 @@
                 const { data: rooms } = await DayPilot.Http.get(`/Booking/GetAllRoom`);
 
                 console.log("Rooms :", rooms);
+
+               
+                // resource dropdown
+                resourceSelect.innerHTML = "";
+                rooms.forEach(room => {
+                    const option = document.createElement("option");
+                    option.value = room.id;
+                    option.textContent = room.name;
+                    resourceSelect.appendChild(option);
+                });
 
                 if (rooms.length === 0) 
                 {
@@ -373,10 +375,10 @@
             async loadEvents(date) {
                 const params = {
                     start: date.toString(),
-                    end: new Date(date.getTime() + 86400000).toString()
+                    end: new Date(date.getTime() + 86400000)
                 };
 
-                const { data } = await DayPilot.Http.get(`/Booking/GetAllEvent/${params.start} ${params.end}`);
+                const { data } = await DayPilot.Http.get(`/Booking/GetAllEvent?start=${params.start}&end=${params.end}`);
                 console.log("Data to load events :", data);
             
                 calendar.events.list = data;
@@ -388,18 +390,164 @@
                 e.data.color = color;
                 calendar.events.update(e);
             },
+            async viewTypeSelection() {
+
+                const resourceSelectorContainer = document.getElementById("resourceSelectorContainer");
+
+                calendar.viewType = "Day";
+                resourceSelectorContainer.classList.remove("d-none");
+
+
+                const selectedResource = document.getElementById("resourceSelect").value;
+                if (selectedResource) {
+                    const startDate = calendar.startDate;
+                    const params = {
+                        id: selectedResource,
+                        start: startDate,
+                        end: new DayPilot.Date(startDate).addDays(1)
+                    };
+
+                    const { data: events } = await DayPilot.Http.get(`/Booking/GetAllEvents?start=${params.start.value}&end=${params.end.value}&id=${params.id}`);
+                    calendar.events.list = events;
+                    calendar.update();
+                }
+            },
+            async resourceSelection() {
+
+                const selectedResource = localStorage.getItem("resource") || ""
+                const startDate = calendar.startDate;
+                const params = {
+                    id: selectedResource,
+                    start: startDate,
+                    end: new DayPilot.Date(startDate).addDays(1)
+                };
+
+                const { data: events } = await DayPilot.Http.get(`/Booking/GetAllEvents?start=${params.start.value}&end=${params.end.value}&id=${params.id}`);
+                console.log("Filtered events for resource:", events);
+
+                calendar.events.list = events;
+                calendar.update();  
+            },
             init() {
+
                 this.loadResources();
-                this.loadEvents(new DayPilot.Date());
+
+                const selectedViewType = localStorage.getItem("viewType") || "Resources";
+                if (selectedViewType === "Day") {
+                    this.viewTypeSelection();
+                    this.resourceSelection();
+                }
+                else{
+                    this.loadEvents(new DayPilot.Date());
+                }
+                
             }
         };
         app.init();
+
     </script>
 
     <script>
         $(document).ready(function () {
-           
-            
+            $('#successMessage').on('click', function () {
+                $(this).hide();
+            });
         });
     </script>
+
+    <script>
+
+        const navSection = $("#navSection");
+        const calendarSection = $("#calendarSection");
+
+        $("#toggleNav").on("mouseenter", function () {
+            if (navSection.hasClass("d-none")) {
+                navSection.removeClass("d-none").addClass("col-2");
+                calendarSection.removeClass("col-11").addClass("col-9");
+            } else {
+                navSection.addClass("d-none").removeClass("col-2");
+                calendarSection.removeClass("col-9").addClass("col-11");
+            }
+        });
+
+        function saveViewType(viewType) {
+            localStorage.setItem("viewType", viewType);
+        }
+
+        function saveResource(resource) {
+            localStorage.setItem("resource", resource);
+        }
+
+
+        function loadViewType() {
+            return localStorage.getItem("viewType") || "Resources";
+        }
+
+        function loadDayResource() {
+            return localStorage.getItem("resource") || "";
+        }
+
+        const savedViewType = loadViewType();
+
+
+        $("#viewTypeSelect").val(savedViewType);
+
+        calendar.viewType = savedViewType === "Resources" ? "Resources" : "Day";
+
+
+        document.getElementById("viewTypeSelect").addEventListener("change", async (e) => {
+            const viewType = e.target.value;
+            saveViewType(viewType);
+            const resourceSelectorContainer = document.getElementById("resourceSelectorContainer");
+
+            if (viewType === "Resources") {
+                calendar.viewType = "Resources";
+                resourceSelectorContainer.classList.add("d-none");
+                app.loadResources();
+
+            } else {
+                calendar.viewType = "Day";
+                resourceSelectorContainer.classList.remove("d-none");
+
+                const selectedResource = document.getElementById("resourceSelect").value;
+                saveResource(selectedResource);
+
+                if (selectedResource) {
+                    const startDate = calendar.startDate;
+                    const params = {
+                        id: selectedResource,
+                        start: startDate,
+                        end: new DayPilot.Date(startDate).addDays(1)
+                    };
+
+                    const { data: events } = await DayPilot.Http.get(`/Booking/GetAllEvents?start=${params.start.value}&end=${params.end.value}&id=${params.id}`);
+                    calendar.events.list = events;
+                    calendar.update();
+                }
+            }
+        });
+
+        document.getElementById("resourceSelect").addEventListener("change", async (e) => {
+            const selectedResource = e.target.value;
+
+            if (selectedResource && calendar.viewType === "Day") {
+                const startDate = calendar.startDate;
+                const params = {
+                    id: selectedResource,
+                    start: startDate,
+                    end: new DayPilot.Date(startDate).addDays(1)
+                };
+                saveResource(selectedResource);
+
+                const { data: events } = await DayPilot.Http.get(`/Booking/GetAllEvents?start=${params.start.value}&end=${params.end.value}&id=${params.id}`);
+                console.log("Filtered events for resource:", events);
+
+                calendar.events.list = events; 
+                calendar.update();
+            }
+        });
+
+
+    </script>
+
 }

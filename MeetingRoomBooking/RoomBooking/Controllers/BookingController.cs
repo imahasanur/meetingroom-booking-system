@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol;
+using NuGet.Versioning;
 using RoomBooking.Application.Domain.Entities;
 using RoomBooking.Infrastructure.Membership;
 using RoomBooking.Models.Booking;
@@ -46,7 +47,8 @@ namespace RoomBooking.Controllers
             return Ok(rooms);
         }
 
-        public async Task<IActionResult> GetAllEvent(DateTime start, DateTime end)
+        [HttpGet]
+        public async Task<IActionResult> GetAllEvent(DateTime start, DateTime end, Guid? id)
         {
 
             if (start == DateTime.MinValue)
@@ -61,6 +63,25 @@ namespace RoomBooking.Controllers
           
 
             return Ok(allEvent);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllEvents(DateTime start, DateTime end, Guid id)
+        {
+
+            if (start == DateTime.MinValue)
+                start = DateTime.Now;
+            if (end == DateTime.MinValue)
+                end = DateTime.Now;
+
+            var model = new GetAllBookingViewModel();
+            model.ResolveDI(_provider);
+
+            var allEvent = await model.GetAllEventAsync(start, end);
+            var filteredEvent = allEvent.Where(ev => ev.Resource.Equals(id)).ToList();
+
+
+            return Ok(filteredEvent);
         }
 
         public async Task<IActionResult> Create()
@@ -237,7 +258,7 @@ namespace RoomBooking.Controllers
 
                 var startTime = model.Start;
                 var minutes = startTime.Minute;
-                var even = minutes % 15 == 0 ? true : false;
+                 var even = minutes % 15 == 0 ? true : false;
 
                 if (even == true)
                 {
