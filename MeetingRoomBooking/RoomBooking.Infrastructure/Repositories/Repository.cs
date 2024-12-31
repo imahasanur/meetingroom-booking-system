@@ -119,6 +119,7 @@ namespace RoomBooking.Infrastructure.Repositories
                 Console.WriteLine($"Filter {query.ToQueryString()}");
             }
 
+
             return await query.ToListAsync();
         }
 

@@ -54,7 +54,7 @@ namespace RoomBooking.Controllers
             if (start == DateTime.MinValue)
                 start = DateTime.Now;
             if (end == DateTime.MinValue)
-                end = DateTime.Now;
+                end = start.AddDays(1);
 
             var model = new GetAllBookingViewModel();
             model.ResolveDI(_provider);
@@ -72,7 +72,7 @@ namespace RoomBooking.Controllers
             if (start == DateTime.MinValue)
                 start = DateTime.Now;
             if (end == DateTime.MinValue)
-                end = DateTime.Now;
+                end = start.AddDays(1);
 
             var model = new GetAllBookingViewModel();
             model.ResolveDI(_provider);

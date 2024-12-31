@@ -112,7 +112,7 @@ namespace RoomBooking.Infrastructure.Repositories
             }
             else
             {
-                expression = x => start.Date <= x.Start.Date && end.Date >= x.End.Date;
+                expression = x => (start.Date <= x.Start.Date && end.Date >= x.End.Date);
 
                 return await GetAsync(expression, include);
             }

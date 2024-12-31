@@ -352,11 +352,11 @@
                 calendar.update();
                 const seletctedViewType = loadViewType();
                 if (seletctedViewType !== "Day") {
-                    calendar.events.load(`/Booking/GetAllEvent/${args.day} ${args.day}`);
+                    calendar.events.load(`/Booking/GetAllEvent?start=${args.day}&end=${args.day}`);
                 }
                 else{
                     const id = loadDayResource();
-                    calendar.events.load(`/Booking/GetAllEvents/${args.day} ${args.day} ${id}`);
+                    calendar.events.load(`/Booking/GetAllEvents?start=${args.day}&end=${args.day}&id=${id}`);
                 }
             }
         });
@@ -451,6 +451,7 @@
                 resourceSelect.innerHTML = "";
                 console.log("inside script ",resourceSelect);
                 const { data: rooms } = await DayPilot.Http.get(`/Booking/GetAllRoom`);
+                resourceSelect.innerHTML = "";
                 rooms.forEach(room => {
                     const option = document.createElement("option");
                     option.value = room.id;
@@ -550,6 +551,7 @@
                 calendar.viewType = "Day";
                 resourceSelect.innerHTML = "";
                 const { data: rooms } = await DayPilot.Http.get(`/Booking/GetAllRoom`);
+                resourceSelect.innerHTML = "";
                 rooms.forEach(room => {
                     const option = document.createElement("option");
                     option.value = room.id;
@@ -576,7 +578,7 @@
             }
         });
 
-        document.getElementById("resourceSelect").addEventListener("change", async (e) => {
+        document.getElementById("resourceSelect").addEventListener("click", async (e) => {
             const selectedResource = e.target.value;
 
             if (selectedResource && calendar.viewType === "Day") {
