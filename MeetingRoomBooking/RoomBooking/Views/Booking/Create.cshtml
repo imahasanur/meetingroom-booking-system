@@ -24,7 +24,9 @@
 
     .calendar_default_rowheader {
         font-weight: bold;
-    }
+        background-color:cyan;
+    }   
+
 </style>
 
 <div>
@@ -45,10 +47,10 @@
 
     @{
 
-                            <div class="notFoundMessage text-center">
-                                <h2 class="alert-danger">Room Not Found</h2>
-                                <h3 class="alert-default-warning">Create a Room For Further Operation</h3>
-                            </div>
+        <div class="notFoundMessage text-center">
+            <h2 class="alert-danger">Room Not Found</h2>
+            <h3 class="alert-default-warning">Create a Room For Further Operation</h3>
+        </div>
         
     }
     
@@ -377,6 +379,7 @@
                 {
                     $(".notFoundMessage").hide();
                 }
+
                 const viewType = localStorage.getItem("viewType") || "Resources";
                 console.log("Resource Select Before ", resourceSelect);
                 resourceSelect.innerHTML = "";
