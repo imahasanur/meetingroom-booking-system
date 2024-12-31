@@ -25,11 +25,9 @@
     .calendar_default_rowheader {
         font-weight: bold;
     }
-
 </style>
 
 <div>
-    
     @{
         string userClaim = string.Empty;
         var roleClaims = User.Claims.Where(c => c.Type == "role").Select(c => c.Value).ToList();
@@ -47,10 +45,10 @@
 
     @{
 
-        <div class="notFoundMessage text-center">
-            <h2 class="alert-danger">Room Not Found</h2>
-            <h3 class="alert-default-warning">Create a Room For Further Operation</h3>
-        </div>
+                            <div class="notFoundMessage text-center">
+                                <h2 class="alert-danger">Room Not Found</h2>
+                                <h3 class="alert-default-warning">Create a Room For Further Operation</h3>
+                            </div>
         
     }
     
@@ -281,10 +279,28 @@
                     end: args.newEnd,
                     roomId: args.newResource
                 };
-                await DayPilot.Http.put(`/Booking/Edit/${args.e.id()}`, params);
+
+                const viewType = localStorage.getItem("viewType") || "Resources";
+
+                if (viewType == "Resources") {
+                    await DayPilot.Http.put(`/Booking/Edit/${args.e.id()}`, params);
+                }
+                else {
+                    params.roomId = args.e.data.resource;
+                    await DayPilot.Http.put(`/Booking/Edit/${args.e.id()}`, params);
+                }
+                
                 window.location.href = "/Booking/Create";
                 calendar.update();
-                calendar.events.load(`/Booking/GetAllEvent/${args.newStart} ${args.newEnd}`);
+
+                
+                if (viewType == "Resources") {
+                    calendar.events.load(`/Booking/GetAllEvent/${args.newStart} ${args.newEnd}`);
+                }
+                else {
+                    calendar.events.load(`/Booking/GetAllEvents/${args.newStart} ${args.newEnd}`);
+                }
+                
             },
             onEventResize: async (args) => {
                 const params = {
@@ -296,7 +312,15 @@
                 await DayPilot.Http.put(`/Booking/Edit/${args.e.id()}`, params);
                 window.location.href = "/Booking/Create";
                 calendar.update();
-                calendar.events.load(`/Booking/GetAllEvent/${args.newStart} ${args.newEnd}`);
+
+                const viewType = localStorage.getItem("viewType") || "Resources";
+                if (viewType == "Resources") {
+                    calendar.events.load(`/Booking/GetAllEvent/${args.newStart} ${args.newEnd}`);
+                }
+                else {
+                    calendar.events.load(`/Booking/GetAllEvents/${args.newStart} ${args.newEnd}`);
+                }
+                
             },
             onBeforeEventRender: (args) => {
                 args.data.backColor = args.data.color + "99";
@@ -334,43 +358,45 @@
                     const id = loadDayResource();
                     calendar.events.load(`/Booking/GetAllEvents/${args.day} ${args.day} ${id}`);
                 }
-               
-
             }
         });
         datepicker.init();
 
         const app = {
-            async loadResources() {
 
+            async loadResources() {
                 const { data: rooms } = await DayPilot.Http.get(`/Booking/GetAllRoom`);
 
                 console.log("Rooms :", rooms);
 
-               
-                // resource dropdown
-                resourceSelect.innerHTML = "";
-                rooms.forEach(room => {
-                    const option = document.createElement("option");
-                    option.value = room.id;
-                    option.textContent = room.name;
-                    resourceSelect.appendChild(option);
-                });
-
                 if (rooms.length === 0) 
                 {
-
                     $(".notFoundMessage").show();
                 } 
                 else
                 {
                     $(".notFoundMessage").hide();
                 }
-
-                const columns = rooms.map(room => ({ id: room.id, name: room.name, backColor: room.color}));
-                console.log("Columns : ", columns);
-                calendar.columns = columns;
+                const viewType = localStorage.getItem("viewType") || "Resources";
+                console.log("Resource Select Before ", resourceSelect);
+                resourceSelect.innerHTML = "";
+                console.log("Resource Select After ",resourceSelect);
+                if (viewType == "Day") {
+                    rooms.forEach(room => {
+                        const option = document.createElement("option");
+                        option.value = room.id;
+                        option.textContent = room.name;
+                        resourceSelect.appendChild(option);
+                    });
+                }
+                else{
+                    const columns = rooms.map(room => ({ id: room.id, name: room.name, backColor: room.color }));
+                    console.log("Columns : ", columns);
+                    calendar.columns = columns;
+                }
+                
                 calendar.update();
+                
             },
             async loadEvents(date) {
                 const params = {
@@ -414,13 +440,25 @@
             },
             async resourceSelection() {
 
-                const selectedResource = localStorage.getItem("resource") || ""
+                const selectedResource = localStorage.getItem("resource") || "";
                 const startDate = calendar.startDate;
                 const params = {
                     id: selectedResource,
                     start: startDate,
                     end: new DayPilot.Date(startDate).addDays(1)
                 };
+
+                resourceSelect.innerHTML = "";
+                console.log("inside script ",resourceSelect);
+                const { data: rooms } = await DayPilot.Http.get(`/Booking/GetAllRoom`);
+                rooms.forEach(room => {
+                    const option = document.createElement("option");
+                    option.value = room.id;
+                    option.textContent = room.name;
+                    resourceSelect.appendChild(option);
+                });
+                resourceSelectorContainer.classList.remove("d-none");
+
 
                 const { data: events } = await DayPilot.Http.get(`/Booking/GetAllEvents?start=${params.start.value}&end=${params.end.value}&id=${params.id}`);
                 console.log("Filtered events for resource:", events);
@@ -503,10 +541,21 @@
             if (viewType === "Resources") {
                 calendar.viewType = "Resources";
                 resourceSelectorContainer.classList.add("d-none");
-                app.loadResources();
+                // await app.loadResources();
+                // await app.loadEvents();
+                localStorage.removeItem("resource");
+                window.location.href = "/Booking/Create";
 
             } else {
                 calendar.viewType = "Day";
+                resourceSelect.innerHTML = "";
+                const { data: rooms } = await DayPilot.Http.get(`/Booking/GetAllRoom`);
+                rooms.forEach(room => {
+                    const option = document.createElement("option");
+                    option.value = room.id;
+                    option.textContent = room.name;
+                    resourceSelect.appendChild(option);
+                });
                 resourceSelectorContainer.classList.remove("d-none");
 
                 const selectedResource = document.getElementById("resourceSelect").value;
@@ -546,8 +595,6 @@
                 calendar.update();
             }
         });
-
-
     </script>
 
 }

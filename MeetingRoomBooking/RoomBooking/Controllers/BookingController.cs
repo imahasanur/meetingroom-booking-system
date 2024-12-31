@@ -66,7 +66,7 @@ namespace RoomBooking.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllEvents(DateTime start, DateTime end, Guid id)
+        public async Task<IActionResult> GetAllEvents(DateTime start, DateTime end, Guid? id)
         {
 
             if (start == DateTime.MinValue)
