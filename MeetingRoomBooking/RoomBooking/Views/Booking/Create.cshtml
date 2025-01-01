@@ -48,8 +48,7 @@
     @{
 
         <div class="notFoundMessage text-center">
-            <h2 class="alert-danger">Room Not Found</h2>
-            <h3 class="alert-default-warning">Create a Room For Further Operation</h3>
+            <h3 class="alert alert-warning p-2" role="alert">Room Not Found ! Create Room</h3>
         </div>
         
     }
@@ -92,17 +91,17 @@
 
     <div class="wrap row">
 
-        <div class="nav-icon col-1 text-center p-1">
+        <div class="nav-icon col-1 col-md-1 col-sm-2 text-center p-1">
             <button id="toggleNav" class="btn btn-primary">
                 <i class="far fa-calendar-check"></i>
             </button>
         </div>
 
-        <div id="navSection" class="left col-2 d-none">
+        <div id="navSection" class="left col-3 col-md-2 col-sm-4 d-none">
             <div id="nav"></div>
         </div>
 
-        <div id="calendarSection" class="right col-11 p-3">
+        <div id="calendarSection" class="right col-8 col-md-9 col-sm-7 ">
             <div id="dp"></div>
         </div>
     </div>
@@ -504,11 +503,9 @@
 
         $("#toggleNav").on("mouseenter", function () {
             if (navSection.hasClass("d-none")) {
-                navSection.removeClass("d-none").addClass("col-2");
-                calendarSection.removeClass("col-11").addClass("col-9");
+                navSection.removeClass("d-none");
             } else {
-                navSection.addClass("d-none").removeClass("col-2");
-                calendarSection.removeClass("col-9").addClass("col-11");
+                navSection.addClass("d-none");
             }
         });
 
@@ -545,8 +542,6 @@
             if (viewType === "Resources") {
                 calendar.viewType = "Resources";
                 resourceSelectorContainer.classList.add("d-none");
-                // await app.loadResources();
-                // await app.loadEvents();
                 localStorage.removeItem("resource");
                 window.location.href = "/Booking/Create";
 
