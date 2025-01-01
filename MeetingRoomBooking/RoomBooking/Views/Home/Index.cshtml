@@ -1,3 +1,12 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+
+<div class="d-flex justify-content-center">
+    @{
+        @if(TempData["status"] != null)
+        {
+            <h1 class="alert alert-light" role="alert">@TempData["status"]</h1>
+        }
+    }
+</div>

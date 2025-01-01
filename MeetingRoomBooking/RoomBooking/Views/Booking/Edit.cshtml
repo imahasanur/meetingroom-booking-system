@@ -63,14 +63,14 @@
                     @{
                         if(Model.UserClaim != null && Model.UserClaim == "admin")
                         {
-                                            <div class="form-group">
-                                                <label>Change State</label>
-                                                <select class="form-control select2 overflow-auto text-center" id="event-state" style="width: 100%;" asp-for="State">
-                                                    <option value="pending" asp-for="State"> Pending</option>
-                                                    <option value="approved" asp-for="State"> Approved</option>
-                                                </select>
-                                                <span asp-validation-for="State" class="text-danger"></span>
-                                            </div>
+                            <div class="form-group">
+                                <label>Change State</label>
+                                <select class="form-control select2 overflow-auto text-center" id="event-state" style="width: 100%;" asp-for="State">
+                                    <option value="pending" asp-for="State"> Pending</option>
+                                    <option value="approved" asp-for="State"> Approved</option>
+                                </select>
+                                <span asp-validation-for="State" class="text-danger"></span>
+                            </div>
                         }
                     }
 

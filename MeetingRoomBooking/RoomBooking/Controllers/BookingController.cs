@@ -415,19 +415,21 @@ namespace RoomBooking.Controllers
         public async Task<(string,string)> GetUserClaim()
         {
             var user = await _userManager.GetUserAsync(User);
-            var claims = await _userManager.GetClaimsAsync(user);
+            var userClaims = await _userManager.GetClaimsAsync(user);
 
-            var userClaim = string.Empty;
+            var claims = userClaims.Select(x => x.Value).ToList();
+            var claim = string.Empty;
 
-            if (claims.Count > 1)
+            if (claims.Contains("admin") == true)
             {
-                userClaim = "admin";
+                claim = "admin";
             }
             else
             {
-                userClaim = claims[0].Value;
+                claim = "user";
             }
-            return (user.Email, userClaim);
+
+            return (user.Email, claim);
         }
     }
 }
