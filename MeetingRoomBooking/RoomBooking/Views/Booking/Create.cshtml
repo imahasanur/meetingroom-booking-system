@@ -1,6 +1,7 @@
 ﻿@using RoomBooking.Models.Booking;
 @model List<RoomBooking.Models.Booking.GetAllBookingViewModel>
 @using System.Security.Claims;
+
 @{
     ViewData["Title"] = "Create Booking";
 }
@@ -34,7 +35,7 @@
         string userClaim = string.Empty;
         var roleClaims = User.Claims.Where(c => c.Type == "role").Select(c => c.Value).ToList();
 
-        if (roleClaims.Count > 1)
+        if(roleClaims.Contains("admin") == true)
         {
             userClaim = "admin";
         }
@@ -43,7 +44,6 @@
             userClaim = "user";
         }
     }
-
 
     @{
 
@@ -95,15 +95,14 @@
         </button>
     </div>
     <div class="wrap row">
-            <div id="navSection" class="left d-none col-2 col-lg-2 col-md-2 col-sm-3 m-2">
-                <div id="nav"></div>
-            </div>
+        <div id="navSection" class="left d-none col-2 col-lg-2 col-md-2 col-sm-3 m-1">
+            <div id="nav"></div>
+        </div>
 
-            <div id="calendarSection" class="right col-lg-9 col-9 col-md-9 col-sm-9">
-                <div id="dp"></div>
-            </div>
+        <div id="calendarSection" class="right col-lg-9 col-9 col-md-9 col-sm-9 p-2">
+            <div id="dp"></div>
+        </div>
     </div>
-
 </div>
 
 @section Scripts{
@@ -165,10 +164,10 @@
              
                if(/^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value.trim()) == true)
                {
-                   args.valid = true;
-                  
+                   args.valid = true; 
                }  
-               else{
+               else
+               {
                    args.valid = false;
                    args.message = "Enter valid format ! Mail format : zy@gmail.com";
                }
@@ -181,7 +180,6 @@
             { id: "#f1c232", name: "Yellow" },
             { id: "#cc0000", name: "Red" },
         ];
-
 
         const calendar = new DayPilot.Calendar("dp", {
             viewType: "Resources",
@@ -221,7 +219,6 @@
                         name: "Guests Email ", id: "Guests", onValidate: validateEmailRequired, type: "text"
                     },
                 ];
-                
 
                 const data = {
                     Name: "Enter event name",
@@ -235,7 +232,6 @@
                     State: "pending",
                     FontColor: "#ffffff",
                     Guests: "Enter email in a comma seperated way [Ex: ab@gmail.com, bd@yahoo.com]"
-
                 };
 
                 var requiredForm;
@@ -254,24 +250,25 @@
                     return;
                 }
 
-                
                 const params = modal.result;
 
-                // New added code.
                 const selectedResource = document.getElementById("resourceSelect").value;
-                if (selectedResource !== "") {
+
+                if (selectedResource !== "") 
+                {
                     params.RoomId = selectedResource;
                 }
 
-
                 const { data: event } = await DayPilot.Http.post("/Booking/Create", params);
+
                 if (event != null) {
                     calendar.events.add(event);
                 }
+
                 window.location.href = "/booking/create";
-              
             },
             onEventMove: async (args) => {
+
                 const params = {
                     id: args.e.id(),
                     start: args.newStart,
@@ -281,10 +278,12 @@
 
                 const viewType = localStorage.getItem("viewType") || "Resources";
 
-                if (viewType == "Resources") {
+                if (viewType == "Resources")
+                {
                     await DayPilot.Http.put(`/Booking/Edit/${args.e.id()}`, params);
                 }
-                else {
+                else
+                {
                     params.roomId = args.e.data.resource;
                     await DayPilot.Http.put(`/Booking/Edit/${args.e.id()}`, params);
                 }
@@ -292,36 +291,42 @@
                 window.location.href = "/Booking/Create";
                 calendar.update();
 
-                
-                if (viewType == "Resources") {
+                if (viewType == "Resources") 
+                {
                     calendar.events.load(`/Booking/GetAllEvent/${args.newStart} ${args.newEnd}`);
                 }
-                else {
+                else 
+                {
                     calendar.events.load(`/Booking/GetAllEvents/${args.newStart} ${args.newEnd}`);
                 }
-                
             },
             onEventResize: async (args) => {
+
                 const params = {
                     id: args.e.id(),
                     start: args.newStart,
                     end: args.newEnd,
                     roomId: args.e.data.resource
                 };
+
                 await DayPilot.Http.put(`/Booking/Edit/${args.e.id()}`, params);
                 window.location.href = "/Booking/Create";
+
                 calendar.update();
 
                 const viewType = localStorage.getItem("viewType") || "Resources";
-                if (viewType == "Resources") {
+
+                if (viewType == "Resources")
+                {
                     calendar.events.load(`/Booking/GetAllEvent/${args.newStart} ${args.newEnd}`);
                 }
-                else {
+                else
+                {
                     calendar.events.load(`/Booking/GetAllEvents/${args.newStart} ${args.newEnd}`);
                 }
-                
             },
             onBeforeEventRender: (args) => {
+
                 args.data.backColor = args.data.color + "99";
                 args.data.borderColor = args.data.color;
                 args.data.areas = [
@@ -346,19 +351,26 @@
             skipMonths: 1,
             selectMode: "Day",
             onTimeRangeSelected: args => {
+
                 calendar.startDate = args.day;
                 app.loadEvents(args.day);
+
                 calendar.update();
+
                 const seletctedViewType = loadViewType();
-                if (seletctedViewType !== "Day") {
+
+                if (seletctedViewType !== "Day")
+                {
                     calendar.events.load(`/Booking/GetAllEvent?start=${args.day}&end=${args.day}`);
                 }
-                else{
+                else
+                {
                     const id = loadDayResource();
                     calendar.events.load(`/Booking/GetAllEvents?start=${args.day}&end=${args.day}&id=${id}`);
                 }
             }
         });
+
         datepicker.init();
 
         const app = {
@@ -378,9 +390,9 @@
                 }
 
                 const viewType = localStorage.getItem("viewType") || "Resources";
-                console.log("Resource Select Before ", resourceSelect);
+
                 resourceSelect.innerHTML = "";
-                console.log("Resource Select After ",resourceSelect);
+
                 if (viewType == "Day") {
                     rooms.forEach(room => {
                         const option = document.createElement("option");
@@ -478,8 +490,7 @@
                 }
                 else{
                     this.loadEvents(new DayPilot.Date());
-                }
-                
+                } 
             }
         };
         app.init();
@@ -515,7 +526,6 @@
             localStorage.setItem("resource", resource);
         }
 
-
         function loadViewType() {
             return localStorage.getItem("viewType") || "Resources";
         }
@@ -526,11 +536,9 @@
 
         const savedViewType = loadViewType();
 
-
         $("#viewTypeSelect").val(savedViewType);
 
         calendar.viewType = savedViewType === "Resources" ? "Resources" : "Day";
-
 
         document.getElementById("viewTypeSelect").addEventListener("change", async (e) => {
             const viewType = e.target.value;
@@ -594,5 +602,4 @@
             }
         });
     </script>
-
 }

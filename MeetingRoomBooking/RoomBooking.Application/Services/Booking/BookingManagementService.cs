@@ -153,6 +153,12 @@ namespace RoomBooking.Application.Services.Booking
                 {
                     isValid = false;
                 }
+
+                if (guests.Contains(host) == true)
+                {
+                    isValid = false;
+                    response = "Host in guest list which should not be.";
+                }
             }
 
             // Redundant guests check.
