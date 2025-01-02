@@ -42,7 +42,7 @@ namespace RoomBooking.Controllers
                 var model = new GetAllRoomViewModel();
 
                 model.ResolveDI(_provider);
-                var allRooms = await model.GetAllRoomAsync(claim.Item2);
+                var allRooms = await model.LoadRoomAsync(claim.Item2);
 
                 return View(allRooms);
             }

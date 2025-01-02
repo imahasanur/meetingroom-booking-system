@@ -133,7 +133,7 @@ namespace RoomBooking.Controllers
             try
             {
                 var model = new GetAllAccountViewModel();
-                var allUser = await model.GetAllAccountAsync(_userManager);
+                var allUser = await model.LoadAccountAsync(_userManager);
 
                 return View(allUser);   
             }

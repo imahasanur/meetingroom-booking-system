@@ -81,9 +81,9 @@ namespace RoomBooking.Application.Services.Room
             return null;
         }
 
-        public async Task<IList<GetRoomDTO>> GetAllRoomAsync()
+        public async Task<IList<GetRoomDTO>> LoadRoomAsync()
         {
-            var rooms = await _unitOfWork.RoomRepository.GetAllRoomAsync();
+            var rooms = await _unitOfWork.RoomRepository.LoadRoomAsync();
             var roomsDTO = new List<GetRoomDTO>();
 
             for(int i = 0; i < rooms.Count; i++)

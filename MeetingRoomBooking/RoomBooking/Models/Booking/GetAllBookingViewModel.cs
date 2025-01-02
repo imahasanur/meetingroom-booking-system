@@ -30,30 +30,30 @@ namespace RoomBooking.Models.Booking
             _bookingService = provider.GetService<IBookingManagementService>();
         }
 
-        public async Task<IList<ScheduleEvent>> GetAllEventAsync(DateTime start, DateTime end)
+        public async Task<IList<ScheduleEvent>> LoadEventAsync(DateTime start, DateTime end)
         {
-            var allEvents = await _bookingService.GetAllEventAsync(start, end,null, null);
+            var allEvents = await _bookingService.LoadEventAsync(start, end,null, null);
             var events = allEvents.Select(x => new ScheduleEvent { Id = x.Id, Start = x.Start, End = x.End, Resource = x.RoomId, Text = x.Name , Color = x.Color, FontColor= x.FontColor }).ToList();
 
             return events;
         }
 
-        public async Task<IList<GetAllBookingViewModel>> GetAllEventAsync(string user, string userClaim)
+        public async Task<IList<GetAllBookingViewModel>> LoadEventAsync(string user, string userClaim)
         {
             DateTime start = DateTime.Now;
             DateTime end = DateTime.Now.AddYears(1);
 
-            var allEvents = await _bookingService.GetAllEventAsync(start, end, user, userClaim);
+            var allEvents = await _bookingService.LoadEventAsync(start, end, user, userClaim);
             var getAllBooking = allEvents.Select(x => new GetAllBookingViewModel {Id = x.Id, Name = x.Name, Start = x.Start, End = x.End, Color = x.Color, CreatedBy = x.CreatedBy, State = x.State, Host = x.Host, Guests = x.Guests, RoomId = x.RoomId, Room = x.Room, UserClaim = userClaim, FontColor = x.FontColor }).ToList();
             return getAllBooking;
         }
 
-        public async Task<IList<GetAllBookingViewModel>> GetAllGuestEventAsync(string user, string userClaim)
+        public async Task<IList<GetAllBookingViewModel>> LoadGuestEventAsync(string user, string userClaim)
         {
             DateTime start = DateTime.Now;
             DateTime end = DateTime.Now.AddYears(1);
 
-            var allEvents = await _bookingService.GetAllGuestEventAsync(start, end, user, userClaim);
+            var allEvents = await _bookingService.LoadGuestEventAsync(start, end, user, userClaim);
             var getAllBooking = allEvents.Select(x => new GetAllBookingViewModel { Id = x.Id, Name = x.Name, Start = x.Start, End = x.End, Color = x.Color, CreatedBy = x.CreatedBy, State = x.State, Host = x.Host, Guests = x.Guests, RoomId = x.RoomId, Room = x.Room, UserClaim = userClaim }).ToList();
             return getAllBooking;
         }

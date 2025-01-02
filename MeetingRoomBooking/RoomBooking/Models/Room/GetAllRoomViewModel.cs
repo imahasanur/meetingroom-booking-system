@@ -31,9 +31,9 @@ namespace RoomBooking.Models.Room
             _roomService = provider.GetService<IRoomManagementService>();
         }
 
-        public async Task<IList<GetAllRoomViewModel>> GetAllRoomAsync(string userClaim)
+        public async Task<IList<GetAllRoomViewModel>> LoadRoomAsync(string userClaim)
         {
-            var rooms = await _roomService.GetAllRoomAsync();
+            var rooms = await _roomService.LoadRoomAsync();
             var roomsViewModel = new List<GetAllRoomViewModel>();
             foreach(var room in rooms)
             {

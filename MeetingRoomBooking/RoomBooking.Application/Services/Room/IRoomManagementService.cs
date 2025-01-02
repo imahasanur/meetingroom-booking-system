@@ -10,7 +10,7 @@ namespace RoomBooking.Application.Services.Room
     public interface IRoomManagementService
     {
         Task<GetRoomDTO> GetRoomAsync(Guid id);
-        Task<IList<GetRoomDTO>> GetAllRoomAsync();
+        Task<IList<GetRoomDTO>> LoadRoomAsync();
         Task<string> CreateRoomAsync(CreateRoomDTO roomDTO);
         Task<string> EditRoomAsync(EditRoomDTO roomDTO);
         Task<string> DeleteRoomAsync(Guid id);

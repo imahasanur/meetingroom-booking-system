@@ -88,9 +88,9 @@ namespace RoomBooking.Models.Room
             return viewModel;
         }
 
-        public async Task<EditRoomViewModel> GetAllRoomAsync()
+        public async Task<EditRoomViewModel> LoadRoomAsync()
         {
-            var rooms = await _roomService.GetAllRoomAsync();
+            var rooms = await _roomService.LoadRoomAsync();
             var model = new EditRoomViewModel()
             {
                 PreviousRooms = rooms

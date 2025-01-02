@@ -38,7 +38,7 @@ namespace RoomBooking.Controllers
         {
             var model = new CreateBookingViewModel();
             model.ResolveDI(_provider);
-            var rooms = await model.GetAllRoomAsync();
+            var rooms = await model.LoadRoomAsync();
             if(rooms.Count == 0)
             {
                 return RedirectToAction("Create");
@@ -59,7 +59,7 @@ namespace RoomBooking.Controllers
             var model = new GetAllBookingViewModel();
             model.ResolveDI(_provider);
 
-            var allEvent = await model.GetAllEventAsync(start, end);
+            var allEvent = await model.LoadEventAsync(start, end);
           
 
             return Ok(allEvent);
@@ -77,7 +77,7 @@ namespace RoomBooking.Controllers
             var model = new GetAllBookingViewModel();
             model.ResolveDI(_provider);
 
-            var allEvent = await model.GetAllEventAsync(start, end);
+            var allEvent = await model.LoadEventAsync(start, end);
             var filteredEvent = allEvent.Where(ev => ev.Resource.Equals(id)).ToList();
 
 
@@ -378,7 +378,7 @@ namespace RoomBooking.Controllers
 
                 var user = await GetUserClaim();
 
-                var allEvent = await model.GetAllEventAsync(user.Item1, user.Item2);
+                var allEvent = await model.LoadEventAsync(user.Item1, user.Item2);
 
                 return View(allEvent);
             }
@@ -400,7 +400,7 @@ namespace RoomBooking.Controllers
 
                 var user = await GetUserClaim();
 
-                var allEvent = await model.GetAllGuestEventAsync(user.Item1, user.Item2);
+                var allEvent = await model.LoadGuestEventAsync(user.Item1, user.Item2);
 
                 return View(allEvent);
             }

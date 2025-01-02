@@ -31,10 +31,10 @@ namespace RoomBooking.Models.Booking
             _bookingService = provider.GetService<IBookingManagementService>();
         }
 
-        public async Task<List<RoomColumn>> GetAllRoomAsync()
+        public async Task<List<RoomColumn>> LoadRoomAsync()
         {
-            var rooms = await _roomService.GetAllRoomAsync();
-            var roomColumns = rooms.Select(x => new RoomColumn{ Name = $"{x.Location} {x.Name} ({x.Capacity}[{x.MinimumCapacity},{x.MinimumCapacity}])", Id = x.Id, Color = x.Color }).ToList();
+            var rooms = await _roomService.LoadRoomAsync();
+            var roomColumns = rooms.Select(x => new RoomColumn{ Name = $"{x.Location} {x.Name} ({x.Capacity}[{x.MinimumCapacity},{x.MaximumCapacity}])", Id = x.Id, Color = x.Color }).ToList();
 
             return roomColumns;
         }

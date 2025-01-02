@@ -302,9 +302,9 @@ namespace RoomBooking.Application.Services.Booking
             return response;
         }
 
-        public async Task<IList<GetEventDTO>> GetAllEventAsync(DateTime start, DateTime end, string? user, string? userClaim)
+        public async Task<IList<GetEventDTO>> LoadEventAsync(DateTime start, DateTime end, string? user, string? userClaim)
         {
-            var allEvent = await _unitOfWork.BookingRepository.GetAllEventAsync(start, end, user, userClaim);
+            var allEvent = await _unitOfWork.BookingRepository.LoadEventAsync(start, end, user, userClaim);
             var eventsDTO = new List<GetEventDTO>();
 
             for (int i = 0; i < allEvent.Count; i++)
@@ -331,9 +331,9 @@ namespace RoomBooking.Application.Services.Booking
             return eventsDTO;
         }
 
-        public async Task<IList<GetEventDTO>> GetAllGuestEventAsync(DateTime start, DateTime end, string? user, string? userClaim)
+        public async Task<IList<GetEventDTO>> LoadGuestEventAsync(DateTime start, DateTime end, string? user, string? userClaim)
         {
-            var allEvent = await _unitOfWork.BookingRepository.GetAllGuestEventAsync(start, end, user, userClaim);
+            var allEvent = await _unitOfWork.BookingRepository.LoadGuestEventAsync(start, end, user, userClaim);
             var eventsDTO = new List<GetEventDTO>();
 
             for (int i = 0; i < allEvent.Count; i++)
