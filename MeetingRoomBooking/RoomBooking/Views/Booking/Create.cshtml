@@ -25,12 +25,16 @@
 
     .calendar_default_rowheader {
         font-weight: bold;
-        background-color:cyan;
+        background-color: #FFFFFF;
     } 
    
+    .calendar_default_crosshair_left{
+        background-color: #FFFFFF;
+    }
+
 </style>
 
-<div>
+<div class="shadow p-3 mb-5 bg-white rounded">
     @{
         string userClaim = string.Empty;
         var roleClaims = User.Claims.Where(c => c.Type == "role").Select(c => c.Value).ToList();
@@ -73,14 +77,14 @@
 
 
     <div class="d-flex justify-content-center">
-        <div class="col-md-4">
+        <div class="col-md-4 shadow p-3 mb-5 bg-white rounded">
             <label for="viewTypeSelect" class="form-label">Select View Type:</label>
             <select id="viewTypeSelect" class="form-select">
                 <option value="Day">Day</option>
                 <option value="Resources" selected>Resources</option>
             </select>
         </div>
-        <div class="col-md-4 d-none" id="resourceSelectorContainer">
+        <div class="col-md-4 shadow p-3 mb-5 bg-white rounded ml-1 d-none" id="resourceSelectorContainer">
             <label for="resourceSelect" class="form-label">Select Resource:</label>
             <select id="resourceSelect" class="form-select">
                
