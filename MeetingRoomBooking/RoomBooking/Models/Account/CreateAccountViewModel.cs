@@ -1,26 +1,27 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using CsvHelper.Configuration;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RoomBooking.Infrastructure.Membership;
 using System.ComponentModel.DataAnnotations;
 
 namespace RoomBooking.Models.Account
 {
-    public class CreateAccountViewModel {
+    public class CreateAccountViewModel
+    {
         private UserManager<ApplicationUser> _userManager;
         private SignInManager<ApplicationUser> _signInManager;
 
         [DataType(DataType.Text)]
-        public string FirstName { get; set; }
+        public string? FirstName { get; set; }
 
         [DataType(DataType.Text)]
-        public string LastName { get; set; }
+        public string? LastName { get; set; }
 
         [EmailAddress]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
-
+        public string? Password { get; set; }
         public string? ReturnUrl { get; set; }
-
         public IFormFile File { get; set; }
 
         public void Resolve(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
@@ -29,6 +30,57 @@ namespace RoomBooking.Models.Account
             _signInManager = signInManager;
         }
 
+        internal async Task<(IEnumerable<IdentityError>? errors, string? redirectLocation)> RegistersAsync(string urlPrefix, List<UserInformation> users)
+        {
 
+            ReturnUrl ??= urlPrefix;
+
+            foreach (var user in users)
+            {
+
+                var userInformation = new ApplicationUser
+                {
+                    UserName = user.Email,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    FullName = $"{user.FirstName} {user.LastName}",
+                    CreatedAtUtc = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day)
+                };
+
+                var result = await _userManager.CreateAsync(userInformation, user.Password);
+
+                if (result.Succeeded)
+                {
+                    await _userManager.AddClaimAsync(userInformation, new System.Security.Claims.Claim("role", "user"));
+                    await _signInManager.SignInAsync(userInformation, isPersistent: false);
+                }
+                else
+                {
+                    return (result.Errors, null);
+                }
+            }
+
+            return (null,ReturnUrl);
+        }
+    }
+
+    public class UserInformation
+    {
+        public string Email { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Password { get; set; }
+    }
+
+    public class UserInformationMap : ClassMap<UserInformation>
+    {
+        public UserInformationMap()
+        {
+            Map(m => m.Email).Name("Email");
+            Map(m => m.FirstName).Name("FirstName");
+            Map(m => m.LastName).Name("LastName");
+            Map(m => m.Password).Name("Password");
+        }
     }
 }

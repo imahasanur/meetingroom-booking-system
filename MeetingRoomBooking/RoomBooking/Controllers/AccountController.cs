@@ -1,9 +1,15 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using CsvHelper.TypeConversion;
+using CsvHelper;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using RoomBooking.Infrastructure.Membership;
 using RoomBooking.Models.Account;
+using System.Globalization;
 using System.Security.Claims;
+using CsvHelper.Configuration;
+using System.Text;
 
 namespace RoomBooking.Controllers
 {
@@ -202,6 +208,7 @@ namespace RoomBooking.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Create()
+        
         {
             var model = new CreateAccountViewModel();
 
@@ -212,7 +219,105 @@ namespace RoomBooking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateAccountViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError(string.Empty, "Choose the csv file");
+
+                return View(model);
+            }
+
+            if (model.File != null && model.File.Length > 0)
+            {
+                using (var stream = model.File.OpenReadStream())
+                {
+                    try
+                    {
+                        var users = new List<UserInformation>();
+                        using (var dataStream = model.File.OpenReadStream())
+                        {
+                            users = ReadCsvFile(dataStream).ToList();
+                        }
+
+                        if (users.Count > 0)
+                        {
+                            var invalidRecord = users.Where(x => x.FirstName == string.Empty || x.LastName == string.Empty || x.Email == string.Empty || x.Password == string.Empty).ToList();
+                            
+                            if (invalidRecord.Count > 0)
+                            {
+                                ModelState.AddModelError(string.Empty, "Csv file contains Null fields value");
+                                
+                                return View(model);
+                            }
+
+                            model.Resolve(_userManager, _signInManager);
+                            var response = await model.RegistersAsync(Url.Content("~/"), users);
+
+                            if (response.errors is not null)
+                            {
+                                foreach (var error in response.errors)
+                                {
+                                    ModelState.AddModelError(string.Empty, error.Description);
+                                    _logger.LogError(error.Description);
+                                }
+                            }
+                            else
+                            {
+                                return Redirect(response.redirectLocation);
+                            }
+                        }
+                        
+                    }
+                    catch (ApplicationException ex)
+                    {
+                        ModelState.AddModelError(string.Empty, ex.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        ModelState.AddModelError(string.Empty, $"An unexpected error occurred: {ex.Message}");
+                    }
+                }
+            }
+
             return View(model);
+        }
+
+        public IEnumerable<UserInformation> ReadCsvFile(Stream fileStream)
+        {
+            try
+            {
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+                {
+                    BadDataFound = null,
+                    Delimiter = ",",
+                    Quote = '\'',
+                    Encoding = Encoding.UTF8,
+                    MissingFieldFound = null,
+                    MemberTypes = MemberTypes.Fields
+                };
+
+                using (var reader = new StreamReader(fileStream))
+                using (var csv = new CsvReader(reader, config))
+                {
+                    // Register mapping for properties.
+                    // Remove Error CsvHelper.ReaderException: 'No members are mapped for type.
+                    csv.Context.RegisterClassMap<UserInformationMap>(); 
+                    var records = csv.GetRecords<UserInformation>().ToList();
+
+                    return records.ToList();
+                }
+            }
+            catch (HeaderValidationException ex)
+            {
+                throw new ApplicationException("CSV file header is invalid.", ex);
+            }
+            catch (TypeConverterException ex)
+            {
+                throw new ApplicationException("CSV file contains invalid data format.", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException("Error reading CSV file", ex);
+            }
         }
     }
 }
