@@ -7,6 +7,7 @@ using RoomBooking.Application.Services;
 using RoomBooking.Application.Services.Booking;
 using RoomBooking.Application.Services.EventTime;
 using RoomBooking.Application.Services.Room;
+using RoomBooking.Application.Services.User;
 using RoomBooking.Infrastructure;
 using RoomBooking.Infrastructure.Membership;
 using RoomBooking.Infrastructure.Repositories;
@@ -60,11 +61,13 @@ namespace RoomBooking
                 builder.Services.AddScoped<IEventTimeManagementService, EventTimeManagementService>();
                 builder.Services.AddScoped<IBookingManagementService, BookingManagementService>();
                 builder.Services.AddScoped<IRoomManagementService, RoomManagementService>();
+                builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 
                 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
                 builder.Services.AddScoped<IEventTimeRepository, EventTimeRepository>();
                 builder.Services.AddScoped<IRoomRepository, RoomRepository>();
                 builder.Services.AddScoped<IGuestRepository, GuestRepository>();
+                builder.Services.AddScoped<IUserRepository, UserRepository>();
                 builder.Services.AddScoped<IApplicationUnitOfWork, ApplicationUnitOfWork>();
                 builder.Services.AddScoped<ApplicationUser>();
 

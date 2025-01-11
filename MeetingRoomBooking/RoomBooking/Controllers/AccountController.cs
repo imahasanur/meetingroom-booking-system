@@ -248,7 +248,7 @@ namespace RoomBooking.Controllers
                             return View(model);
                         }
 
-                        model.Resolve(_userManager, _signInManager);
+                        model.Resolve(_userManager, _signInManager, _provider);
                         var response = await model.RegistersAsync(Url.Content("~/"), users);
 
                         if (response.errors is not null)
@@ -269,12 +269,13 @@ namespace RoomBooking.Controllers
                 catch (ApplicationException ex)
                 {
                     ModelState.AddModelError(string.Empty, ex.Message);
+                    _logger.LogError(ex, "There is an ApplicationException");
                 }
                 catch (Exception ex)
                 {
                     ModelState.AddModelError(string.Empty, $"An unexpected error occurred: {ex.Message}");
+                    _logger.LogError(ex, $"There is an exception {ex.Message}");
                 }
-                
             }
 
             return View(model);

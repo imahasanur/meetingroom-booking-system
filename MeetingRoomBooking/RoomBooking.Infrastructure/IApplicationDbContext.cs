@@ -14,5 +14,6 @@ namespace RoomBooking.Infrastructure
         public DbSet<Event> Event { get; set; }
         public DbSet<Guest> Guest { get; set; }
         public DbSet<EventTime> Time { get; set; }
+        public DbSet<UploadedUser> UploadedUser { get; set; }
     }
 }

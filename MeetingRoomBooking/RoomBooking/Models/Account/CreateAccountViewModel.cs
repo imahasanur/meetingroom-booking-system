@@ -1,6 +1,9 @@
 ﻿using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using RoomBooking.Application.DTO;
+using RoomBooking.Application.Services.Room;
+using RoomBooking.Application.Services.User;
 using RoomBooking.Infrastructure.Membership;
 using System.ComponentModel.DataAnnotations;
 
@@ -10,6 +13,7 @@ namespace RoomBooking.Models.Account
     {
         private UserManager<ApplicationUser> _userManager;
         private SignInManager<ApplicationUser> _signInManager;
+        private IUserManagementService _userService;
 
         [DataType(DataType.Text)]
         public string? FirstName { get; set; }
@@ -24,10 +28,11 @@ namespace RoomBooking.Models.Account
         public string? ReturnUrl { get; set; }
         public IFormFile File { get; set; }
 
-        public void Resolve(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public void Resolve(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IServiceProvider provider)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _userService = provider.GetRequiredService<IUserManagementService>();
         }
 
         internal async Task<(IEnumerable<IdentityError>? errors, string? redirectLocation)> RegistersAsync(string urlPrefix, List<UserInformation> users)
@@ -54,6 +59,15 @@ namespace RoomBooking.Models.Account
                 {
                     await _userManager.AddClaimAsync(userInformation, new System.Security.Claims.Claim("role", "user"));
                     await _signInManager.SignInAsync(userInformation, isPersistent: false);
+
+                    var uploadedUser = new CreateUserDTO 
+                    {
+                        CreatedAtUTC = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day),
+                        UserEmail = userInformation.Email,
+                        IsLoggedIn = false,
+                    };
+
+                    await _userService.CreateUploadedUserAsync(uploadedUser); 
                 }
                 else
                 {
