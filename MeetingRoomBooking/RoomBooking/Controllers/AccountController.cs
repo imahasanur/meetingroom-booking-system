@@ -199,5 +199,20 @@ namespace RoomBooking.Controllers
                 return RedirectToAction("GetAll");
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            var model = new CreateAccountViewModel();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreateAccountViewModel model)
+        {
+            return View(model);
+        }
     }
 }

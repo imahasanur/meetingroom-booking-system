@@ -1,0 +1,46 @@
+﻿@model CreateAccountViewModel
+@{
+    ViewData["Title"] = "Create User";
+}
+
+<link rel="stylesheet" href="~/assets/style.css" asp-append-version="true" />
+
+<div class="container-box">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-lg-12 shadow p-3 mb-2 rounded">
+            <form id="registerForm" asp-controller="Account" asp-action="Create" asp-area="" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data" asp-antiforgery="true">
+                <h5 class="text-center p-3">Upload New Users.</h5>
+
+                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                <div class="form-group">
+                    <label for="exampleInputFile">File input</label>
+                    <div class="input-group">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="inputFile" asp-for="File">
+                            <label class="custom-file-label" asp-for="File">Choose file</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Upload </button>
+                <hr />
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            const inputFile = $("#inputFile");
+
+            inputFile.change(function () {
+                const fileName = this.files[0]?.name || "Choose file";
+                $(this).next(".custom-file-label").text(fileName);
+            });
+        });
+    </script>
+}
