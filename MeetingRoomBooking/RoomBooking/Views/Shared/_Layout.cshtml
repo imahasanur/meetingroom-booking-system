@@ -84,6 +84,14 @@
                                         @if(isAdmin == true)
                                         {
                                             <li class="nav-item">
+                                                <a class="nav-link" asp-controller="Account" asp-action="Create">
+                                                    <i class="nav-icon fas fa-plus"></i>
+                                                    <p>
+                                                        Create Users
+                                                    </p>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
                                                 <a class="nav-link" asp-controller="Room" asp-action="Create">
                                                     <i class="nav-icon fas fa-plus-circle"></i>
                                                     <p>

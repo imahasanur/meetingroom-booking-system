@@ -228,54 +228,53 @@ namespace RoomBooking.Controllers
 
             if (model.File != null && model.File.Length > 0)
             {
-                using (var stream = model.File.OpenReadStream())
+                
+                try
                 {
-                    try
+                    var users = new List<UserInformation>();
+                    using (var dataStream = model.File.OpenReadStream())
                     {
-                        var users = new List<UserInformation>();
-                        using (var dataStream = model.File.OpenReadStream())
-                        {
-                            users = ReadCsvFile(dataStream).ToList();
-                        }
+                        users = ReadCsvFile(dataStream).ToList();
+                    }
 
-                        if (users.Count > 0)
-                        {
-                            var invalidRecord = users.Where(x => x.FirstName == string.Empty || x.LastName == string.Empty || x.Email == string.Empty || x.Password == string.Empty).ToList();
+                    if (users.Count > 0)
+                    {
+                        var invalidRecord = users.Where(x => x.FirstName == string.Empty || x.LastName == string.Empty || x.Email == string.Empty || x.Password == string.Empty).ToList();
                             
-                            if (invalidRecord.Count > 0)
-                            {
-                                ModelState.AddModelError(string.Empty, "Csv file contains Null fields value");
+                        if (invalidRecord.Count > 0)
+                        {
+                            ModelState.AddModelError(string.Empty, "Csv file contains Null fields value");
                                 
-                                return View(model);
-                            }
+                            return View(model);
+                        }
 
-                            model.Resolve(_userManager, _signInManager);
-                            var response = await model.RegistersAsync(Url.Content("~/"), users);
+                        model.Resolve(_userManager, _signInManager);
+                        var response = await model.RegistersAsync(Url.Content("~/"), users);
 
-                            if (response.errors is not null)
+                        if (response.errors is not null)
+                        {
+                            foreach (var error in response.errors)
                             {
-                                foreach (var error in response.errors)
-                                {
-                                    ModelState.AddModelError(string.Empty, error.Description);
-                                    _logger.LogError(error.Description);
-                                }
-                            }
-                            else
-                            {
-                                return Redirect(response.redirectLocation);
+                                ModelState.AddModelError(string.Empty, error.Description);
+                                _logger.LogError(error.Description);
                             }
                         }
+                        else
+                        {
+                            return Redirect(response.redirectLocation);
+                        }
+                    }
                         
-                    }
-                    catch (ApplicationException ex)
-                    {
-                        ModelState.AddModelError(string.Empty, ex.Message);
-                    }
-                    catch (Exception ex)
-                    {
-                        ModelState.AddModelError(string.Empty, $"An unexpected error occurred: {ex.Message}");
-                    }
                 }
+                catch (ApplicationException ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, $"An unexpected error occurred: {ex.Message}");
+                }
+                
             }
 
             return View(model);
