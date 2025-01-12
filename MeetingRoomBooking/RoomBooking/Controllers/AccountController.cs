@@ -331,10 +331,7 @@ namespace RoomBooking.Controllers
 
         public async Task<IActionResult> ResetPassword()
         {
-            var model = new ResetPasswordViewModel();
-            var code = new Random().Next(1000, 9000).ToString();
-
-            model.Code = code;
+            var model = new ResetPasswordViewModel(); 
 
             return View(model);
         }
@@ -355,6 +352,8 @@ namespace RoomBooking.Controllers
             {
                 model.Resolve(_userManager, _signInManager, _provider);
                 var user = await _userManager.GetUserAsync(User);
+
+                model.Code = await _userManager.GeneratePasswordResetTokenAsync(user);
 
                 var response = await model.ResetPassowrdAsync(model, user);
 

@@ -25,7 +25,7 @@ namespace RoomBooking.Models.Account
         [Compare("Password", ErrorMessage = "Type properly! It's a mismatch with password")]
         public string ConfirmPassword { get; set; }
 
-        public string Code { get; set; }
+        public string? Code { get; set; }
 
         public void Resolve(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IServiceProvider provider)
         {
