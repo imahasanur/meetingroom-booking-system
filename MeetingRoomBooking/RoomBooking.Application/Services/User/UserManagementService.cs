@@ -36,6 +36,14 @@ namespace RoomBooking.Application.Services.User
             bool isPreviousLoggedIn = false;
 
             var user = await _unitOfWork.UserRepository.CheckPreviousLogging(userEmail,isTrackingOff);
+
+            if (user == null || user.Count == 0)
+            {
+                isPreviousLoggedIn = true;
+                
+                return isPreviousLoggedIn;
+            }
+
             var loggedInUsr = user[0];
 
             if(loggedInUsr.IsLoggedIn == false)
