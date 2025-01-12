@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RoomBooking.Infrastructure.Membership;
 using RoomBooking.Models;
+using RoomBooking.Models.Account;
 using System.Diagnostics;
 
 namespace RoomBooking.Controllers
@@ -11,11 +12,15 @@ namespace RoomBooking.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IServiceProvider _provider;
 
-        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager)
+        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IServiceProvider provider)
         {
             _logger = logger;
             _userManager = userManager;
+            _signInManager = signInManager;
+            _provider = provider;
         }
 
         [Authorize]
@@ -31,7 +36,13 @@ namespace RoomBooking.Controllers
                 var userClaim = await _userManager.GetClaimsAsync(user);
                 var claims = userClaim.Select(x => x.Value).ToList();
 
-                if(claims.Contains("admin") == true)
+                var model = new LoginAccountViewModel();
+
+                model.Resolve(_provider);
+
+                var isPreviousLoggedIn = await model.CheckPreviousLogging(user.Email);
+
+                if (claims.Contains("admin") == true)
                 {
                     TempData["status"] = $"Welcome to the Admin panel {user.FullName}";
                     TempData["claim"] = "admin";
@@ -40,6 +51,11 @@ namespace RoomBooking.Controllers
                 {
                     TempData["status"] = $"Welcome to User panel {user.FullName}";
                     TempData["claim"] = "user";
+                }
+
+                if (isPreviousLoggedIn == false)
+                {
+                    return RedirectToAction("ResetPassword", "Account");
                 }
             }
             
