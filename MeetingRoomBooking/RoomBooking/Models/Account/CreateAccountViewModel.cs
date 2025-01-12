@@ -50,6 +50,9 @@ namespace RoomBooking.Models.Account
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     FullName = $"{user.FirstName} {user.LastName}",
+                    Department = user.Department,
+                    PhoneNumber = user.Phone,
+                    MemberPin = user.MemberPin,
                     CreatedAtUtc = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day)
                 };
 
@@ -84,6 +87,9 @@ namespace RoomBooking.Models.Account
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Password { get; set; }
+        public string Department { get; set; }
+        public string Phone { get; set; }
+        public string MemberPin { get; set; }
     }
 
     public class UserInformationMap : ClassMap<UserInformation>
@@ -94,6 +100,9 @@ namespace RoomBooking.Models.Account
             Map(m => m.FirstName).Name("FirstName");
             Map(m => m.LastName).Name("LastName");
             Map(m => m.Password).Name("Password");
+            Map(m => m.MemberPin).Name("Pin");
+            Map(m => m.Department).Name("Department");
+            Map(m => m.Phone).Name("Phone");
         }
     }
 }

@@ -248,7 +248,7 @@ namespace RoomBooking.Controllers
 
                     if (users.Count > 0)
                     {
-                        var invalidRecord = users.Where(x => x.FirstName == string.Empty || x.LastName == string.Empty || x.Email == string.Empty || x.Password == string.Empty).ToList();
+                        var invalidRecord = users.Where(x => x.FirstName == string.Empty || x.LastName == string.Empty || x.Email == string.Empty || x.Password == string.Empty || x.MemberPin == string.Empty || x.Department == string.Empty || x.Phone == string.Empty).ToList();
                             
                         if (invalidRecord.Count > 0)
                         {

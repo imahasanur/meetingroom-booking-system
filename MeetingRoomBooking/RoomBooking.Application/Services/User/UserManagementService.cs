@@ -66,6 +66,7 @@ namespace RoomBooking.Application.Services.User
             var loggedInUsr = user[0];
 
             loggedInUsr.IsLoggedIn = true;
+            loggedInUsr.LastUpdatedAtUTC = DateTime.UtcNow;
 
             await _unitOfWork.SaveAsync();
 

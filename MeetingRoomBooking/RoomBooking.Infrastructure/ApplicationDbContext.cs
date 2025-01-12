@@ -65,6 +65,8 @@ namespace RoomBooking.Infrastructure
                 FirstName = adminFirstName,
                 LastName = adminLastName,
                 FullName = adminFullName,
+                MemberPin = "1122",
+                Department = "Developer",
                 CreatedAtUtc = new DateTime(2024, 12, 11, 0, 0, 0, DateTimeKind.Utc)
             };
             adminUser.PasswordHash = passwordHasher.HashPassword(adminUser, adminPassword);
@@ -87,6 +89,8 @@ namespace RoomBooking.Infrastructure
                     ClaimValue = "user"
                 }
             );
+
+            builder.Entity<ApplicationUser>().Property(x => x.MemberPin).HasMaxLength(20);
 
             builder.Entity<Room>().Property(p => p.ConcurrencyToken).IsConcurrencyToken();
 

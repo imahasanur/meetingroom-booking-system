@@ -36,6 +36,23 @@ namespace RoomBooking.Models.Account
         [Display(Name = "Confirm Password")]
         [Compare("Password", ErrorMessage = "Type properly! It's a mismatch with password")]
         public string ConfirmPassword { get; set; }
+
+        [Required]
+        [DataType(DataType.Text)]
+        [Display(Name = "Phone")]
+        public string Phone { get; set; }
+
+        [Required]
+        [DataType(DataType.Text)]
+        [Display(Name = "Department")]
+        public string Deaprtment { get; set; }
+
+        [Required]
+        [StringLength(20,MinimumLength =2)]
+        [DataType(DataType.Text)]
+        [Display(Name = "Member Pin")]
+        public string MemberPin { get; set; }
+
         public string? ReturnUrl { get; set; }
 
         public RegisterAccountViewModel() { }
@@ -57,6 +74,9 @@ namespace RoomBooking.Models.Account
                 FirstName = FirstName,
                 LastName = LastName,
                 FullName = $"{FirstName} {LastName}",
+                Department = Deaprtment,
+                MemberPin = MemberPin,
+                PhoneNumber = Phone,
                 CreatedAtUtc = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day)
             };
             var result = await _userManager.CreateAsync(user, Password);
