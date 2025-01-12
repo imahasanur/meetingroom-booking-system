@@ -58,7 +58,6 @@ namespace RoomBooking.Models.Account
                 if (result.Succeeded)
                 {
                     await _userManager.AddClaimAsync(userInformation, new System.Security.Claims.Claim("role", "user"));
-                    await _signInManager.SignInAsync(userInformation, isPersistent: false);
 
                     var uploadedUser = new CreateUserDTO 
                     {

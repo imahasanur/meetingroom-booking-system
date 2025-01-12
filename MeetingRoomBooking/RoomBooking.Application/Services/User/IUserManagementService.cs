@@ -10,5 +10,7 @@ namespace RoomBooking.Application.Services.User
     public interface IUserManagementService
     {
         Task CreateUploadedUserAsync(CreateUserDTO user);
+        Task<bool> CheckPreviousLogging(string userEmail, bool isTrackingOff);
+        Task<bool> UpdateLoggedInState(string userEmail);
     }
 }

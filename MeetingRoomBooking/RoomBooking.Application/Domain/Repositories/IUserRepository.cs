@@ -10,5 +10,6 @@ namespace RoomBooking.Application.Domain.Repositories
     public interface IUserRepository
     {
         Task CreateUploadedUserAsync(UploadedUser user);
+        Task<IList<UploadedUser>> CheckPreviousLogging(string userEmail, bool isTrackingOff);
     }
 }

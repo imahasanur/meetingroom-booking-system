@@ -30,6 +30,38 @@ namespace RoomBooking.Application.Services.User
             await _unitOfWork.UserRepository.CreateUploadedUserAsync(uploadedUser);
             await _unitOfWork.SaveAsync();
         }
-            
+
+        public async Task<bool> CheckPreviousLogging(string userEmail, bool isTrackingOff)
+        {
+            bool isPreviousLoggedIn = false;
+
+            var user = await _unitOfWork.UserRepository.CheckPreviousLogging(userEmail,isTrackingOff);
+            var loggedInUsr = user[0];
+
+            if(loggedInUsr.IsLoggedIn == false)
+            {
+               isPreviousLoggedIn = false;
+            }
+            else
+            {
+                isPreviousLoggedIn = true;
+            }
+
+            return isPreviousLoggedIn;
+        }
+
+        public async Task<bool> UpdateLoggedInState(string userEmail)
+        {
+            bool isPreviousLoggedIn = true;
+
+            var user = await _unitOfWork.UserRepository.CheckPreviousLogging(userEmail, false);
+            var loggedInUsr = user[0];
+
+            loggedInUsr.IsLoggedIn = true;
+
+            await _unitOfWork.SaveAsync();
+
+            return isPreviousLoggedIn;
+        }
     }
 }

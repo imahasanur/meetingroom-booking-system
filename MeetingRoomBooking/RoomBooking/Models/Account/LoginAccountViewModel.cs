@@ -1,9 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using RoomBooking.Application.Services.User;
+using RoomBooking.Infrastructure.Membership;
+using System.ComponentModel.DataAnnotations;
 
 namespace RoomBooking.Models.Account
 {
     public class LoginAccountViewModel
     {
+        private IUserManagementService _userService;
+
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
@@ -15,5 +20,20 @@ namespace RoomBooking.Models.Account
         [Display(Name = "Password")]
         public string Password { get; set; }
         public string? ReturnUrl { get; set; }
+
+        public void Resolve(IServiceProvider provider)
+        {
+
+            _userService = provider.GetRequiredService<IUserManagementService>();
+        }
+
+        public async Task<bool> CheckPreviousLogging(string userEmail)
+        {
+            bool isTrackingOff = true;
+            bool isNewLogIn = false;
+            isNewLogIn = await _userService.CheckPreviousLogging(userEmail, isTrackingOff);
+
+            return isNewLogIn;
+        }
     }
 }

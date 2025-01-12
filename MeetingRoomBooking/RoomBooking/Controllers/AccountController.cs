@@ -93,7 +93,16 @@ namespace RoomBooking.Controllers
                 if (result.Succeeded)
                 {
                     var user = await _userManager.FindByEmailAsync(model.Email);
-                    var claims = (await _userManager.GetClaimsAsync(user)).ToArray();
+                    var userEmail = user.UserName;
+
+                    model.Resolve(_provider);
+                    var isPreviousLoggedIn = await model.CheckPreviousLogging(userEmail);
+
+                    if(isPreviousLoggedIn == false)
+                    {
+                        return RedirectToAction("ResetPassword", "Account");
+                    }
+                    //var claims = (await _userManager.GetClaimsAsync(user)).ToArray();
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -318,6 +327,63 @@ namespace RoomBooking.Controllers
             {
                 throw new ApplicationException("Error reading CSV file", ex);
             }
+        }
+
+        public async Task<IActionResult> ResetPassword()
+        {
+            var model = new ResetPasswordViewModel();
+            var code = new Random().Next(1000, 9000).ToString();
+
+            model.Code = code;
+
+            return View(model);
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid password reset attempt");
+
+                return View(model);
+            }
+
+            TempData.Clear();
+
+            try
+            {
+                model.Resolve(_userManager, _signInManager, _provider);
+                var user = await _userManager.GetUserAsync(User);
+
+                var response = await model.ResetPassowrdAsync(model, user);
+
+                if (response.isReset == true)
+                {
+                    TempData["success"] = "Password Reset Successfully";
+                }
+                else
+                {
+                    TempData["message"] = "There is and Error while password reset";
+
+                    if (response.errors is not null)
+                    {
+                        foreach (var error in response.errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                            _logger.LogError(error.Description);
+                        }
+                    }
+                }
+                return View(model);
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError($"Error while updating account: {ex.Message}");
+                TempData["failure"] = "An error occurred while Resetting passowrd";
+            }
+
+            return View(model);
         }
     }
 }
