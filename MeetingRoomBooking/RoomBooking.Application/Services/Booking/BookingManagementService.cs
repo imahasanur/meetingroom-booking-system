@@ -396,8 +396,6 @@ namespace RoomBooking.Application.Services.Booking
                     existingEvent.Start = eventDTO.Start;
                     existingEvent.End = eventDTO.End;
                     existingEvent.RoomId = eventDTO.RoomId;
-                    existingEvent.Description = eventDTO.Description;
-                  
 
                     // Check the state pending or approved
                     if( existingEvent.State == "approved")
@@ -434,13 +432,14 @@ namespace RoomBooking.Application.Services.Booking
                         if (isValid.Item1 == false)
                         {
                             isValid.Item2 = "Booking Attendee limit mismatch with max or min limit of the the room";
+
                             return isValid.Item2;
                         }
-
                     }
                     else
                     {
                         response = "Room is deleted";
+
                         return response;
                     }
 
