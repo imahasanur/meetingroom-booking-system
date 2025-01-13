@@ -59,8 +59,8 @@ namespace RoomBooking.Controllers
             var model = new GetAllBookingViewModel();
             model.ResolveDI(_provider);
 
-            var allEvent = await model.LoadEventAsync(start, end);
-          
+            var userIdentity = await GetUserClaim();
+            var allEvent = await model.LoadEventAsync(start, end, userIdentity.Item1, userIdentity.Item2);
 
             return Ok(allEvent);
         }
@@ -77,9 +77,10 @@ namespace RoomBooking.Controllers
             var model = new GetAllBookingViewModel();
             model.ResolveDI(_provider);
 
-            var allEvent = await model.LoadEventAsync(start, end);
-            var filteredEvent = allEvent.Where(ev => ev.Resource.Equals(id)).ToList();
+            var userIdentity = await GetUserClaim();
+            var allEvent = await model.LoadEventAsync(start, end, userIdentity.Item1, userIdentity.Item2);
 
+            var filteredEvent = allEvent.Where(ev => ev.Resource.Equals(id)).ToList();
 
             return Ok(filteredEvent);
         }

@@ -31,10 +31,10 @@ namespace RoomBooking.Models.Booking
             _bookingService = provider.GetService<IBookingManagementService>();
         }
 
-        public async Task<IList<ScheduleEvent>> LoadEventAsync(DateTime start, DateTime end)
+        public async Task<IList<ScheduleEvent>> LoadEventAsync(DateTime start, DateTime end, string user, string userClaim)
         {
             var allEvents = await _bookingService.LoadEventAsync(start, end,null, null);
-            var events = allEvents.Select(x => new ScheduleEvent { Id = x.Id, Start = x.Start, End = x.End, Resource = x.RoomId, Text = x.Name , Color = x.Color, FontColor= x.FontColor }).ToList();
+            var events = allEvents.Select(x => new ScheduleEvent { Id = x.Id, Start = x.Start, End = x.End, Resource = x.RoomId, Text = (x.CreatedBy.Equals(user) || x.Host.Equals(user) || userClaim.Equals("admin")) ? $"{x.Name} \n {x.Description}" : x.Name, Color = x.Color, FontColor= x.FontColor }).ToList();
 
             return events;
         }
