@@ -68,6 +68,7 @@ namespace RoomBooking.Models.Booking
                 Host = model.Host,
                 AllGuest = model.Guests,
                 RoomId = model.RoomId,
+                Description = model.Description,
                 FontColor = model.FontColor,
             };
 
@@ -102,6 +103,7 @@ namespace RoomBooking.Models.Booking
                 Guests = guests,
                 RoomId = eventDTO.RoomId,
                 FontColor = eventDTO.FontColor,
+                Description = eventDTO.Description,
             };
             return editBookingModel;
         }
