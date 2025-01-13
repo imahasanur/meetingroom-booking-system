@@ -20,6 +20,7 @@ namespace RoomBooking.Models.Booking
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
         public string CreatedBy { get; set; }
+        public string Description { get; set; }
         public string Host { get; set; }
         public Guid RoomId { get; set; }
         public string Guests { get; set; }
@@ -64,6 +65,7 @@ namespace RoomBooking.Models.Booking
                 End = model.End,
                 CreatedBy = model.CreatedBy,
                 Host = model.Host,
+                Description = model.Description,
                 Color = model.Color,
                 FontColor = model.FontColor,
                 CreatedAtUTC = model.CreatedAtUTC,

@@ -40,6 +40,7 @@
                     <th>Meeting Name</th>
                     <th>Start Time</th>
                     <th>End Time</th>
+                    <th>Purpose</th>
                     <th>Host</th>
                     <th>Meeting Creator</th>
                     <th>Room </th>
@@ -58,6 +59,7 @@
                             <td>@meeting.Name</td>
                             <td>@meeting.Start.ToString("yyyy-MM-dd HH:mm:ss.ff")</td>
                             <td>@meeting.End.ToString("yyyy-MM-dd HH:mm:ss.ff")</td>
+                            <td>@meeting.Description</td>
                             <td>@meeting.Host</td>
                             <td>@meeting.CreatedBy</td>
                             <td>@meeting.Room.Location @meeting.Room.Name</td>
@@ -136,6 +138,7 @@
                 {
                     <tr>
                         <td class="text-center">No meetings available.</td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>

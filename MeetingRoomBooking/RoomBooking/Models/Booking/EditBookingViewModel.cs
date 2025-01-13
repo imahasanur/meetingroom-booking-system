@@ -27,6 +27,8 @@ namespace RoomBooking.Models.Booking
         public string CreatedBy { get; set; }
         [Required]
         public string Host { get; set; }
+        [Required]
+        public string Description { get; set; }
         public Guid RoomId { get; set; }
         public string Guests { get; set; }
         public string? UserClaim { get; set; }

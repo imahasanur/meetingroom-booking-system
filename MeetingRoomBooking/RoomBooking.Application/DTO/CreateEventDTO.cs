@@ -16,6 +16,7 @@ namespace RoomBooking.Application.DTO
         public required string State { get; set; }
         public required DateTime Start { get; set; }
         public required DateTime End { get; set; }
+        public required string Description { get; set; }
         public required string CreatedBy { get; set; }
         public required string Host { get; set; }
         public required List<Guest> Guests { get; set; }

@@ -17,6 +17,7 @@ namespace RoomBooking.Models.Booking
         public string State { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
+        public string Description { get; set;}
         public string CreatedBy { get; set; }
         public string Host { get; set; }
         public Guid RoomId { get; set; }
@@ -44,7 +45,7 @@ namespace RoomBooking.Models.Booking
             DateTime end = DateTime.Now.AddYears(1);
 
             var allEvents = await _bookingService.LoadEventAsync(start, end, user, userClaim);
-            var getAllBooking = allEvents.Select(x => new GetAllBookingViewModel {Id = x.Id, Name = x.Name, Start = x.Start, End = x.End, Color = x.Color, CreatedBy = x.CreatedBy, State = x.State, Host = x.Host, Guests = x.Guests, RoomId = x.RoomId, Room = x.Room, UserClaim = userClaim, FontColor = x.FontColor }).ToList();
+            var getAllBooking = allEvents.Select(x => new GetAllBookingViewModel {Id = x.Id, Name = x.Name, Start = x.Start, End = x.End, Color = x.Color, CreatedBy = x.CreatedBy, State = x.State, Host = x.Host, Guests = x.Guests, RoomId = x.RoomId, Room = x.Room, UserClaim = userClaim, FontColor = x.FontColor, Description = x.Description }).ToList();
             return getAllBooking;
         }
 
@@ -54,7 +55,7 @@ namespace RoomBooking.Models.Booking
             DateTime end = DateTime.Now.AddYears(1);
 
             var allEvents = await _bookingService.LoadGuestEventAsync(start, end, user, userClaim);
-            var getAllBooking = allEvents.Select(x => new GetAllBookingViewModel { Id = x.Id, Name = x.Name, Start = x.Start, End = x.End, Color = x.Color, CreatedBy = x.CreatedBy, State = x.State, Host = x.Host, Guests = x.Guests, RoomId = x.RoomId, Room = x.Room, UserClaim = userClaim }).ToList();
+            var getAllBooking = allEvents.Select(x => new GetAllBookingViewModel { Id = x.Id, Name = x.Name, Start = x.Start, End = x.End, Color = x.Color, CreatedBy = x.CreatedBy, State = x.State, Host = x.Host, Guests = x.Guests, RoomId = x.RoomId, Room = x.Room, UserClaim = userClaim, Description = x.Description }).ToList();
             return getAllBooking;
         }
     }

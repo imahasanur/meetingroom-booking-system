@@ -202,6 +202,9 @@
                         name: "End Date & Time", id: "End", type: "dateFormat", disabled: true
                     },
                     {
+                        name: "Description", id: "Description", type: "text"
+                    },
+                    {
                         name: "Event Host", id: "Host", onValidate: validateSingleEmailRequired, type: "text",
                     },
                     {
@@ -220,6 +223,9 @@
                         name: "End Date & Time", id: "End", type: "dateFormat", disabled: true
                     },
                     {
+                        name: "Description", id: "Description", type: "text"
+                    },
+                    {
                         name: "Guests Email ", id: "Guests", onValidate: validateEmailRequired, type: "text"
                     },
                 ];
@@ -231,6 +237,7 @@
                     End: args.end,
                     RoomId: args.resource,
                     Host: "enter host email",
+                    Description: "write meeting purpose",
                     CreatedAtUTC: new DayPilot.Date(),
                     CreatedBy: "admin@gmail.com",
                     State: "pending",

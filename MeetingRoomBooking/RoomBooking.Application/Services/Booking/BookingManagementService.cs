@@ -185,6 +185,7 @@ namespace RoomBooking.Application.Services.Booking
                 State = eventDTO.State,
                 Start = eventDTO.Start,
                 End = eventDTO.End,
+                Description = eventDTO.Description,
                 CreatedAtUTC = eventDTO.CreatedAtUTC,
                 CreatedBy = eventDTO.CreatedBy,
                 Host = eventDTO.Host,
@@ -314,6 +315,7 @@ namespace RoomBooking.Application.Services.Booking
                 {
                     Id = scheduleEvent.Id,
                     Name = scheduleEvent.Name,
+                    Description = scheduleEvent.Description,
                     Color = scheduleEvent.State == "approved" ? scheduleEvent.Room.Color : scheduleEvent.Color,
                     FontColor = scheduleEvent.Room.FontColor,
                     State = scheduleEvent.State,
@@ -343,6 +345,7 @@ namespace RoomBooking.Application.Services.Booking
                 {
                     Id = scheduleEvent.Id,
                     Name = scheduleEvent.Name,
+                    Description = scheduleEvent.Description,
                     Color = scheduleEvent.State == "approved" ? scheduleEvent.Room.Color : scheduleEvent.Color,
                     State = scheduleEvent.State,
                     FontColor = scheduleEvent.Room.FontColor,
@@ -393,6 +396,7 @@ namespace RoomBooking.Application.Services.Booking
                     existingEvent.Start = eventDTO.Start;
                     existingEvent.End = eventDTO.End;
                     existingEvent.RoomId = eventDTO.RoomId;
+                    existingEvent.Description = eventDTO.Description;
                   
 
                     // Check the state pending or approved
@@ -523,6 +527,7 @@ namespace RoomBooking.Application.Services.Booking
                 eventEntity.End = eventDTO.End;
                 eventEntity.Host = eventDTO.Host;
                 eventEntity.State = eventDTO.State;
+                eventEntity.Description = eventDTO.Description;
                 
                 eventEntity.LastUpdatedAtUTC = DateTime.UtcNow;
 
@@ -707,7 +712,7 @@ namespace RoomBooking.Application.Services.Booking
                 Start = eventEntity[0].Start,
                 End = eventEntity[0].End,
                 Color = eventEntity[0].Color,
-               
+                Description = eventEntity[0].Description,
                 RoomId = eventEntity[0].RoomId,
                 Guests = eventEntity[0].Guests,
                 CreatedBy = eventEntity[0].CreatedBy,

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RoomBooking.Infrastructure;
 
@@ -11,9 +12,11 @@ using RoomBooking.Infrastructure;
 namespace RoomBooking.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250112120344_UpdateEventTable")]
+    partial class UpdateEventTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,6 +55,12 @@ namespace RoomBooking.Data.Migrations
 
                     b.Property<DateTime?>("LastUpdatedAtUTC")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("MaximumTime")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MinimumTime")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -367,7 +376,7 @@ namespace RoomBooking.Data.Migrations
                         {
                             Id = new Guid("6c23fda7-ae43-439e-b7f9-7d30868cb399"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b88390e9-d391-4ece-bc1e-786bf0533803",
+                            ConcurrencyStamp = "addb5901-f42a-4468-8880-7954e17fac8e",
                             CreatedAtUtc = new DateTime(2024, 12, 11, 0, 0, 0, 0, DateTimeKind.Utc),
                             Department = "Developer",
                             Email = "admin@gmail.com",
@@ -379,7 +388,7 @@ namespace RoomBooking.Data.Migrations
                             MemberPin = "1122",
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHD4YjTSqu9zG8CEHLdPe0VamXSi7DTQJE8zDpv/17BSh7j+MZZQrda12UurQE+bbQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELLxoPVkA6hpHtANudPynOXZWXg34GxW/E1VwIEu4c5r7FZORTVYidgMK8Fwd61FGQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,

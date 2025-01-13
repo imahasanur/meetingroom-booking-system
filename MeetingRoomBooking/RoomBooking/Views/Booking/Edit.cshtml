@@ -60,6 +60,11 @@
                         <input asp-for="Host" type="email" class="form-control" id="event-host" autocomplete="on" aria-required="true" placeholder="Meeting host.." required>
                         <span asp-validation-for="Host" class="text-danger"></span>
                     </div>
+                    <div class="form-group">
+                        <label asp-for="Description">Meeting Purpose</label>
+                        <input asp-for="Description" type="text" class="form-control" id="event-description" autocomplete="on" aria-required="true" placeholder="Meeting purpose.." required>
+                        <span asp-validation-for="Host" class="text-danger"></span>
+                    </div>
                     @{
                         if(Model.UserClaim != null && Model.UserClaim == "admin")
                         {
@@ -89,6 +94,7 @@
                     <input asp-for="UserClaim" value="@Model.UserClaim" type="hidden">
                     <input type="hidden" asp-for="RoomId" value="@Model.RoomId">
                     <input type="hidden" asp-for="FontColor" value="@Model.FontColor">
+                    <input type="hidden" asp-for="Description" value="@Model.Description">
                 </div>
                 <div class="card-footer text-center">
                     
@@ -155,6 +161,7 @@
             $("#event-host").prop("disabled", true);
             $("#guests").prop("disabled", true);
             $("#event-state").prop("disabled", true);
+            $("#event-description").prop("disabled", true);
         }
 
         $(document).ready(function () {

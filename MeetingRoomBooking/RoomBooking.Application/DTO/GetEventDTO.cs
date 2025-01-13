@@ -1,6 +1,7 @@
 ﻿using RoomBooking.Application.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ namespace RoomBooking.Application.DTO
         public required string State { get; set; }
         public required DateTime Start { get; set; }
         public required DateTime End { get; set; }
+        public required string Description {get; set;}
         public required string CreatedBy { get; set; }
         public required string Host { get; set; }
         public required Guid RoomId { get; set; }
