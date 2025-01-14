@@ -81,6 +81,42 @@ namespace RoomBooking.Controllers
             return View(model);
         }
 
+        //[HttpPost, ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Login(LoginAccountViewModel model)
+        //{
+        //    model.ReturnUrl ??= Url.Content("~/");
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
+
+        //        if (result.Succeeded)
+        //        {
+        //            var user = await _userManager.FindByEmailAsync(model.Email);
+        //            var userEmail = user.UserName;
+
+        //            model.Resolve(_provider);
+        //            var isPreviousLoggedIn = await model.CheckPreviousLogging(userEmail);
+
+        //            if(isPreviousLoggedIn == false)
+        //            {
+        //                return RedirectToAction("ResetPassword", "Account");
+        //            }
+        //            //var claims = (await _userManager.GetClaimsAsync(user)).ToArray();
+
+        //            return RedirectToAction("Index", "Home");
+        //        }
+        //        else
+        //        {
+        //            _logger.LogWarning("Invalid login attempt.");
+        //            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+        //        }
+        //    }
+        //    _logger.LogInformation("Model State is not valid");
+
+        //    return View(model);
+        //}
+
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginAccountViewModel model)
         {
@@ -88,30 +124,47 @@ namespace RoomBooking.Controllers
 
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
+                model.Resolve(_provider, _userManager);
 
-                if (result.Succeeded)
+                string isValidUser = await model.CheckUserValidityAsync(model.Email, model.Password);
+                
+                if(isValidUser.Equals("Invalid"))
                 {
-                    var user = await _userManager.FindByEmailAsync(model.Email);
-                    var userEmail = user.UserName;
+                    _logger.LogError("User is not registered in the system.");
+                    ModelState.AddModelError(string.Empty, " User is not registered in the system. ");
 
-                    model.Resolve(_provider);
-                    var isPreviousLoggedIn = await model.CheckPreviousLogging(userEmail);
+                    return View(model);
+                }
+                else if(isValidUser.Equals("Not Found"))
+                {
+                    _logger.LogError(" User is not found");
+                    ModelState.AddModelError(string.Empty, "User password is not correct.");
 
-                    if(isPreviousLoggedIn == false)
-                    {
-                        return RedirectToAction("ResetPassword", "Account");
-                    }
-                    //var claims = (await _userManager.GetClaimsAsync(user)).ToArray();
-
-                    return RedirectToAction("Index", "Home");
+                    return View(model);
                 }
                 else
                 {
-                    _logger.LogWarning("Invalid login attempt.");
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                }
+                    var isPreviousLoggedIn = await model.CheckPreviousLogging(model.Email);
+
+                    if (isPreviousLoggedIn == false)
+                    {
+                        return RedirectToAction("ResetPassword", "Account", new {user = model.Email});
+                    }
+
+                    var response = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
+
+                    if (response.Succeeded)
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Invalid login attempt.");
+                        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    }
+                }  
             }
+
             _logger.LogInformation("Model State is not valid");
 
             return View(model);
@@ -334,9 +387,11 @@ namespace RoomBooking.Controllers
             }
         }
 
-        public async Task<IActionResult> ResetPassword()
+        public async Task<IActionResult> ResetPassword(string user)
         {
             var model = new ResetPasswordViewModel(); 
+
+            model.User = user;
 
             return View(model);
         }
@@ -356,7 +411,7 @@ namespace RoomBooking.Controllers
             try
             {
                 model.Resolve(_userManager, _signInManager, _provider);
-                var user = await _userManager.GetUserAsync(User);
+                var user = await _userManager.FindByEmailAsync(model.User);
 
                 model.Code = await _userManager.GeneratePasswordResetTokenAsync(user);
 

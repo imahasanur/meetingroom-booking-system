@@ -36,12 +36,6 @@ namespace RoomBooking.Controllers
                 var userClaim = await _userManager.GetClaimsAsync(user);
                 var claims = userClaim.Select(x => x.Value).ToList();
 
-                var model = new LoginAccountViewModel();
-
-                model.Resolve(_provider);
-
-                var isPreviousLoggedIn = await model.CheckPreviousLogging(user.Email);
-
                 if (claims.Contains("admin") == true)
                 {
                     TempData["status"] = $"Welcome to the Admin panel {user.FullName}";
@@ -51,11 +45,6 @@ namespace RoomBooking.Controllers
                 {
                     TempData["status"] = $"Welcome to User panel {user.FullName}";
                     TempData["claim"] = "user";
-                }
-
-                if (isPreviousLoggedIn == false)
-                {
-                    return RedirectToAction("ResetPassword", "Account");
                 }
             }
             

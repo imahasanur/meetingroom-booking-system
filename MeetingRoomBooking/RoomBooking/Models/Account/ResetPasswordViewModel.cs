@@ -12,6 +12,7 @@ namespace RoomBooking.Models.Account
         private SignInManager<ApplicationUser> _signInManager;
         private IUserManagementService _userService;
 
+        public string User { get; set; }
 
         [Required]
         [StringLength(50, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long for pass.", MinimumLength = 7)]
