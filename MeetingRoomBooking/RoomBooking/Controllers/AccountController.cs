@@ -387,7 +387,7 @@ namespace RoomBooking.Controllers
             }
         }
 
-        public async Task<IActionResult> ResetPassword(string user)
+        public IActionResult ResetPassword(string user)
         {
             var model = new ResetPasswordViewModel(); 
 
@@ -440,6 +440,60 @@ namespace RoomBooking.Controllers
             {
                 _logger.LogError($"Error while updating account: {ex.Message}");
                 TempData["failure"] = "An error occurred while Resetting passowrd";
+            }
+
+            return View(model);
+        }
+
+        public IActionResult ChangePassword()
+        {
+            var model = new ChangePasswordViewModel();
+
+            return View(model);
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid password change attempt");
+
+                return View(model);
+            }
+
+            TempData.Clear();
+
+            try
+            {
+                model.Resolve(_userManager, _signInManager, _provider);
+                var user = await _userManager.GetUserAsync(User);
+
+                var response = await model.ChangePassowrdAsync(model, user);
+
+                if (response.isChanged == true)
+                {
+                    TempData["success"] = "Password Changed Successfully";
+                }
+                else
+                {
+                    TempData["message"] = "There is and Error while password changing";
+
+                    if (response.errors is not null)
+                    {
+                        foreach (var error in response.errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                            _logger.LogError(error.Description);
+                        }
+                    }
+                }
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error while updating account: {ex.Message}");
+                TempData["failure"] = "An error occurred while Changing passowrd";
             }
 
             return View(model);

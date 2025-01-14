@@ -80,9 +80,18 @@
                                         </p>
                                     </a>
                                     <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-controller="Account" asp-action="ChangePassword">
+                                                <i class="nav-icon fas fa-key"></i>
+                                                <p>
+                                                    Change password
+                                                </p>
+                                            </a>
+                                        </li>
 
                                         @if(isAdmin == true)
                                         {
+                                           
                                             <li class="nav-item">
                                                 <a class="nav-link" asp-controller="Account" asp-action="Create">
                                                     <i class="nav-icon fas fa-plus"></i>
