@@ -220,25 +220,16 @@ namespace RoomBooking.Application.Services.Booking
                 if (isValid.Item1 == false)
                 {
                     isValid.Item2 = "Booking Attendee limit mismatch with max or min limit of the the room";
+
                     return isValid.Item2;
                 }
-
             }
             else
             {
                 response = "Room is deleted";
+
                 return response;
             }
-
-            //// Check pending request for request maker.
-            
-            //var bookings = await _unitOfWork.BookingRepository.GetBookingByMakerAsync(eventEntity.CreatedBy);
-            //if(bookings != null && bookings.Count > 0 && userClaim != "admin")
-            //{
-            //    response = "Can't do multiple pending meeting booking request";
-
-            //    return response;
-            //}
 
             // Check user for same room , same day overlapping meeting.
             var bookings = await _unitOfWork.BookingRepository.CheckBookingOverlapping(eventEntity.Start, eventEntity.End, eventEntity.RoomId);
@@ -536,8 +527,7 @@ namespace RoomBooking.Application.Services.Booking
                     if (oneRoom != null)
                     { 
                         eventEntity.Color = oneRoom.Color;
-                    }
-                    
+                    } 
                 }
                 else if(eventDTO.State == "pending")
                 {
@@ -584,6 +574,7 @@ namespace RoomBooking.Application.Services.Booking
                     if (isValid.Item1 == false)
                     {
                         isValid.Item2 = "Booking Attendee limit mismatch with max or min limit of the the room";
+
                         return isValid.Item2;
                     }
 
@@ -591,6 +582,7 @@ namespace RoomBooking.Application.Services.Booking
                 else
                 {
                     response = "Room is deleted";
+
                     return response;
                 }
 
@@ -683,14 +675,14 @@ namespace RoomBooking.Application.Services.Booking
             }
             catch (DbUpdateConcurrencyException ex)
             {
-
                 response = ex.Message;
-                return response;
 
+                return response;
             }
             catch (Exception ex)
             {
                 response = ex.Message;
+
                 return response;
             }
         }

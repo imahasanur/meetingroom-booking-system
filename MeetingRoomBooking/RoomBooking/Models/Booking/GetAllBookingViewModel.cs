@@ -41,7 +41,7 @@ namespace RoomBooking.Models.Booking
 
         public async Task<IList<GetAllBookingViewModel>> LoadEventAsync(string user, string userClaim)
         {
-            DateTime start = DateTime.Now;
+            DateTime start = DateTime.Now.AddMonths(-1);
             DateTime end = DateTime.Now.AddYears(1);
 
             var allEvents = await _bookingService.LoadEventAsync(start, end, user, userClaim);
@@ -51,7 +51,7 @@ namespace RoomBooking.Models.Booking
 
         public async Task<IList<GetAllBookingViewModel>> LoadGuestEventAsync(string user, string userClaim)
         {
-            DateTime start = DateTime.Now;
+            DateTime start = DateTime.Now.AddMonths(-1);
             DateTime end = DateTime.Now.AddYears(1);
 
             var allEvents = await _bookingService.LoadGuestEventAsync(start, end, user, userClaim);
