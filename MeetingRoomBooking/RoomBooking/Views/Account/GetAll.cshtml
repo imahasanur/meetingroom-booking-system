@@ -1,13 +1,13 @@
 ﻿@model List<GetAllAccountViewModel>
 @{
-    ViewData["Title"] = "All Bookings";
+    ViewData["Title"] = "All Users";
 }
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
 <div class="card">
     <div class="card-header">
-        <h3 class="card-title">Meeting Booking Details</h3>
+        <h3 class="card-title">Users Details</h3>
     </div>
     @if (TempData["success"] is not null)
     {
@@ -105,8 +105,8 @@
                         "next": "» Next"
                     },
                     "info": "Showing _START_ to _END_ of _TOTAL_ entries",
-                    "infoEmpty": "No Room is not available",
-                    "lengthMenu": "All Romms Entries"
+                    "infoEmpty": "No user is not available",
+                    "lengthMenu": "All Users Entries"
                 }
             });
         });
