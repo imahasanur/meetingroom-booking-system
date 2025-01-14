@@ -240,6 +240,11 @@ namespace RoomBooking.Controllers
                 
                 try
                 {
+                    if (!model.File.FileName.Contains(".csv"))
+                    {
+                        throw new Exception($"Inserted file {model.File.FileName} is not .csv file.");
+                    }
+
                     var users = new List<UserInformation>();
                     using (var dataStream = model.File.OpenReadStream())
                     {
