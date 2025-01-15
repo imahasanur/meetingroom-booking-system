@@ -533,6 +533,7 @@ namespace RoomBooking.Application.Services.Booking
             catch (Exception ex)
             {
                 response = ex.Message;
+
                 return response;
             }
         }
