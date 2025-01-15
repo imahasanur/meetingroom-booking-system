@@ -173,6 +173,106 @@ namespace RoomBooking.Application.Services.Booking
             return (isValid, response);
         }
 
+        async Task<(bool, string)> CheckBookingConstraints(DateTime start, DateTime end, Guid roomId, string host, string createdBy)
+        {
+            bool isValid = true;
+            var response = string.Empty;
+
+            // Check user for same room , same day overlapping meeting.
+            var bookings = await _unitOfWork.BookingRepository.CheckBookingOverlapping(start, end, roomId);
+
+            if (bookings != null && bookings.Count > 0)
+            {
+                isValid = false;
+                response = "Found same room , same day overlapping meeting.";
+
+                return (isValid, response);
+            }
+
+            // Check user for different room , same day overlapping meeting.
+            bookings = await _unitOfWork.BookingRepository.CheckAnyRoomBookingOverlappingByUser(start, end, createdBy);
+
+            if (bookings != null && bookings.Count > 0)
+            {
+                isValid = false;
+                response = "Found different room , same day overlapping meeting by a booking creator.";
+
+                return (isValid, response);
+            }
+
+            // Check Host user for different room , same day overlapping meeting.
+            bookings = await _unitOfWork.BookingRepository.CheckAnyRoomBookingOverlappingByHost(start, end, host);
+
+            if (bookings != null && bookings.Count > 0)
+            {
+                isValid = false;
+                response = "Found different room , same day overlapping meeting by a host.";
+
+                return (isValid, response);
+            }
+
+            // Check event start time is backward or not.
+            var isBackward = start > DateTime.Now ? true : false;
+
+            if (isBackward == false)
+            {
+                isValid = false;
+                response = "Event start time can't be set backward than current time while creatig";
+
+                return (isValid, response);
+            }
+
+            return (isValid, response);
+        }
+
+        async Task<(bool,string)> CheckBookingEditConstraints(DateTime start, DateTime end, Guid roomId, Guid eventId, string createdBy, string host)
+        {
+            bool isValid = true;
+            string response = string.Empty;
+
+            // Check user for same room , same day overlapping meeting.
+            var bookings = await _unitOfWork.BookingRepository.CheckEditBookingOverlapping(start, end, roomId, eventId);
+            if (bookings != null && bookings.Count > 0)
+            {
+                isValid = false;
+                response = "Found same room , same day overlapping meeting.";
+
+                return (isValid,response);
+            }
+
+            // Check user for different room , same day overlapping meeting.
+            bookings = await _unitOfWork.BookingRepository.CheckEditAnyRoomBookingOverlappingByUser(start, end,createdBy, eventId);
+            if (bookings != null && bookings.Count > 0)
+            {
+                isValid = false;
+                response = "Found different room , same day overlapping meeting by a booking creator.";
+
+                return (isValid, response);
+            }
+
+            // Check Host for different room , same day overlapping meeting.
+            bookings = await _unitOfWork.BookingRepository.CheckEditAnyRoomBookingOverlappingByHost(start, end, host, eventId);
+            if (bookings != null && bookings.Count > 0)
+            {
+                isValid = false;
+                response = "Found different room , same day overlapping meeting by a host.";
+
+                return (isValid, response);
+            }
+
+            // Check event start time is backward or not.
+            var isBackward = start > DateTime.Now ? true : false;
+            if (isBackward == false)
+            {
+                isValid = false ;
+                response = "Event start time can't be set backward than current time while updating";
+
+                return (isValid, response);
+            }
+
+            return (isValid, response);
+        }
+
         public async Task<string> CreateBookingAsync(CreateEventDTO eventDTO, IList<string> allUser, string userClaim)
         {
             string response = string.Empty;
@@ -231,44 +331,11 @@ namespace RoomBooking.Application.Services.Booking
                 return response;
             }
 
-            // Check user for same room , same day overlapping meeting.
-            var bookings = await _unitOfWork.BookingRepository.CheckBookingOverlapping(eventEntity.Start, eventEntity.End, eventEntity.RoomId);
+            var isConstraintSatisfy = await CheckBookingConstraints(eventEntity.Start, eventEntity.End, eventEntity.RoomId, eventEntity.Host, eventEntity.CreatedBy);
 
-            if(bookings != null && bookings.Count > 0)
+            if (isConstraintSatisfy.Item1 == false)
             {
-                response = "Found same room , same day overlapping meeting.";
-
-                return response;
-            }
-
-            // Check user for different room , same day overlapping meeting.
-            bookings = await _unitOfWork.BookingRepository.CheckAnyRoomBookingOverlappingByUser(eventEntity.Start, eventEntity.End, eventEntity.CreatedBy);
-            
-            if (bookings != null && bookings.Count > 0)
-            {
-                response = "Found different room , same day overlapping meeting by a booking creator.";
-
-                return response;
-            }
-
-            // Check Host user for different room , same day overlapping meeting.
-            bookings = await _unitOfWork.BookingRepository.CheckAnyRoomBookingOverlappingByHost(eventEntity.Start, eventEntity.End, eventEntity.Host);
-            
-            if (bookings != null && bookings.Count > 0)
-            {
-                response = "Found different room , same day overlapping meeting by a host.";
-
-                return response;
-            }
-
-            // Check event start time is backward or not.
-            var isBackward = eventEntity.Start > DateTime.Now ? true: false;
-            
-            if(isBackward == false)
-            {
-                response = "Event start time can't be set backward than current time while creatig";
-
-                return response;
+                return isConstraintSatisfy.Item2;
             }
 
             // Assign event selected room color while creating event
@@ -437,41 +504,11 @@ namespace RoomBooking.Application.Services.Booking
                         return response;
                     }
 
+                    var isConstraintsSatisfy = await CheckBookingEditConstraints(existingEvent.Start, existingEvent.End, existingEvent.RoomId, existingEvent.Id, existingEvent.CreatedBy, existingEvent.Host);
 
-                    // Check user for same room , same day overlapping meeting.
-                    var bookings = await _unitOfWork.BookingRepository.CheckEditBookingOverlapping(existingEvent.Start, existingEvent.End, existingEvent.RoomId, existingEvent.Id);
-                    if (bookings != null && bookings.Count > 0)
+                    if (isConstraintsSatisfy.Item1 == false)
                     {
-                        response = "Found same room , same day overlapping meeting.";
-
-                        return response;
-                    }
-
-                    // Check user for different room , same day overlapping meeting.
-                    bookings = await _unitOfWork.BookingRepository.CheckEditAnyRoomBookingOverlappingByUser(existingEvent.Start, existingEvent.End, existingEvent.CreatedBy, existingEvent.Id);
-                    if (bookings != null && bookings.Count > 0)
-                    {
-                        response = "Found different room , same day overlapping meeting by a booking creator.";
-
-                        return response;
-                    }
-
-                    // Check Host for different room , same day overlapping meeting.
-                    bookings = await _unitOfWork.BookingRepository.CheckEditAnyRoomBookingOverlappingByHost(existingEvent.Start, existingEvent.End, existingEvent.Host, existingEvent.Id);
-                    if (bookings != null && bookings.Count > 0)
-                    {
-                        response = "Found different room , same day overlapping meeting by a host.";
-
-                        return response;
-                    }
-
-                    // Check event start time is backward or not.
-                    var isBackward = existingEvent.Start > DateTime.Now ? true : false;
-                    if (isBackward == false)
-                    {
-                        response = "Event start time can't be set backward than current time while updating";
-
-                        return response;
+                        return isConstraintsSatisfy.Item2;
                     }
 
                     await _unitOfWork.BookingRepository.EditBookingAsync(existingEvent);
@@ -589,41 +626,11 @@ namespace RoomBooking.Application.Services.Booking
                     return response;
                 }
 
+                var isConstraintsSatisfy = await CheckBookingEditConstraints(eventEntity.Start, eventEntity.End, eventEntity.RoomId, eventEntity.Id, eventEntity.CreatedBy, eventEntity.Host);
 
-                // Check user for same room , same day overlapping meeting.
-                var bookings = await _unitOfWork.BookingRepository.CheckEditBookingOverlapping(eventEntity.Start, eventEntity.End, eventEntity.RoomId, eventEntity.Id);
-                if (bookings != null && bookings.Count > 0)
+                if (isConstraintsSatisfy.Item1 == false)
                 {
-                    response = "Found same room , same day overlapping meeting.";
-
-                    return response;
-                }
-
-                // Check user for different room , same day overlapping meeting.
-                bookings = await _unitOfWork.BookingRepository.CheckEditAnyRoomBookingOverlappingByUser(eventEntity.Start, eventEntity.End, eventEntity.CreatedBy, eventEntity.Id);
-                if (bookings != null && bookings.Count > 0)
-                {
-                    response = "Found different room , same day overlapping meeting by a booking creator.";
-
-                    return response;
-                }
-
-                // Check host for different room , same day overlapping meeting.
-                bookings = await _unitOfWork.BookingRepository.CheckEditAnyRoomBookingOverlappingByHost(eventEntity.Start, eventEntity.End, eventEntity.Host, eventEntity.Id);
-                if (bookings != null && bookings.Count > 0)
-                {
-                    response = "Found different room , same day overlapping meeting by a host.";
-
-                    return response;
-                }
-
-                // Check event start time is backward or not.
-                var isBackward = eventEntity.Start > DateTime.Now ? true : false;
-                if (isBackward == false)
-                {
-                    response = "Event start time can't be set backward than current time while updating";
-
-                    return response;
+                    return isConstraintsSatisfy.Item2;
                 }
 
                 // Change color for accepted request.
