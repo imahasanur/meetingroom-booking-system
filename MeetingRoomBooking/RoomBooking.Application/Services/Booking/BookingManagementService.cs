@@ -243,6 +243,7 @@ namespace RoomBooking.Application.Services.Booking
 
             // Check user for different room , same day overlapping meeting.
             bookings = await _unitOfWork.BookingRepository.CheckAnyRoomBookingOverlappingByUser(eventEntity.Start, eventEntity.End, eventEntity.CreatedBy);
+            
             if (bookings != null && bookings.Count > 0)
             {
                 response = "Found different room , same day overlapping meeting by a booking creator.";
@@ -252,6 +253,7 @@ namespace RoomBooking.Application.Services.Booking
 
             // Check Host user for different room , same day overlapping meeting.
             bookings = await _unitOfWork.BookingRepository.CheckAnyRoomBookingOverlappingByHost(eventEntity.Start, eventEntity.End, eventEntity.Host);
+            
             if (bookings != null && bookings.Count > 0)
             {
                 response = "Found different room , same day overlapping meeting by a host.";
@@ -261,6 +263,7 @@ namespace RoomBooking.Application.Services.Booking
 
             // Check event start time is backward or not.
             var isBackward = eventEntity.Start > DateTime.Now ? true: false;
+            
             if(isBackward == false)
             {
                 response = "Event start time can't be set backward than current time while creatig";

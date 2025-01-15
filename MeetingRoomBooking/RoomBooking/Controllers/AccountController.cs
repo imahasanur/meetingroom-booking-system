@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Security.Claims;
 using CsvHelper.Configuration;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RoomBooking.Controllers
 {
@@ -44,23 +45,39 @@ namespace RoomBooking.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterAccountViewModel model)
         {
+
             if (ModelState.IsValid)
             {
-                model.Resolve(_userManager, _signInManager);
-                var response = await model.RegisterAsync(Url.Content("~/"));
-
-                if (response.errors is not null)
+                TempData.Clear();
+                try
                 {
-                    foreach (var error in response.errors)
+                    model.Resolve(_userManager, _signInManager);
+                    var response = await model.RegisterAsync(Url.Content("~/"));
+
+                    if (response.errors is not null)
                     {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                        _logger.LogError(error.Description);
+                        foreach (var error in response.errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                            _logger.LogError(error.Description);
+                        }
+                    }
+                    else
+                    {
+                        TempData["success"] = "User is Registered Successfully !";
                     }
                 }
-                else
+                catch(Exception ex)
                 {
-                    return Redirect(response.redirectLocation);
-                }    
+                    _logger.LogError($"{ex.Message} Error occured while registering the user.");
+                    TempData["message"] = "An error occured";
+                }
+                
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Model state is not valid.");
+                _logger.LogError("Model state is not valid while registering user");
             }
 
             return View(model);
@@ -80,42 +97,6 @@ namespace RoomBooking.Controllers
 
             return View(model);
         }
-
-        //[HttpPost, ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Login(LoginAccountViewModel model)
-        //{
-        //    model.ReturnUrl ??= Url.Content("~/");
-
-        //    if (ModelState.IsValid)
-        //    {
-        //        var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
-
-        //        if (result.Succeeded)
-        //        {
-        //            var user = await _userManager.FindByEmailAsync(model.Email);
-        //            var userEmail = user.UserName;
-
-        //            model.Resolve(_provider);
-        //            var isPreviousLoggedIn = await model.CheckPreviousLogging(userEmail);
-
-        //            if(isPreviousLoggedIn == false)
-        //            {
-        //                return RedirectToAction("ResetPassword", "Account");
-        //            }
-        //            //var claims = (await _userManager.GetClaimsAsync(user)).ToArray();
-
-        //            return RedirectToAction("Index", "Home");
-        //        }
-        //        else
-        //        {
-        //            _logger.LogWarning("Invalid login attempt.");
-        //            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-        //        }
-        //    }
-        //    _logger.LogInformation("Model State is not valid");
-
-        //    return View(model);
-        //}
 
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginAccountViewModel model)

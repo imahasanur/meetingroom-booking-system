@@ -8,6 +8,26 @@
 <div class="container-box">
     <div class="row">
         <div class="col-md-12 col-sm-12 col-lg-12 shadow p-3 mb-2 rounded">
+            <div class="text-center m-2">
+                @if (TempData["success"] != null)
+                {
+                    <div id="message" class="alert alert-success alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+                        <i class="icon fas fa-check"></i>
+                        @TempData["success"]
+
+                    </div>
+                }
+
+                @if (TempData["message"] != null)
+                {
+                    <div id="message" class="alert alert-warning alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+                        <i class="icon fas fa-times"></i>
+                        @TempData["message"]
+
+                    </div>
+                }
+            </div>
+
             <form id="registerForm" asp-controller="Account" asp-action="Register" asp-area="" asp-route-returnUrl="@Model.ReturnUrl" method="post" asp-antiforgery="true">
                 <h5 class="text-center p-3">Create a new account.</h5>
 
@@ -61,4 +81,12 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            $('#message').on('click', function () {
+                $(this).hide();
+            });
+        });
+    </script>
 }
