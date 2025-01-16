@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using RoomBooking.Application.DTO;
+using RoomBooking.Application.Services.User;
 using RoomBooking.Infrastructure.Membership;
 using System.ComponentModel.DataAnnotations;
 
@@ -10,6 +11,8 @@ namespace RoomBooking.Models.Account
     {
         private UserManager<ApplicationUser> _userManager;
         private SignInManager<ApplicationUser> _signInManager;
+        private IServiceProvider _provider;
+        private IUserManagementService _service;
 
         [Required]
         [DataType(DataType.Text)]
@@ -58,17 +61,19 @@ namespace RoomBooking.Models.Account
 
         public RegisterAccountViewModel() { }
 
-        public void Resolve(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        public void Resolve(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IServiceProvider provider)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _provider = provider;
+            _service = _provider.GetRequiredService<IUserManagementService>();
         }
 
-        internal async Task<(IEnumerable<IdentityError>? errors, string? redirectLocation)> RegisterAsync(string urlPrefix)
+        public async Task<(IEnumerable<string>? errors, string? message)> RegisterAsync(string urlPrefix)
         {
             ReturnUrl ??= urlPrefix;
 
-            var user = new ApplicationUser
+            var user = new CreateRegisterUserDTO
             {
                 UserName = Email,
                 Email = Email,
@@ -77,22 +82,14 @@ namespace RoomBooking.Models.Account
                 FullName = $"{FirstName} {LastName}",
                 Department = Deaprtment,
                 MemberPin = MemberPin,
-                PhoneNumber = Phone,
+                Phone = Phone,
+                Password = Password,
                 CreatedAtUtc = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day)
             };
-            var result = await _userManager.CreateAsync(user, Password);
 
-            if (result.Succeeded)
-            {
-                await _userManager.AddClaimAsync(user, new System.Security.Claims.Claim("role", "user"));
-                //await _signInManager.SignInAsync(user, isPersistent: false);
-
-                return (null, ReturnUrl);
-            }
-            else
-            {
-                return (result.Errors, null);
-            }
+            var result = await _service.RegisterAsync(user); 
+            
+            return result;
         }
 
     }

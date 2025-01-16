@@ -3,6 +3,8 @@ using RoomBooking.Application.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,6 +18,26 @@ namespace RoomBooking.Application.Services.User
         public UserManagementService(IApplicationUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
+        }
+
+        public async Task<(IEnumerable<string>? errors, string? message)> RegisterAsync(CreateRegisterUserDTO userDTO)
+        {
+            var response = await _unitOfWork.IdentityUserRepository.RegisterAsync(userDTO);
+
+            return response;
+        }
+
+        public async Task<GetRegisterUserDTO> GetUserByMailAsync(string userEmail)
+        {
+            var user = await _unitOfWork.IdentityUserRepository.GetUserByMailAsync(userEmail);
+            return user;
+        }
+
+        public async Task<bool> CheckPasswordAsync(GetRegisterUserDTO userDTO, string password)
+        {
+            var response = await _unitOfWork.IdentityUserRepository.CheckPasswordAsync(userDTO, password);
+
+            return response;
         }
 
         public async Task CreateUploadedUserAsync(CreateUserDTO user)
@@ -71,6 +93,11 @@ namespace RoomBooking.Application.Services.User
             await _unitOfWork.SaveAsync();
 
             return isPreviousLoggedIn;
+        }
+
+        public async Task LogoutAsync()
+        {
+            await _unitOfWork.IdentityUserRepository.LogoutAsync();
         }
     }
 }

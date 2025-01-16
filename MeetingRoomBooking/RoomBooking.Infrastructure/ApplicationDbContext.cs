@@ -67,7 +67,7 @@ namespace RoomBooking.Infrastructure
                 FullName = adminFullName,
                 MemberPin = "1122",
                 Department = "Developer",
-                CreatedAtUtc = new DateTime(2024, 12, 11, 0, 0, 0, DateTimeKind.Utc)
+                CreatedAtUTC = new DateTime(2024, 12, 11, 0, 0, 0, DateTimeKind.Utc)
             };
             adminUser.PasswordHash = passwordHasher.HashPassword(adminUser, adminPassword);
 
@@ -134,5 +134,6 @@ namespace RoomBooking.Infrastructure
         public DbSet<Guest> Guest { get; set; }
         public DbSet<EventTime> Time { get; set; }
         public DbSet<UploadedUser> UploadedUser { get; set; }
+        public DbSet<ApplicationUser> IdentityUser { get; set; }
     }
 }

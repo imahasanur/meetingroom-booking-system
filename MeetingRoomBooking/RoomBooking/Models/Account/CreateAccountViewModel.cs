@@ -42,7 +42,6 @@ namespace RoomBooking.Models.Account
 
             foreach (var user in users)
             {
-
                 var userInformation = new ApplicationUser
                 {
                     UserName = user.Email,
@@ -53,7 +52,7 @@ namespace RoomBooking.Models.Account
                     Department = user.Department,
                     PhoneNumber = user.Phone,
                     MemberPin = user.MemberPin,
-                    CreatedAtUtc = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day)
+                    CreatedAtUTC = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day)
                 };
 
                 var result = await _userManager.CreateAsync(userInformation, user.Password);

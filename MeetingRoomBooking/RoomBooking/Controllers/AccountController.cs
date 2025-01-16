@@ -54,15 +54,15 @@ namespace RoomBooking.Controllers
                 TempData.Clear();
                 try
                 {
-                    model.Resolve(_userManager, _signInManager);
+                    model.Resolve(_userManager, _signInManager, _provider);
                     var response = await model.RegisterAsync(Url.Content("~/"));
 
                     if (response.errors is not null)
                     {
                         foreach (var error in response.errors)
                         {
-                            ModelState.AddModelError(string.Empty, error.Description);
-                            _logger.LogError(error.Description);
+                            ModelState.AddModelError(string.Empty, error);
+                            _logger.LogError(error);
                         }
                     }
                     else
@@ -160,7 +160,12 @@ namespace RoomBooking.Controllers
         {
             try
             {
-                await _signInManager.SignOutAsync();
+                var model = new LogoutViewModel();
+
+                model.Resolve(_provider);
+
+                await model.LogoutAsync();
+
                 _logger.LogInformation("User logged out.");
 
                 if (returnUrl != null)
@@ -482,59 +487,5 @@ namespace RoomBooking.Controllers
 
             return View(model);
         }
-
-        //public IActionResult ForgetPassword()
-        //{
-        //    var model = new ForgetPasswordViewModel();
-
-        //    return View(model);
-        //}
-
-        //[HttpPost, ValidateAntiForgeryToken]
-        //public async Task<IActionResult> ForgetPassword(ForgetPasswordViewModel model)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        ModelState.AddModelError(string.Empty, "Invalid password change attempt");
-
-        //        return View(model);
-        //    }
-
-        //    TempData.Clear();
-
-        //    try
-        //    {
-        //        model.Resolve(_userManager, _signInManager, _provider);
-        //        var user = await _userManager.GetUserAsync(User);
-
-        //        var response = await model.ForgetPassowrdAsync(model, user);
-
-        //        if (response.isChanged == true)
-        //        {
-        //            TempData["success"] = "Password Updated Successfully";
-        //        }
-        //        else
-        //        {
-        //            TempData["message"] = "There is and Error while setting new password";
-
-        //            if (response.errors is not null)
-        //            {
-        //                foreach (var error in response.errors)
-        //                {
-        //                    ModelState.AddModelError(string.Empty, error.Description);
-        //                    _logger.LogError(error.Description);
-        //                }
-        //            }
-        //        }
-        //        return View(model);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError($"Error while updating account: {ex.Message}");
-        //        TempData["failure"] = "An error occurred while setting new passowrd";
-        //    }
-
-        //    return View(model);
-        //}
     }
 }

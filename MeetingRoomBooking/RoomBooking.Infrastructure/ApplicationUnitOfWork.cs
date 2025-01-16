@@ -17,10 +17,11 @@ namespace RoomBooking.Infrastructure
         public IGuestRepository GuestRepository { get; set; }
         public IEventTimeRepository EventTimeRepository { get; set; }
         public IUserRepository UserRepository { get; set; }
+        public IIdentityUserRepository IdentityUserRepository { get; set; }
 
         private readonly IApplicationDbContext _context;
 
-        public ApplicationUnitOfWork(IApplicationDbContext dbContext, IRoomRepository roomRepository, IBookingRepository bookingRepository, IGuestRepository guestRepository, IEventTimeRepository eventTimeRepository, IUserRepository userRepository) : base((DbContext)dbContext)
+        public ApplicationUnitOfWork(IApplicationDbContext dbContext, IRoomRepository roomRepository, IBookingRepository bookingRepository, IGuestRepository guestRepository, IEventTimeRepository eventTimeRepository, IUserRepository userRepository, IIdentityUserRepository identityUserRepository) : base((DbContext)dbContext)
         {
             _context = (ApplicationDbContext)dbContext;
             RoomRepository = roomRepository;
@@ -28,6 +29,7 @@ namespace RoomBooking.Infrastructure
             GuestRepository = guestRepository;
             EventTimeRepository = eventTimeRepository;
             UserRepository = userRepository;
+            IdentityUserRepository = identityUserRepository;
         }
     }
 }

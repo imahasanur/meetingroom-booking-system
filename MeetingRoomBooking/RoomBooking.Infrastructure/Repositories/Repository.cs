@@ -9,7 +9,7 @@ namespace RoomBooking.Infrastructure.Repositories
 {
     public abstract class Repository<TEntity, TKey>
           : IRepository<TEntity, TKey> where TKey : IComparable
-          where TEntity : class, IEntity<TKey>
+          where TEntity : class, IEntity<TKey> 
     {
         private DbContext _dbContext;
         private DbSet<TEntity> _dbSet;

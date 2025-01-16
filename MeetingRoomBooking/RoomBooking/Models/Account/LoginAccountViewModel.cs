@@ -41,7 +41,7 @@ namespace RoomBooking.Models.Account
         {
             string response = string.Empty;
 
-            var user = await _userManager.FindByEmailAsync(userEmail);
+            var user = await _userService.GetUserByMailAsync(userEmail);
 
             if (user == null)
             {
@@ -50,7 +50,7 @@ namespace RoomBooking.Models.Account
                 return response;
             }
 
-            bool isValidUser = await _userManager.CheckPasswordAsync(user, password);
+            bool isValidUser = await _userService.CheckPasswordAsync(user, password);
 
             if (isValidUser == true) 
             {
