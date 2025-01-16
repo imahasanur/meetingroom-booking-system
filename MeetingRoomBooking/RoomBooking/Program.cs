@@ -15,6 +15,7 @@ using RoomBooking.Models.Room;
 using Serilog;
 using Serilog.Events;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 
 namespace RoomBooking
 {
@@ -29,7 +30,7 @@ namespace RoomBooking
                 .AddJsonFile("appsettings.json", optional: false)
                 .AddEnvironmentVariables()
                 .Build();
-
+           
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .CreateBootstrapLogger();

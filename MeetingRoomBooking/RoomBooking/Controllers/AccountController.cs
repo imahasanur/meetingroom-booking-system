@@ -11,6 +11,7 @@ using System.Security.Claims;
 using CsvHelper.Configuration;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace RoomBooking.Controllers
 {
@@ -21,6 +22,7 @@ namespace RoomBooking.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IServiceProvider _provider;
+        //private readonly IEmailSender _emailSender;
 
         public AccountController(ILogger<AccountController> logger, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, IServiceProvider provider)
         {
@@ -29,6 +31,7 @@ namespace RoomBooking.Controllers
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _provider = provider;
+            //_emailSender = emailSender;
         }
 
         public IActionResult Register()
@@ -479,5 +482,59 @@ namespace RoomBooking.Controllers
 
             return View(model);
         }
+
+        //public IActionResult ForgetPassword()
+        //{
+        //    var model = new ForgetPasswordViewModel();
+
+        //    return View(model);
+        //}
+
+        //[HttpPost, ValidateAntiForgeryToken]
+        //public async Task<IActionResult> ForgetPassword(ForgetPasswordViewModel model)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        ModelState.AddModelError(string.Empty, "Invalid password change attempt");
+
+        //        return View(model);
+        //    }
+
+        //    TempData.Clear();
+
+        //    try
+        //    {
+        //        model.Resolve(_userManager, _signInManager, _provider);
+        //        var user = await _userManager.GetUserAsync(User);
+
+        //        var response = await model.ForgetPassowrdAsync(model, user);
+
+        //        if (response.isChanged == true)
+        //        {
+        //            TempData["success"] = "Password Updated Successfully";
+        //        }
+        //        else
+        //        {
+        //            TempData["message"] = "There is and Error while setting new password";
+
+        //            if (response.errors is not null)
+        //            {
+        //                foreach (var error in response.errors)
+        //                {
+        //                    ModelState.AddModelError(string.Empty, error.Description);
+        //                    _logger.LogError(error.Description);
+        //                }
+        //            }
+        //        }
+        //        return View(model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError($"Error while updating account: {ex.Message}");
+        //        TempData["failure"] = "An error occurred while setting new passowrd";
+        //    }
+
+        //    return View(model);
+        //}
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using RoomBooking.Application.DTO;
 using RoomBooking.Infrastructure.Membership;
 using System.ComponentModel.DataAnnotations;
 
