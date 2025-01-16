@@ -106,51 +106,64 @@ namespace RoomBooking.Controllers
         {
             model.ReturnUrl ??= Url.Content("~/");
 
+            TempData.Clear();
+
             if (ModelState.IsValid)
             {
-                model.Resolve(_provider, _userManager);
-
-                string isValidUser = await model.CheckUserValidityAsync(model.Email, model.Password);
-                
-                if(isValidUser.Equals("Invalid"))
+                try
                 {
-                    _logger.LogError("User is not registered in the system.");
-                    ModelState.AddModelError(string.Empty, " User is not registered in the system. ");
+                    model.Resolve(_provider, _userManager);
 
-                    return View(model);
-                }
-                else if(isValidUser.Equals("Not Found"))
-                {
-                    _logger.LogError(" User is not found");
-                    ModelState.AddModelError(string.Empty, "User password is not correct.");
+                    string isValidUser = await model.CheckUserValidityAsync(model.Email, model.Password);
 
-                    return View(model);
-                }
-                else
-                {
-                    var isPreviousLoggedIn = await model.CheckPreviousLogging(model.Email);
-
-                    if (isPreviousLoggedIn == false)
+                    if (isValidUser.Equals("Invalid"))
                     {
-                        return RedirectToAction("ResetPassword", "Account", new {user = model.Email});
+                        _logger.LogError("User is not registered in the system.");
+                        ModelState.AddModelError(string.Empty, " User is not registered in the system. ");
+
+                        return View(model);
                     }
-
-                    var response = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
-
-                    if (response.Succeeded)
+                    else if (isValidUser.Equals("Not Found"))
                     {
-                        return RedirectToAction("Index", "Home");
+                        _logger.LogError(" User is not found");
+                        ModelState.AddModelError(string.Empty, "User password is not correct.");
+
+                        return View(model);
                     }
                     else
                     {
-                        _logger.LogWarning("Invalid login attempt.");
-                        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                        var isPreviousLoggedIn = await model.CheckPreviousLogging(model.Email);
+
+                        if (isPreviousLoggedIn == false)
+                        {
+                            return RedirectToAction("ResetPassword", "Account", new { user = model.Email });
+                        }
+
+                        var response = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
+
+                        if (response.Succeeded)
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+                        else
+                        {
+                            _logger.LogWarning("Invalid login attempt.");
+                            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                        }
                     }
-                }  
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error is {ex.Message}");
+                    TempData["message"] = $"Error : {ex.Message}";
+                }
             }
-
-            _logger.LogInformation("Model State is not valid");
-
+            else
+            {
+                _logger.LogInformation("Model State is not valid");
+                ModelState.AddModelError(string.Empty, "Model State is  not valid ");
+            }
+            
             return View(model);
         }
 
