@@ -277,87 +277,108 @@ namespace RoomBooking.Application.Services.Booking
         {
             string response = string.Empty;
 
-            var eventEntity = new RoomBooking.Application.Domain.Entities.Event()
+            var events = new List<Event>();
+
+            try
             {
-                Id = eventDTO.Id,
-                Name = eventDTO.Name,
-                Color = eventDTO.Color,
-                State = eventDTO.State,
-                Start = eventDTO.Start,
-                End = eventDTO.End,
-                Description = eventDTO.Description,
-                CreatedAtUTC = eventDTO.CreatedAtUTC,
-                CreatedBy = eventDTO.CreatedBy,
-                Host = eventDTO.Host,
-                RoomId = eventDTO.RoomId,
-                Guests = eventDTO.Guests,
-            };
+                var repeat = Convert.ToInt32(eventDTO.Repeat);
 
-            // Check meeting booking time limit with room maximum and minimum time.
-            var eventTimeEntity = await _unitOfWork.EventTimeRepository.GetTimeLimitAsync();
-            var isValid = ValidateEventTimeLimit(eventEntity.Start, eventEntity.End, eventTimeEntity);
-            var allGuest = eventEntity.Guests.Select(x => x.User.Trim()).ToList();
-
-            if (isValid.Item1 == false)
-            {
-                return isValid.Item2;
-            }
-
-            // Check meeting booking user & guests validity in users list.
-            isValid = ValidateMeetingAttendee(allGuest, eventEntity.Host, allUser, eventEntity.CreatedBy, userClaim);
-
-            if (isValid.Item1 == false)
-            {
-                return isValid.Item2;
-            }
-
-            // Check booking minimum and maximum room attendee limit.
-            var room = await _unitOfWork.RoomRepository.GetRoomAsync(eventEntity.RoomId, false);
-
-            if (room != null && room?.Capacity != 0)
-            {
-                isValid = CheckBookingAttendeeLimit(room.MaximumCapacity, room.MinimumCapacity, room.Capacity, allGuest.Count + 1);
-                if (isValid.Item1 == false)
+                for (int i = 0; i <= repeat; i++)
                 {
-                    isValid.Item2 = "Booking Attendee limit mismatch with max or min limit of the the room";
+                    var eventEntity = new RoomBooking.Application.Domain.Entities.Event()
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = eventDTO.Name,
+                        Color = eventDTO.Color,
+                        State = eventDTO.State,
+                        Start = eventDTO.Start,
+                        End = eventDTO.End,
+                        Description = eventDTO.Description,
+                        CreatedAtUTC = eventDTO.CreatedAtUTC,
+                        CreatedBy = eventDTO.CreatedBy,
+                        Host = eventDTO.Host,
+                        RoomId = eventDTO.RoomId,
+                        Guests = eventDTO.Guests,
+                    };
 
-                    return isValid.Item2;
+                    eventEntity.Start = eventDTO.Start.AddDays(i);
+                    eventEntity.End = eventDTO.End.AddDays(i);
+
+                    // Check meeting booking time limit with room maximum and minimum time.
+                    var eventTimeEntity = await _unitOfWork.EventTimeRepository.GetTimeLimitAsync();
+                    var isValid = ValidateEventTimeLimit(eventEntity.Start, eventEntity.End, eventTimeEntity);
+                    var allGuest = eventEntity.Guests.Select(x => x.User.Trim()).ToList();
+
+                    if (isValid.Item1 == false)
+                    {
+                        return isValid.Item2;
+                    }
+
+                    // Check meeting booking user & guests validity in users list.
+                    isValid = ValidateMeetingAttendee(allGuest, eventEntity.Host, allUser, eventEntity.CreatedBy, userClaim);
+
+                    if (isValid.Item1 == false)
+                    {
+                        return isValid.Item2;
+                    }
+
+                    // Check booking minimum and maximum room attendee limit.
+                    var room = await _unitOfWork.RoomRepository.GetRoomAsync(eventEntity.RoomId, false);
+
+                    if (room != null && room?.Capacity != 0)
+                    {
+                        isValid = CheckBookingAttendeeLimit(room.MaximumCapacity, room.MinimumCapacity, room.Capacity, allGuest.Count + 1);
+                        if (isValid.Item1 == false)
+                        {
+                            isValid.Item2 = "Booking Attendee limit mismatch with max or min limit of the the room";
+
+                            return isValid.Item2;
+                        }
+                    }
+                    else
+                    {
+                        response = "Room is deleted";
+
+                        return response;
+                    }
+
+                    var isConstraintSatisfy = await CheckBookingConstraints(eventEntity.Start, eventEntity.End, eventEntity.RoomId, eventEntity.Host, eventEntity.CreatedBy);
+
+                    if (isConstraintSatisfy.Item1 == false)
+                    {
+                        return isConstraintSatisfy.Item2;
+                    }
+
+                    // Assign event selected room color while creating event
+                    var slectedRoom = await _unitOfWork.RoomRepository.GetRoomAsync(eventEntity.RoomId, false);
+
+                    if (userClaim == "admin")
+                    {
+                        eventEntity.State = "approved";
+
+                        if (slectedRoom != null)
+                        {
+                            eventEntity.Color = slectedRoom.Color;
+                        }
+                        else
+                        {
+                            response = "Selected room already deleted not found";
+
+                            return response;
+                        }
+                    }
+
+                    events.Add(eventEntity);
                 }
+                await _unitOfWork.BookingRepository.CreateBookingsAsync(events);
+                await _unitOfWork.SaveAsync();
             }
-            else
+            catch (Exception ex) 
             {
-                response = "Room is deleted";
+                response = ex.Message;
 
                 return response;
             }
-
-            var isConstraintSatisfy = await CheckBookingConstraints(eventEntity.Start, eventEntity.End, eventEntity.RoomId, eventEntity.Host, eventEntity.CreatedBy);
-
-            if (isConstraintSatisfy.Item1 == false)
-            {
-                return isConstraintSatisfy.Item2;
-            }
-
-            // Assign event selected room color while creating event
-            var slectedRoom = await _unitOfWork.RoomRepository.GetRoomAsync(eventEntity.RoomId, false);
-
-            if (userClaim == "admin")
-            {
-                eventEntity.State = "approved";
-                
-                if (slectedRoom != null) { 
-                    eventEntity.Color = slectedRoom.Color;
-                }
-                else
-                {
-                    response = "Selected room already deleted not found";
-
-                    return response;
-                }
-            }
-
-            await _unitOfWork.BookingRepository.CreateBookingAsync(eventEntity);
-            await _unitOfWork.SaveAsync();
 
             response = "success";
 

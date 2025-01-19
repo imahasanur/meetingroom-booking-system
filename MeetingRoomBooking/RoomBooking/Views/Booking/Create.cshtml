@@ -51,9 +51,9 @@
 
     @{
 
-        <div class="notFoundMessage text-center">
-            <h3 class="alert alert-warning p-2" role="alert">Room Not Found ! Create Room</h3>
-        </div>
+                <div class="notFoundMessage text-center">
+                    <h3 class="alert alert-warning p-2" role="alert">Room Not Found ! Create Room</h3>
+                </div>
         
     }
     
@@ -191,6 +191,14 @@
             cellDuration: 15,
             onTimeRangeSelected: async (args) => {
 
+                const days = [
+                    { name: "No repeat", id: "0" },
+                    { name: "next 1 day", id: "1" },
+                    { name: "next 7 days", id: "7" },
+                    { name: "next 14 days", id: "14" },
+                    { name: "next 30 days", id: "30" },
+                ];
+
                 const form = [
                     {
                         name: "Event Name", id: "Name", onValidate: validateTextRequired, type: "text"
@@ -210,6 +218,9 @@
                     {
                         name: "Guests Email " , id: "Guests", onValidate: validateEmailRequired, type: "text"
                     },
+                    {
+                        name: "Repeat Booking ", id: "Repeat", type: "select", options: days
+                    },
                 ];
 
                 const formTwo = [
@@ -228,6 +239,9 @@
                     {
                         name: "Guests Email ", id: "Guests", onValidate: validateEmailRequired, type: "text"
                     },
+                    {
+                        name: "Repeat Booking ", id: "Repeat", type:"select", options: days
+                    },
                 ];
 
                 const data = {
@@ -242,7 +256,8 @@
                     CreatedBy: "admin@gmail.com",
                     State: "pending",
                     FontColor: "#ffffff",
-                    Guests: "Enter email in a comma seperated way [Ex: ab@gmail.com, bd@yahoo.com]"
+                    Guests: "Enter email in a comma seperated way [Ex: ab@gmail.com, bd@yahoo.com]",
+                    Repeat: "0",
                 };
 
                 var requiredForm;

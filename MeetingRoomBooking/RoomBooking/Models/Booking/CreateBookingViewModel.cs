@@ -25,6 +25,7 @@ namespace RoomBooking.Models.Booking
         public Guid RoomId { get; set; }
         public string Guests { get; set; }
         public DateTime CreatedAtUTC { get; set; }
+        public string? Repeat { get; set; }
 
         public void ResolveDI(IServiceProvider provider)
         {
@@ -72,6 +73,7 @@ namespace RoomBooking.Models.Booking
                 State = model.State,
                 RoomId = model.RoomId,
                 Guests = guests,
+                Repeat = model.Repeat,
             };
 
             var response = await _bookingService.CreateBookingAsync(bookingEvent, allUser, userClaim);

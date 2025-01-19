@@ -25,6 +25,11 @@ namespace RoomBooking.Infrastructure.Repositories
             await _dbSet.AddAsync(entity);
         }
 
+        public virtual async Task AddAllAsync(IList<TEntity> entities)
+        {
+            await _dbSet.AddRangeAsync(entities);
+        }
+
         public virtual async Task RemoveAsync(TKey id)
         {
             var entityToDelete = _dbSet.Find(id);

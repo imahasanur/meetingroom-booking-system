@@ -22,6 +22,7 @@ namespace RoomBooking.Application.DTO
         public required List<Guest> Guests { get; set; }
         public required Guid RoomId { get; set; }
         public required DateTime CreatedAtUTC { get; set; }
+        public string? Repeat { get; set; }
 
     }
 }
