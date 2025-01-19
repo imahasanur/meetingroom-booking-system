@@ -92,7 +92,7 @@ namespace RoomBooking.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateBookingViewModel model)
+        public async Task<IActionResult> Create([FromBody]CreateBookingViewModel model)
         {
 
             string response = string.Empty;

@@ -4,6 +4,7 @@ using RoomBooking.Application.Services.Booking;
 using RoomBooking.Application.Services.Room;
 using RoomBooking.Models.Room;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices;
 
 namespace RoomBooking.Models.Booking
 {
@@ -25,7 +26,8 @@ namespace RoomBooking.Models.Booking
         public Guid RoomId { get; set; }
         public string Guests { get; set; }
         public DateTime CreatedAtUTC { get; set; }
-        public string? Repeat { get; set; }
+        public string Repeat { get; set; }
+        public DateTime DateRange { get; set; }
 
         public void ResolveDI(IServiceProvider provider)
         {
@@ -75,6 +77,46 @@ namespace RoomBooking.Models.Booking
                 Guests = guests,
                 Repeat = model.Repeat,
             };
+
+            if (model.Repeat.Equals("1"))
+            {
+                var dateRange = model.DateRange.Date;
+                var currentDate = DateTime.Now.Date;
+                var eventDate = model.Start.Date;
+
+                if (eventDate == dateRange)
+                {
+                    bookingEvent.Repeat = "0";
+                }
+                else if (dateRange < eventDate && dateRange >= currentDate)
+                {
+                    var difference = dateRange - eventDate;
+                    var days = difference.Days;
+                    bookingEvent.Repeat = days.ToString();
+                }
+                else if (dateRange > eventDate)
+                {
+                    var difference = dateRange - eventDate;
+                    var days = difference.Days;
+                    bookingEvent.Repeat = days.ToString();
+                }
+                else if (dateRange < currentDate)
+                {
+                    string result = string.Empty;
+                    result = "Selected Date Range should not be less than current Date";
+
+                    return result;
+                }
+            }
+
+            var repeatedDays = Convert.ToInt32(bookingEvent.Repeat);
+
+            if(repeatedDays < 0)
+            {
+                bookingEvent.Start = bookingEvent.Start.AddDays(repeatedDays);
+                bookingEvent.End = bookingEvent.End.AddDays(repeatedDays);
+                bookingEvent.Repeat = ((-1) * repeatedDays).ToString();
+            }
 
             var response = await _bookingService.CreateBookingAsync(bookingEvent, allUser, userClaim);
 

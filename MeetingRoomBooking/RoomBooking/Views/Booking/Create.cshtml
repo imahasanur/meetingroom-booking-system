@@ -193,10 +193,7 @@
 
                 const days = [
                     { name: "No repeat", id: "0" },
-                    { name: "next 1 day", id: "1" },
-                    { name: "next 7 days", id: "7" },
-                    { name: "next 14 days", id: "14" },
-                    { name: "next 30 days", id: "30" },
+                    { name: "Daily", id: "1" },
                 ];
 
                 const form = [
@@ -204,10 +201,13 @@
                         name: "Event Name", id: "Name", onValidate: validateTextRequired, type: "text"
                     },
                     {
-                        name: "Start Date & Time", id: "Start", type: "dateFormat", disabled: true
+                        name: "Start Date & Time", id: "Start", dateFormat: "yyyy-MM-dd HH:mm:ss", type: "dateFormat", disabled: true
                     },
                     {
-                        name: "End Date & Time", id: "End", type: "dateFormat", disabled: true
+                        name: "End Date & Time", id: "End", dateFormat: "yyyy-MM-dd HH:mm:ss", type: "dateFormat", disabled: true
+                    },
+                    {
+                        name: "Select Date Range", id: "DateRange", dateFormat: "yyyy-MM-dd", type: "date",
                     },
                     {
                         name: "Description", id: "Description", type: "text"
@@ -228,10 +228,13 @@
                         name: "Event Name", id: "Name", onValidate: validateTextRequired, type: "text"
                     },
                     {
-                        name: "Start Date & Time", id: "Start", type: "dateFormat", disabled: true
+                        name: "Start Date & Time", id: "Start", dateFormat: "yyyy-MM-dd HH:mm:ss", type: "dateFormat", disabled: true
                     },
                     {
-                        name: "End Date & Time", id: "End", type: "dateFormat", disabled: true
+                        name: "End Date & Time", id: "End", dateFormat: "yyyy-MM-dd HH:mm:ss", type: "dateFormat", disabled: true
+                    },
+                    {
+                        name: "Select Date Range", id: "DateRange", dateFormat: "yyyy-MM-dd", type: "date",
                     },
                     {
                         name: "Description", id: "Description", type: "text"
@@ -240,7 +243,7 @@
                         name: "Guests Email ", id: "Guests", onValidate: validateEmailRequired, type: "text"
                     },
                     {
-                        name: "Repeat Booking ", id: "Repeat", type:"select", options: days
+                        name: "Repeat Booking ", id: "Repeat", type: "select", options: days
                     },
                 ];
 
@@ -249,8 +252,9 @@
                     Color: "#FFA500",
                     Start: args.start,
                     End: args.end,
+                    DateRange: args.end,
                     RoomId: args.resource,
-                    Host: "enter host email",
+                    Host: "host email",
                     Description: "write meeting purpose",
                     CreatedAtUTC: new DayPilot.Date(),
                     CreatedBy: "admin@gmail.com",
