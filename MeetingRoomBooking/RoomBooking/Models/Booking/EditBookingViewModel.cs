@@ -42,6 +42,13 @@ namespace RoomBooking.Models.Booking
 
         public async Task<string> EditBookingAsync(EditBookingViewModel model, string currentUser, string userClaim)
         {
+            var end = model.End.TimeOfDay;
+
+            if (end.TotalHours == 0)
+            {
+                model.End = model.End.AddMinutes(-1);
+            }
+
             var eventDTO = new EditEventDTO()
             {
                 Id = model.Id,
@@ -58,6 +65,13 @@ namespace RoomBooking.Models.Booking
 
         public async Task<string> EditBookingByIdAsync(EditBookingViewModel model, string currentUser, IList<string> allUser, string userClaim)
         {
+            var end = model.End.TimeOfDay;
+
+            if (end.TotalHours == 0)
+            {
+                model.End = model.End.AddMinutes(-1);
+            }
+
             var eventDTO = new EditEventDTO()
             {
                 Id = model.Id,

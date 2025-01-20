@@ -45,20 +45,16 @@ namespace RoomBooking.Models.Booking
 
         public async Task<string> CreateBookingAsync(CreateBookingViewModel model, IList<string> allUser, string userClaim)
         {
+
+            var end = model.End.TimeOfDay;
+
+            if(end.TotalHours == 0)
+            {
+                model.End = model.End.AddMinutes(-1);
+            }
+
             var guests = new List<Guest>();
             var allGuest = model.Guests.Split(',').ToList();
-
-            //for (int i = 0; i < temp.Length; i++)
-            //{
-            //    var guest = temp[i].Trim();
-            //    guests.Add(new Guest
-            //    {
-            //        Id = Guid.NewGuid(),
-            //        EventId = model.Id,
-            //        User = guest,
-            //        CreatedAtUTC = DateTime.UtcNow,
-            //    });
-            //}
 
             var bookingEvent = new CreateEventDTO()
             {
