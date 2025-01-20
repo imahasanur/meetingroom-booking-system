@@ -136,7 +136,7 @@ namespace RoomBooking.Infrastructure.Repositories
             return null;
         }
 
-        public async Task CreateBookingsAsync(IList<Event> eventEntity)
+        public async Task CreateBookingsAsync(ICollection<Event> eventEntity)
         {
             await AddAllAsync(eventEntity);
         }

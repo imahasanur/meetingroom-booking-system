@@ -10,7 +10,7 @@ namespace RoomBooking.Application.Services.Booking
     public interface IBookingManagementService
     {
 
-        Task<string> CreateBookingAsync(CreateEventDTO eventDTO, IList<string> allUser, string userClaim);
+        Task<string> CreateBookingAsync(CreateEventDTO eventDTO, IList<string> allUser, string userClaim, List<string> guests);
         Task<IList<GetEventDTO>> LoadEventAsync(DateTime start, DateTime end, string? user, string? userClaim);
         Task<IList<GetEventDTO>> LoadGuestEventAsync(DateTime start, DateTime end, string? user, string? userClaim);
         Task<string> EditBookingAsync(EditEventDTO eventDTO, string currentUser, string userClaim);

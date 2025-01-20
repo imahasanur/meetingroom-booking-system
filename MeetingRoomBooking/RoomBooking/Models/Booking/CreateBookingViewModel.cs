@@ -46,19 +46,19 @@ namespace RoomBooking.Models.Booking
         public async Task<string> CreateBookingAsync(CreateBookingViewModel model, IList<string> allUser, string userClaim)
         {
             var guests = new List<Guest>();
-            var temp = model.Guests.Split(',');
+            var allGuest = model.Guests.Split(',').ToList();
 
-            for (int i = 0; i < temp.Length; i++)
-            {
-                var guest = temp[i].Trim();
-                guests.Add(new Guest
-                {
-                    Id = Guid.NewGuid(),
-                    EventId = model.Id,
-                    User = guest,
-                    CreatedAtUTC = DateTime.UtcNow,
-                });
-            }
+            //for (int i = 0; i < temp.Length; i++)
+            //{
+            //    var guest = temp[i].Trim();
+            //    guests.Add(new Guest
+            //    {
+            //        Id = Guid.NewGuid(),
+            //        EventId = model.Id,
+            //        User = guest,
+            //        CreatedAtUTC = DateTime.UtcNow,
+            //    });
+            //}
 
             var bookingEvent = new CreateEventDTO()
             {
@@ -118,7 +118,7 @@ namespace RoomBooking.Models.Booking
                 bookingEvent.Repeat = ((-1) * repeatedDays).ToString();
             }
 
-            var response = await _bookingService.CreateBookingAsync(bookingEvent, allUser, userClaim);
+            var response = await _bookingService.CreateBookingAsync(bookingEvent, allUser, userClaim, allGuest);
 
             return response;
         }

@@ -16,7 +16,7 @@ namespace RoomBooking.Application.Domain.Repositories
         Task<IList<Event>> GetBookingByIdAsync(Guid id);
         Task<IList<Event>> LoadEventAsync(DateTime start, DateTime end, string? user, string? userClaim);
         Task<IList<Event>> LoadGuestEventAsync(DateTime start, DateTime end, string? user, string? userClaim);
-        Task CreateBookingsAsync(IList<Event> eventEntity);
+        Task CreateBookingsAsync(ICollection<Event> eventEntity);
         Task<Event> GetBookingAsync(Guid id);
         Task EditBookingAsync(Event eventEntity);
         Task DeleteBookingAsync(Event eventEntity);

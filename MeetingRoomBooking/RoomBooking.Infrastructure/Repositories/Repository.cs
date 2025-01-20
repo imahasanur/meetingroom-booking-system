@@ -25,22 +25,10 @@ namespace RoomBooking.Infrastructure.Repositories
             await _dbSet.AddAsync(entity);
         }
 
-        public virtual async Task AddAllAsync(IList<TEntity> entities)
+        public virtual async Task AddAllAsync(ICollection<TEntity> entities)
         {
-            foreach (TEntity entity in entities)
-            {
-                _dbContext.Entry(entity).State = EntityState.Added;
-            }
-            //await _dbSet.AddRangeAsync(entities);
-
+            //await _dbSet.AddRangeAsync(entities).ConfigureAwait(false);
             await _dbSet.AddRangeAsync(entities);
-            await _dbContext.SaveChangesAsync();
-
-
-            //foreach (TEntity entity in entities)
-            //{
-            //    await _dbSet.AddAsync(entity);
-            //}
         }
 
         public virtual async Task RemoveAsync(TKey id)

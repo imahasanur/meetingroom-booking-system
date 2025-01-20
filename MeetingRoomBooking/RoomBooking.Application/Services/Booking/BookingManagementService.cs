@@ -273,7 +273,7 @@ namespace RoomBooking.Application.Services.Booking
             return (isValid, response);
         }
 
-        public async Task<string> CreateBookingAsync(CreateEventDTO eventDTO, IList<string> allUser, string userClaim)
+        public async Task<string> CreateBookingAsync(CreateEventDTO eventDTO, IList<string> allUser, string userClaim, List<string> guests)
         {
             string response = string.Empty;
 
@@ -285,9 +285,25 @@ namespace RoomBooking.Application.Services.Booking
 
                 for (int i = 0; i <= repeat; i++)
                 {
+
+                    var eventGuests = new List<Guest>();
+                    var id = Guid.NewGuid();
+
+                    for (int j = 0; j < guests.Count; j++)
+                    {
+                        var guest = guests[j].Trim();
+                        eventGuests.Add(new Guest
+                        {
+                            Id = Guid.NewGuid(),
+                            EventId = id,
+                            User = guest,
+                            CreatedAtUTC = DateTime.UtcNow,
+                        });
+                    }
+
                     var eventEntity = new RoomBooking.Application.Domain.Entities.Event()
                     {
-                        Id = Guid.NewGuid(),
+                        Id = id,
                         Name = eventDTO.Name,
                         Color = eventDTO.Color,
                         State = eventDTO.State,
@@ -298,20 +314,15 @@ namespace RoomBooking.Application.Services.Booking
                         CreatedBy = eventDTO.CreatedBy,
                         Host = eventDTO.Host,
                         RoomId = eventDTO.RoomId,
-                        Guests = eventDTO.Guests,
+                        Guests = eventGuests,
                         
                     };
-
-                    foreach(var guest in eventEntity.Guests)
-                    {
-                        guest.EventId = eventEntity.Id;
-                    }
 
                     eventEntity.Start = eventDTO.Start.AddDays(i);
                     eventEntity.End = eventDTO.End.AddDays(i);
 
                     // Check meeting booking time limit with room maximum and minimum time.
-                    var eventTimeEntity = await _unitOfWork.EventTimeRepository.GetTimeLimitAsync();
+                     var eventTimeEntity = await _unitOfWork.EventTimeRepository.GetTimeLimitAsync();
                     var isValid = ValidateEventTimeLimit(eventEntity.Start, eventEntity.End, eventTimeEntity);
 
                     var allGuest = eventEntity.Guests.Select(x => x.User.Trim()).ToList();
@@ -376,15 +387,7 @@ namespace RoomBooking.Application.Services.Booking
                     }
 
                     events.Add(eventEntity);
-                    //await _unitOfWork.BookingRepository.CreateBookingAsync(eventEntity);
-
                 }
-                //await _unitOfWork.SaveAsync();
-                //foreach (var anEvent in events) 
-                //{
-                //    await _unitOfWork.BookingRepository.CreateBookingAsync(anEvent);
-                //    await _unitOfWork.SaveAsync();
-                //}
 
                 await _unitOfWork.BookingRepository.CreateBookingsAsync(events);
                 await _unitOfWork.SaveAsync();
