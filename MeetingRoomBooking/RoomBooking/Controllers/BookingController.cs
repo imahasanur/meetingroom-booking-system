@@ -175,15 +175,6 @@ namespace RoomBooking.Controllers
 
                 var user = await GetUserClaim();
 
-                var startTime = model.Start;
-                var minutes = startTime.Minute;
-                var even = minutes % 15 == 0 ? true : false;
-
-                if (even == true)
-                {
-                    model.Start = model.Start.AddMinutes(1);
-                }
-
                 response = await model.EditBookingAsync(model, user.Item1, user.Item2);
 
                 if(response.Equals("success"))
@@ -265,15 +256,6 @@ namespace RoomBooking.Controllers
                 var allUser = _userManager.Users.ToList().Select(x => x.Email).ToList();
 
                 var user = await GetUserClaim();
-
-                var startTime = model.Start;
-                var minutes = startTime.Minute;
-                 var even = minutes % 15 == 0 ? true : false;
-
-                if (even == true)
-                {
-                    model.Start = model.Start.AddMinutes(1);
-                }
                 
                 response = await model.EditBookingByIdAsync(model, user.Item1, allUser, user.Item2);
 

@@ -187,6 +187,8 @@
 
         const calendar = new DayPilot.Calendar("dp", {
             viewType: "Resources",
+            headerHeightAutoFit: true,
+            headerTextWrappingEnabled: true,
             durationBarVisible: true,
             cellDuration: 15,
             onTimeRangeSelected: async (args) => {
@@ -369,7 +371,7 @@
                         symbol: "icons/daypilot.svg#minichevron-down-2",
                         visibility: "Visible",
                         action: "ContextMenu",
-                        style: "border-radius: 15px; cursor:pointer;"
+                        style: "border-radius: 10px; cursor:pointer;"
                     }
                 ];
             }

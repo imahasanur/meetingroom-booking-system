@@ -40,14 +40,30 @@ namespace RoomBooking.Models.Booking
             _bookingService = provider.GetService<IBookingManagementService>();
         }
 
-        public async Task<string> EditBookingAsync(EditBookingViewModel model, string currentUser, string userClaim)
+        public EditBookingViewModel ValidateEventTime(EditBookingViewModel model)
         {
+            var startTime = model.Start;
+            var minutes = startTime.Minute;
+            var even = minutes % 15 == 0 ? true : false;
+
+            if (even == true)
+            {
+                model.Start = model.Start.AddMinutes(1);
+            }
+
             var end = model.End.TimeOfDay;
 
             if (end.TotalHours == 0)
             {
                 model.End = model.End.AddMinutes(-1);
             }
+
+            return model;
+        }
+
+        public async Task<string> EditBookingAsync(EditBookingViewModel model, string currentUser, string userClaim)
+        {
+            model = ValidateEventTime(model);
 
             var eventDTO = new EditEventDTO()
             {
@@ -65,12 +81,7 @@ namespace RoomBooking.Models.Booking
 
         public async Task<string> EditBookingByIdAsync(EditBookingViewModel model, string currentUser, IList<string> allUser, string userClaim)
         {
-            var end = model.End.TimeOfDay;
-
-            if (end.TotalHours == 0)
-            {
-                model.End = model.End.AddMinutes(-1);
-            }
+            model = ValidateEventTime(model);
 
             var eventDTO = new EditEventDTO()
             {
