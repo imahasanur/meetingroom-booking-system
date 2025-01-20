@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RoomBooking.Application.Domain
+namespace RoomBooking.Domain.Domain
 {
     public interface IUnitOfWork : IDisposable, IAsyncDisposable
     {

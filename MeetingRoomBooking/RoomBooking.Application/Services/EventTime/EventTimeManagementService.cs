@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using RoomBooking.Application.Domain.Entities;
 using RoomBooking.Application.DTO;
 using System;
 using System.Data.Common;

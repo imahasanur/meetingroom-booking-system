@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using RoomBooking.Application.Domain.Entities;
+using RoomBooking.Domain.Domain.Entities;
 using RoomBooking.Application.DTO;
 using System;
 using System.Collections.Generic;
@@ -51,7 +51,7 @@ namespace RoomBooking.Application.Services.Booking
             return (isValid, response);
         }
 
-        (bool,string) ValidateEventTimeLimit(DateTime start, DateTime end, IList<RoomBooking.Application.Domain.Entities.EventTime> eventTimeEntity)
+        (bool,string) ValidateEventTimeLimit(DateTime start, DateTime end, IList<RoomBooking.Domain.Domain.Entities.EventTime> eventTimeEntity)
         {
             var meetingTimeDifference = ConvertTimeToMinutes(start, end);
            
@@ -301,7 +301,7 @@ namespace RoomBooking.Application.Services.Booking
                         });
                     }
 
-                    var eventEntity = new RoomBooking.Application.Domain.Entities.Event()
+                    var eventEntity = new RoomBooking.Domain.Domain.Entities.Event()
                     {
                         Id = id,
                         Name = eventDTO.Name,

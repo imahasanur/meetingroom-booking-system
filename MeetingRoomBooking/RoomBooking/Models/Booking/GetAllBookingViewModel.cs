@@ -1,5 +1,5 @@
 ﻿using DotNetEnv;
-using RoomBooking.Application.Domain.Entities;
+using RoomBooking.Domain.Domain.Entities;
 using RoomBooking.Application.Services.Booking;
 using RoomBooking.Application.Services.Room;
 using RoomBooking.Models.Room;
@@ -23,7 +23,7 @@ namespace RoomBooking.Models.Booking
         public Guid RoomId { get; set; }
         public List<Guest> Guests { get; set; }
         public string? UserClaim { get; set; }
-        public RoomBooking.Application.Domain.Entities.Room Room { get; set; }
+        public RoomBooking.Domain.Domain.Entities.Room Room { get; set; }
         public DateTime CreatedAtUTC { get; set; }
 
         public void ResolveDI(IServiceProvider provider)

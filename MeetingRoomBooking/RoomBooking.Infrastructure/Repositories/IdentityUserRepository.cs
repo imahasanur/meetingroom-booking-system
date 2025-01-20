@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using RoomBooking.Application.Domain.Entities;
-using RoomBooking.Application.Domain.Repositories;
+using RoomBooking.Domain.Domain.Entities;
+using RoomBooking.Domain.Domain.Repositories;
 using RoomBooking.Application.DTO;
 using RoomBooking.Infrastructure.Membership;
 using System;
@@ -23,7 +23,7 @@ namespace RoomBooking.Infrastructure.Repositories
             _singInManager = signInManager;
         }
 
-        public async Task<GetRegisterUserDTO> GetUserByMailAsync(string userEmail)
+        public async Task<Domain.DTO.GetRegisterUserDTO> GetUserByMailAsync(string userEmail)
         {
             var user = await _userManager.FindByEmailAsync(userEmail);
             if (user == null)
@@ -31,7 +31,7 @@ namespace RoomBooking.Infrastructure.Repositories
                 return null;
             }
 
-            var userDTO = new GetRegisterUserDTO
+            var userDTO = new Domain.DTO.GetRegisterUserDTO
             {
                 Id = user.Id,
                 AccessFailedCount = user.AccessFailedCount,
@@ -59,7 +59,7 @@ namespace RoomBooking.Infrastructure.Repositories
             return userDTO;
         }
 
-        public async Task<bool> CheckPasswordAsync(GetRegisterUserDTO userDTO, string password)
+        public async Task<bool> CheckPasswordAsync(Domain.DTO.GetRegisterUserDTO userDTO, string password)
         {
             var user = new ApplicationUser
             {
@@ -90,7 +90,7 @@ namespace RoomBooking.Infrastructure.Repositories
 
             return response;
         }
-        public async Task<(IEnumerable<string>? errors, string? message)> RegisterAsync(CreateRegisterUserDTO userDTO)
+        public async Task<(IEnumerable<string>? errors, string? message)> RegisterAsync(Domain.DTO.CreateRegisterUserDTO userDTO)
         {
             var user = new ApplicationUser
             {

@@ -1,7 +1,6 @@
-﻿using RoomBooking.Application.Domain.Entities;
-using RoomBooking.Application.DTO;
+﻿using RoomBooking.Domain.Domain.Entities;
 
-namespace RoomBooking.Application.Domain.Repositories
+namespace RoomBooking.Domain.Domain.Repositories
 {
     public interface IRoomRepository:IRepositoryBase<Room, Guid>
     {

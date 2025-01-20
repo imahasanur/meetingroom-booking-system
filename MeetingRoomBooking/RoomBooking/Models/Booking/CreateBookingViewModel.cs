@@ -1,4 +1,4 @@
-﻿using RoomBooking.Application.Domain.Entities;
+﻿using RoomBooking.Domain.Domain.Entities;
 using RoomBooking.Application.DTO;
 using RoomBooking.Application.Services.Booking;
 using RoomBooking.Application.Services.Room;

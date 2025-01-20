@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RoomBooking.Application.Domain.Entities;
+using RoomBooking.Domain.Domain.Entities;
 using RoomBooking.Application.DTO;
 using System;
 using System.Data.Common;
@@ -111,7 +111,7 @@ namespace RoomBooking.Application.Services.Room
 
         public async Task<string> CreateRoomAsync(CreateRoomDTO roomDTO)
         {
-            var room = new RoomBooking.Application.Domain.Entities.Room()
+            var room = new RoomBooking.Domain.Domain.Entities.Room()
             {
                 Name = roomDTO.Name,
                 Details = roomDTO.Details,

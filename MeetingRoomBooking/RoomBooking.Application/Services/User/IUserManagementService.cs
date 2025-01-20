@@ -12,7 +12,7 @@ namespace RoomBooking.Application.Services.User
         Task<GetRegisterUserDTO> GetUserByMailAsync(string userEmail);
         Task<bool> CheckPasswordAsync(GetRegisterUserDTO userDTO, string password);
         Task<(IEnumerable<string>? errors, string? message)> RegisterAsync(CreateRegisterUserDTO userDTO);
-        Task CreateUploadedUserAsync(CreateUserDTO user);
+        Task CreateUploadedUserAsync(DTO.CreateUserDTO user);
         Task<bool> CheckPreviousLogging(string userEmail, bool isTrackingOff);
         Task<bool> UpdateLoggedInState(string userEmail);
         Task LogoutAsync();

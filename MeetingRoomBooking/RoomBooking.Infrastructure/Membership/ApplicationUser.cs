@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using RoomBooking.Application.Domain.Entities;
+using RoomBooking.Domain.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

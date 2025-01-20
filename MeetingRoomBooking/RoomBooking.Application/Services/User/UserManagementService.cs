@@ -1,4 +1,4 @@
-﻿using RoomBooking.Application.Domain.Entities;
+﻿using RoomBooking.Domain.Domain.Entities;
 using RoomBooking.Application.DTO;
 using System;
 using System.Collections.Generic;
@@ -22,20 +22,84 @@ namespace RoomBooking.Application.Services.User
 
         public async Task<(IEnumerable<string>? errors, string? message)> RegisterAsync(CreateRegisterUserDTO userDTO)
         {
-            var response = await _unitOfWork.IdentityUserRepository.RegisterAsync(userDTO);
+            RoomBooking.Domain.DTO.CreateRegisterUserDTO user = new RoomBooking.Domain.DTO.CreateRegisterUserDTO()
+            {
+                UserName = userDTO.UserName,
+                Email = userDTO.Email,
+                FirstName = userDTO.FirstName,
+                LastName = userDTO.LastName,
+                FullName = userDTO.FullName,
+                Department = userDTO.Department,
+                MemberPin = userDTO.MemberPin,
+                Phone = userDTO.Phone,
+                Password = userDTO.Password,
+                CreatedAtUtc = userDTO.CreatedAtUtc,
+            };
+            var response = await _unitOfWork.IdentityUserRepository.RegisterAsync(user);
 
             return response;
         }
 
         public async Task<GetRegisterUserDTO> GetUserByMailAsync(string userEmail)
         {
-            var user = await _unitOfWork.IdentityUserRepository.GetUserByMailAsync(userEmail);
-            return user;
+            var userDTO = await _unitOfWork.IdentityUserRepository.GetUserByMailAsync(userEmail);
+
+            RoomBooking.Application.DTO.GetRegisterUserDTO registerUserDTO = new RoomBooking.Application.DTO.GetRegisterUserDTO()
+            {
+                Id = userDTO.Id,
+                AccessFailedCount = userDTO.AccessFailedCount,
+                ConcurrencyStamp = userDTO.ConcurrencyStamp,
+                EmailConfirmed = userDTO.EmailConfirmed,
+                LockoutEnabled = userDTO.LockoutEnabled,
+                NormalizedEmail = userDTO.NormalizedEmail,
+                NormalizedUserName = userDTO.NormalizedUserName,
+                PasswordHash = userDTO.PasswordHash,
+                SecurityStamp = userDTO.SecurityStamp,
+                TwoFactorEnabled = userDTO.TwoFactorEnabled,
+                PhoneNumber = userDTO.PhoneNumber,
+                PhoneNumberConfirmed = userDTO.PhoneNumberConfirmed,
+                UserName = userDTO.UserName,
+                FirstName = userDTO.FirstName,
+                LastName = userDTO.LastName,
+                Email = userDTO.Email,
+                Department = userDTO.Department,
+                MemberPin = userDTO.MemberPin,
+                CreatedAtUTC = userDTO.CreatedAtUTC,
+                LockoutEnd = userDTO.LockoutEnd,
+                LastUpdatedAtUTC = userDTO.LastUpdatedAtUTC,
+            };
+
+            return registerUserDTO;
         }
 
         public async Task<bool> CheckPasswordAsync(GetRegisterUserDTO userDTO, string password)
         {
-            var response = await _unitOfWork.IdentityUserRepository.CheckPasswordAsync(userDTO, password);
+            RoomBooking.Domain.DTO.GetRegisterUserDTO registerDTO = new RoomBooking.Domain.DTO.GetRegisterUserDTO()
+            {
+                Id = userDTO.Id,
+                AccessFailedCount = userDTO.AccessFailedCount,
+                ConcurrencyStamp = userDTO.ConcurrencyStamp,
+                EmailConfirmed = userDTO.EmailConfirmed,
+                LockoutEnabled = userDTO.LockoutEnabled,
+                NormalizedEmail = userDTO.NormalizedEmail,
+                NormalizedUserName = userDTO.NormalizedUserName,
+                PasswordHash = userDTO.PasswordHash,
+                SecurityStamp = userDTO.SecurityStamp,
+                TwoFactorEnabled = userDTO.TwoFactorEnabled,
+                PhoneNumber = userDTO.PhoneNumber,
+                PhoneNumberConfirmed = userDTO.PhoneNumberConfirmed,
+                UserName = userDTO.UserName,
+                FirstName = userDTO.FirstName,
+                LastName = userDTO.LastName,
+                Email = userDTO.Email,
+                Department = userDTO.Department,
+                MemberPin = userDTO.MemberPin,
+                CreatedAtUTC = userDTO.CreatedAtUTC,
+                LockoutEnd = userDTO.LockoutEnd,
+                LastUpdatedAtUTC = userDTO.LastUpdatedAtUTC,
+            };
+
+            var response = await _unitOfWork.IdentityUserRepository.CheckPasswordAsync(registerDTO, password);
 
             return response;
         }
@@ -99,5 +163,7 @@ namespace RoomBooking.Application.Services.User
         {
             await _unitOfWork.IdentityUserRepository.LogoutAsync();
         }
+
+     
     }
 }

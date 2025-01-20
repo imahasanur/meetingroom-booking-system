@@ -2,7 +2,7 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using RoomBooking.Application;
-using RoomBooking.Application.Domain.Repositories;
+using RoomBooking.Domain.Domain.Repositories;
 using RoomBooking.Application.Services;
 using RoomBooking.Application.Services.Booking;
 using RoomBooking.Application.Services.EventTime;

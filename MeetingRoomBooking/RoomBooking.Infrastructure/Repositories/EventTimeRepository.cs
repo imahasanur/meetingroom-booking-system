@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RoomBooking.Application.Domain.Entities;
-using RoomBooking.Application.Domain.Repositories;
+using RoomBooking.Domain.Domain.Entities;
+using RoomBooking.Domain.Domain.Repositories;
 using RoomBooking.Application.DTO;
 using System;
 using System.Collections.Generic;

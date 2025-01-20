@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol;
 using NuGet.Versioning;
-using RoomBooking.Application.Domain.Entities;
+using RoomBooking.Domain.Domain.Entities;
 using RoomBooking.Infrastructure.Membership;
 using RoomBooking.Models.Booking;
 using RoomBooking.Models.Room;
