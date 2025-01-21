@@ -15,6 +15,8 @@ namespace RoomBooking.Application.DTO
         public required string Details { get; set; }
         public required string CreatedBy { get; set; }
         public required string FontColor { get; set; }
+        public string QRCode { get; set; }
+        public string? RoomImage { get; set; }
         public required DateTime CreatedAtUTC { get; set; }
         public DateTime? LastUpdatedAtUTC { get; set; }
 

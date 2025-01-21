@@ -26,9 +26,19 @@
             <div class="card-header mx-auto bg-cyan">
                 <h3 class="card-title">Create Room</h3>
             </div>
-            <form asp-controller="Room" asp-action="Create" asp-area="" asp-route-returnUrl="Room/Create" method="post" asp-antiforgery="true" >
+            <form asp-controller="Room" asp-action="Create" asp-area="" asp-route-returnUrl="Room/Create" method="post" enctype="multipart/form-data" asp-antiforgery="true">
                 <div class="card-body">
                     <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                    <div class="form-group">
+                        <label for="exampleInputFile">File input</label>
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="inputFile" asp-for="ImageFile">
+                                <label class="custom-file-label" asp-for="ImageFile">Choose file</label>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div class="form-group">
                         <label>Select Available Floors</label>
@@ -75,6 +85,16 @@
                         <input asp-for="MaximumCapacity" type="number" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Write Meeting maximum attendee capacity" min="2" max="25">
                         <span asp-validation-for="MaximumCapacity" class="text-danger"></span>
                     </div>
+                    @if (!string.IsNullOrEmpty(Model.QRCode))
+                    {
+                        <div class="form-group">
+                            <label asp-for="MaximumCapacity">QR Code </label>
+                            <div>
+                                <img height="150" width="150" src="@Model.QRCode" />
+                            </div>
+                        </div>
+                    }
+
                 </div>
                 <div class="card-footer text-center">
                     <button type="submit" class="btn btn-primary">Submit</button>
@@ -92,6 +112,13 @@
         $(document).ready(function () {
             $('#successMessage').on('click', function () {
                 $(this).hide();
+            });
+
+            const inputFile = $("#inputFile");
+
+            inputFile.change(function () {
+                const fileName = this.files[0]?.name || "Choose file";
+                $(this).next(".custom-file-label").text(fileName);
             });
         });
     </script>

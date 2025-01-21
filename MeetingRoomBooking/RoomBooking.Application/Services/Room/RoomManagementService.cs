@@ -72,7 +72,9 @@ namespace RoomBooking.Application.Services.Room
                     FontColor = room.FontColor,
                     MaximumCapacity = room.MaximumCapacity,
                     MinimumCapacity = room.MinimumCapacity,
-                    ConcurrencyToken = room.ConcurrencyToken
+                    ConcurrencyToken = room.ConcurrencyToken,
+                    QRCode = room.QRCode,
+                    RoomImage = room.RoomImage,
                 };
 
                 return roomDTO;
@@ -103,6 +105,8 @@ namespace RoomBooking.Application.Services.Room
                     FontColor= room.FontColor,
                     MinimumCapacity = room.MinimumCapacity,
                     MaximumCapacity = room.MaximumCapacity,
+                    QRCode = room.QRCode,
+                    RoomImage = room.RoomImage,
                 };
                 roomsDTO.Add(roomDTO);
             }
@@ -123,7 +127,9 @@ namespace RoomBooking.Application.Services.Room
                 MinimumCapacity = roomDTO.MinimumCapacity,
                 MaximumCapacity = roomDTO.MaximumCapacity,
                 Color = roomDTO.Color,
-                ConcurrencyToken = Guid.NewGuid()
+                ConcurrencyToken = Guid.NewGuid(),
+                QRCode = roomDTO.QRCode,
+                RoomImage = roomDTO.RoomImage,
             };
 
             string response = string.Empty;
@@ -199,7 +205,8 @@ namespace RoomBooking.Application.Services.Room
                     existingRoom.MaximumCapacity = roomDTO.MaximumCapacity;
                     existingRoom.MinimumCapacity = roomDTO.MinimumCapacity;
                     existingRoom.ConcurrencyToken = Guid.NewGuid();
-
+                    existingRoom.QRCode = roomDTO.QRCode;
+                    existingRoom.RoomImage = roomDTO.RoomImage;
 
                     var result = ValidateAttendeeLimit(existingRoom.MaximumCapacity, existingRoom.MinimumCapacity, existingRoom.Capacity);
 

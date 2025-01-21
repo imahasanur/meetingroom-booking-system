@@ -33,9 +33,20 @@
             <div class="card-header mx-auto bg-cyan">
                 <h3 class="card-title">Update Room</h3>
             </div>
-            <form asp-controller="Room" asp-action="Edit" asp-area="" asp-route-returnUrl="Room/Edit" method="post" asp-antiforgery="true">
+            <form asp-controller="Room" asp-action="Edit" asp-area="" asp-route-returnUrl="Room/Edit" method="post" enctype="multipart/form-data" asp-antiforgery="true">
                 <div class="card-body">
                     <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                    <div class="form-group">
+                        <label for="exampleInputFile">File input</label>
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="inputFile" asp-for="ImageFile">
+                                <label class="custom-file-label" asp-for="ImageFile">Choose file</label>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label>Select Available Floors</label>
                         <select class="form-control select2 overflow-auto text-center" style="width: 100%;" asp-for="Location">
@@ -105,6 +116,13 @@
         $(document).ready(function () {
             $('#message').on('click', function () {
                 $(this).hide();
+            });
+
+            const inputFile = $("#inputFile");
+
+            inputFile.change(function () {
+                const fileName = this.files[0]?.name || "Choose file";
+                $(this).next(".custom-file-label").text(fileName);
             });
         });
     </script>

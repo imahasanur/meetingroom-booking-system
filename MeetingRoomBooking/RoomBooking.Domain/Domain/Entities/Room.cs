@@ -20,6 +20,8 @@ namespace RoomBooking.Domain.Domain.Entities
         public Guid ConcurrencyToken { get; set; }
         public int? MinimumCapacity { get; set; }
         public int? MaximumCapacity { get; set; }
+        public string QRCode { get; set; }
+        public string? RoomImage { get; set; }
         public DateTime CreatedAtUTC { get; set; }
         public DateTime? LastUpdatedAtUTC { get; set; }
         public List<Event> Events { get; set; }

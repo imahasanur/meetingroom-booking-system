@@ -5,6 +5,7 @@ using RoomBooking.Application.DTO;
 using System.Web.Mvc;
 using Microsoft.AspNetCore.Identity;
 using RoomBooking.Application.Services.Room;
+using QRCoder;
 
 namespace RoomBooking.Models.Room
 {
@@ -50,6 +51,11 @@ namespace RoomBooking.Models.Room
         [Range(2, 25, ErrorMessage = "The Room must hold at least 2 and at max 25 people")]
         public int? MaximumCapacity { get; set; }
 
+        public string? QRCode { get; set; }
+        public IFormFile? ImageFile { get; set; }
+        public string? RoomImage { get; set; }
+
+
         public IList<GetRoomDTO>? PreviousRooms { get; set; }
 
         public void ResolveDI(IServiceProvider provider)
@@ -57,8 +63,31 @@ namespace RoomBooking.Models.Room
             _roomService = provider.GetService<IRoomManagementService>();
         }
 
+        
+        public string QRCodeGeneration(string url)
+        {
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(url, QRCodeGenerator.ECCLevel.Q);
+            using (PngByteQRCode qrCode = new PngByteQRCode(qrCodeData))
+            {
+                byte[] qrCodeImage = qrCode.GetGraphic(20);
+                string qrImage = Convert.ToBase64String(qrCodeImage);
+
+                return $"data:image/png;base64,{qrImage}";
+            }
+        }
+
         public async Task<string> CreateRoomAsync(CreateRoomViewModel model)
         {
+            if (model.ImageFile != null && model.ImageFile.Length > 0)
+            {
+                var ms = new MemoryStream();
+
+                model.ImageFile.CopyTo(ms);
+                byte[] fileBytes = ms.ToArray();
+                model.RoomImage = Convert.ToBase64String(fileBytes);
+            }
+
             var room = new CreateRoomDTO()
             { 
                 Name = model.Name,
@@ -71,7 +100,10 @@ namespace RoomBooking.Models.Room
                 MaximumCapacity = model?.MaximumCapacity ?? 0, 
                 MinimumCapacity = model?.MinimumCapacity ?? 0,
                 FontColor = model.FontColor,
+                QRCode = model.QRCode,
+                RoomImage = model.RoomImage,
             };
+
             var response = await _roomService.CreateRoomAsync(room);
             return response;
         }

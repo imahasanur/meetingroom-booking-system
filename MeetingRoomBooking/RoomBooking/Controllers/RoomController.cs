@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using RoomBooking.Domain.Domain.Entities;
-using RoomBooking.Application.DTO;
-using RoomBooking.Application.Services.Room;
-using RoomBooking.Data.Migrations;
+using QRCoder;
 using RoomBooking.Infrastructure.Membership;
 using RoomBooking.Models.Room;
 
@@ -61,6 +58,10 @@ namespace RoomBooking.Controllers
             {
                 var model = new CreateRoomViewModel();
                 model.ResolveDI(_provider);
+
+                var currentURI = $"{HttpContext.Request.Host}{HttpContext.Request.Path}";
+
+                model.QRCode = model.QRCodeGeneration(currentURI);
 
                 return View(model);
             }

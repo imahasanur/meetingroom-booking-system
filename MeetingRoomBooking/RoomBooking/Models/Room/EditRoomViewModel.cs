@@ -51,6 +51,9 @@ namespace RoomBooking.Models.Room
         public int? MaximumCapacity { get; set; }
 
         public Guid ConcurrencyToken { get; set; }
+        public IFormFile? ImageFile { get; set; }
+        public string? RoomImage { get; set; }
+        public string? QRCode { get; set; }
 
         public IList<GetRoomDTO>? PreviousRooms { get; set; }
 
@@ -82,7 +85,9 @@ namespace RoomBooking.Models.Room
                 MaximumCapacity = room.MaximumCapacity,
                 MinimumCapacity = room.MinimumCapacity,
                 LastUpdatedAtUTC = room.LastUpdatedAtUTC,
-                ConcurrencyToken = room.ConcurrencyToken
+                ConcurrencyToken = room.ConcurrencyToken,
+                RoomImage = room.RoomImage,
+                QRCode = room.QRCode,
             };
 
             return viewModel;
@@ -114,7 +119,9 @@ namespace RoomBooking.Models.Room
                 MaximumCapacity = model.MaximumCapacity,
                 MinimumCapacity = model.MinimumCapacity,
                 LastUpdatedAtUTC = DateTime.UtcNow,
-                ConcurrencyToken = model.ConcurrencyToken
+                ConcurrencyToken = model.ConcurrencyToken,
+                RoomImage = model.RoomImage,
+                QRCode = model.QRCode,
             };
 
             var response = await _roomService.EditRoomAsync(room);

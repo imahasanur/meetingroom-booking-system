@@ -45,6 +45,8 @@
                     <th>Details</th>
                     <th>Color</th>
                     <th>Font Color</th>
+                    <th>Room Image</th>
+                    <th>Room QR Code</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -64,6 +66,8 @@
                             <td>@room.Details</td>
                             <td>@room.Color</td>
                             <td>@room.FontColor</td>
+                            <td>@room.RoomImage ? @room.RoomImage: "Image Not set";</td>
+                            <td>@room.QRCode</td>
                             <td>
                                 @{
                                     if(room.UserClaim == "admin")
@@ -87,6 +91,8 @@
                 {
                     <tr>
                         <td class="text-center">No rooms available.</td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>

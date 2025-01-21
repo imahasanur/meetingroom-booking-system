@@ -25,6 +25,8 @@ namespace RoomBooking.Models.Room
         public string FontColor { get; set; }
         public DateTime CreatedAtUTC { get; set; }
         public DateTime? LastUpdatedAtUTC { get; set; }
+        public string? RoomImage { get; set; }
+        public string? QRCode { get; set; }
 
         public void ResolveDI(IServiceProvider provider)
         {
@@ -51,7 +53,9 @@ namespace RoomBooking.Models.Room
                     LastUpdatedAtUTC = room.LastUpdatedAtUTC,
                     MinimumCapacity = room.MinimumCapacity,
                     MaximumCapacity = room.MaximumCapacity,
-                    UserClaim = userClaim
+                    UserClaim = userClaim,
+                    QRCode = room.QRCode,
+                    RoomImage = room.RoomImage,
                 };
                 roomsViewModel.Add(viewModel);
             };
