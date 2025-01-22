@@ -42,6 +42,19 @@ namespace RoomBooking.Models.EventTime
         {
             var response = string.Empty;
 
+            if(model.MinimumTime >= model.MaximumTime)
+            {
+                response = "Max time should be greater than min time.";
+
+                return response;
+            }
+            else if(model.MinimumTime < 15 || model.MaximumTime < 15)
+            {
+                response = "please keep minimum 15 minutes of meeting time";
+
+                return response;
+            }
+
             var eventTimeDTO = new EditEventTimeDTO { Id = model.Id,
                 MinimumTime = model.MinimumTime,
                 MaximumTime = model.MaximumTime,
