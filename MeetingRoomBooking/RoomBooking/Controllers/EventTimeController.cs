@@ -96,7 +96,7 @@ namespace RoomBooking.Controllers
                 }
                 else
                 {
-                    TempData["message"] = "Time Limit doesn't update";
+                    TempData["message"] = response;
                 }
 
                 return View(model);

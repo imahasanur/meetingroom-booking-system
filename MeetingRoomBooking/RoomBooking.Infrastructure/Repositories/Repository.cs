@@ -143,19 +143,6 @@ namespace RoomBooking.Infrastructure.Repositories
             }
         }
 
-        public async Task<TResult> SingleOrDefaultAsync<TResult>(Expression<Func<TEntity, TResult>>? selector,
-            Expression<Func<TEntity, bool>>? predicate = null,
-            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
-            Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
-            bool disableTracking = true)
-        {
-            var query = _dbSet.AsQueryable();
-            if (disableTracking) query.AsNoTracking();
-            if (include is not null) query = include(query);
-            if (predicate is not null) query = query.Where(predicate);
-            return (orderBy is not null
-                ? await orderBy(query).Select(selector!).FirstOrDefaultAsync()
-                : await query.Select(selector!).FirstOrDefaultAsync())!;
-        }
+       
     }
 }
