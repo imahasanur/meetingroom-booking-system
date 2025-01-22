@@ -57,6 +57,7 @@
                     foreach (var room in Model)
                     {
                         <tr>
+                            <input type="hidden" asp-for="@room.QRCode" />
                             <td>@serial</td>
                             <td>@room.Name</td>
                             <td>@room.Location</td>
@@ -66,8 +67,22 @@
                             <td>@room.Details</td>
                             <td>@room.Color</td>
                             <td>@room.FontColor</td>
-                            <td>@room.RoomImage ? @room.RoomImage: "Image Not set";</td>
-                            <td>@room.QRCode</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(room.RoomImage))
+                                {
+                                    <div>
+                                        <img height="120" width="150" object-fit="contain" src="@room.RoomImage" />
+                                    </div>
+                                }
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(room.QRCode))
+                                {
+                                    <div>
+                                        <img height="120" width="120" src="@room.QRCode" />
+                                    </div>
+                                }
+                            </td>
                             <td>
                                 @{
                                     if(room.UserClaim == "admin")
@@ -106,6 +121,7 @@
                 }
             </tbody>
         </table>
+        
     </div>
 </div>
 

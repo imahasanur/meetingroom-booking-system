@@ -36,13 +36,21 @@
             <form asp-controller="Room" asp-action="Edit" asp-area="" asp-route-returnUrl="Room/Edit" method="post" enctype="multipart/form-data" asp-antiforgery="true">
                 <div class="card-body">
                     <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-
+                    @if (!string.IsNullOrEmpty(Model.RoomImage))
+                    {
+                        <div class="form-group">
+                            <label asp-for="RoomImage">Room Image </label>
+                            <div>
+                                <img height="190" width="190" src="@Model.RoomImage" />
+                            </div>
+                        </div>
+                    }
                     <div class="form-group">
                         <label for="exampleInputFile">File input</label>
                         <div class="input-group">
                             <div class="custom-file">
                                 <input type="file" class="custom-file-input" id="inputFile" asp-for="ImageFile">
-                                <label class="custom-file-label" asp-for="ImageFile">Choose file</label>
+                                <label class="custom-file-label" asp-for="ImageFile">Choose Room image </label>
                             </div>
                         </div>
                     </div>
@@ -91,6 +99,16 @@
                         <input asp-for="MaximumCapacity" type="number" class="form-control" id="" autocomplete="on" aria-required="true" placeholder="Write Meeting maximum attendee capacity" min="2" max="25">
                         <span asp-validation-for="MaximumCapacity" class="text-danger"></span>
                     </div>
+
+                    @if (!string.IsNullOrEmpty(Model.QRCode))
+                    {
+                        <div class="form-group">
+                            <label asp-for="QRCode">QR Code </label>
+                            <div>
+                                <img height="150" width="150" object-fit="contain" src="@Model.QRCode" />
+                            </div>
+                        </div>
+                    }
                     <div class="form-group">
                         <input asp-for="Id" value="@Model?.Id" type="hidden">
                         <input asp-for="CreatedAtUTC" value="@Model?.CreatedAtUTC " type="hidden">
@@ -98,6 +116,8 @@
                         <input asp-for="CreatedBy" value="@Model?.CreatedBy" type="hidden">
                         <input asp-for="PreviousRooms" value="@Model?.PreviousRooms" type="hidden">
                         <input asp-for="ConcurrencyToken" value="@Model?.ConcurrencyToken" type="hidden">
+                        <input asp-for="RoomImage" value="@Model?.RoomImage" type="hidden">
+                        <input asp-for="QRCode" value="@Model?.QRCode" type="hidden">
                     </div>
                     <div class="card-footer text-center">
                         <button type="submit" class="btn btn-primary">Save</button>

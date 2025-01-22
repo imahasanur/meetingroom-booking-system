@@ -26,6 +26,7 @@ namespace RoomBooking.Models.Room
         public DateTime CreatedAtUTC { get; set; }
         public DateTime? LastUpdatedAtUTC { get; set; }
         public string? RoomImage { get; set; }
+        public IFormFile? ImageFile { get; set; }
         public string? QRCode { get; set; }
 
         public void ResolveDI(IServiceProvider provider)

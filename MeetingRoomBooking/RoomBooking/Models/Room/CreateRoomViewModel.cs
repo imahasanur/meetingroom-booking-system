@@ -79,13 +79,25 @@ namespace RoomBooking.Models.Room
 
         public async Task<string> CreateRoomAsync(CreateRoomViewModel model)
         {
+            List<string> imageExtensions = new List<string> { "JPG", "JPEG", "JPE", "BMP", "GIF", "PNG" };
+
             if (model.ImageFile != null && model.ImageFile.Length > 0)
             {
+                var file = model.ImageFile.FileName.ToUpper().Split(".");
+                var extension = file[file.Length - 1];
+
+                if (imageExtensions.Contains(extension) == false)
+                {
+                    string result = "It is not a valid image fomat. Upload these types [ .JPG, .JPEG, .JPE, .BMP, .GIF, .PNG] ";
+
+                    return result;
+                }
+
                 var ms = new MemoryStream();
 
                 model.ImageFile.CopyTo(ms);
                 byte[] fileBytes = ms.ToArray();
-                model.RoomImage = Convert.ToBase64String(fileBytes);
+                model.RoomImage = $"data:image/jpeg;charset=utf-8;base64,{ Convert.ToBase64String(fileBytes)}";
             }
 
             var room = new CreateRoomDTO()

@@ -88,12 +88,16 @@
                     @if (!string.IsNullOrEmpty(Model.QRCode))
                     {
                         <div class="form-group">
-                            <label asp-for="MaximumCapacity">QR Code </label>
+                            <label asp-for="QRCode">QR Code </label>
                             <div>
                                 <img height="150" width="150" src="@Model.QRCode" />
                             </div>
                         </div>
                     }
+
+                    <div class="form-group">
+                        <input asp-for="QRCode" type="hidden" />
+                    </div>
 
                 </div>
                 <div class="card-footer text-center">
