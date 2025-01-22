@@ -25,10 +25,69 @@ namespace RoomBooking.Controllers
             _user = user;
         }
 
-        public IActionResult Get()
-        { 
-            return View();
-        }
+        //public async Task<IActionResult> GetRooms()
+        //{
+        //    TempData.Clear();
+
+        //    try
+        //    {
+        //        var claim = await GetUserClaim();
+        //        var model = new GetAllRoomViewModel();
+
+        //        model.ResolveDI(_provider);
+        //        var allRooms = await model.LoadRoomAsync("user");
+
+        //        if(allRooms == null || allRooms.Count == 0)
+        //        {
+        //            TempData["message"] = "No rooms available now";
+        //        }
+
+        //        return View(allRooms);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "There is an exception while performing Get All room operation");
+        //        TempData["message"] = "There is an error while load rooms";
+
+        //        return View();
+        //    }
+        //}
+
+        //[HttpGet]
+        //public async Task<IActionResult> Get(Guid id)
+        //{
+        //    TempData.Clear();
+
+        //    try
+        //    {
+        //        var model = new EditRoomViewModel();
+        //        model.ResolveDI(_provider);
+
+        //        model = await model.GetRoomAsync(id);
+
+        //        TempData.Clear();
+
+        //        if (model?.CreatedBy is not null)
+        //        {
+        //            model.ResolveDI(_provider);
+
+        //            return View(model);
+        //        }
+        //        else
+        //        {
+        //            TempData["message"] = "Room doesn't exist . Already deleted";
+        //        }
+
+        //        return RedirectToAction("GetRooms");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Room Get operation failed ");
+        //        TempData["failure"] = "Room Get operation failed";
+        //    }
+
+        //    return RedirectToAction("GetRooms");
+        //}
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
@@ -59,9 +118,12 @@ namespace RoomBooking.Controllers
                 var model = new CreateRoomViewModel();
                 model.ResolveDI(_provider);
 
-                var currentURI = $"{HttpContext.Request.Host}{HttpContext.Request.Path}";
+                var roomId = Guid.NewGuid();
+
+                var currentURI = $"{HttpContext.Request.Host}/Home/Get/{roomId}";
 
                 model.QRCode = model.QRCodeGeneration(currentURI);
+                model.Id = roomId;
 
                 return View(model);
             }

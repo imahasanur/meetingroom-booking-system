@@ -1,0 +1,72 @@
+﻿@model List<GetAllRoomViewModel>
+@{
+    ViewData["Title"] = "All Rooms";
+}
+
+<div class="row ml-auto">
+    <div class="col-md-1 col-sm-1"></div>
+    <div class=" col-md-10 col-sm-10">
+
+        @if (TempData["message"] is not null)
+        {
+            <div id="message" class="alert alert-danger alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+                <i class="icon  fas fa-times"></i>
+                @TempData["message"]
+            </div>
+        }
+        <div class="row">
+            
+
+            @if (Model != null && Model?.Count > 0)
+            {
+                foreach (var room in Model)
+                {
+                    <div class=" col-md-5 col-5 col-sm-6">
+                        <div class="card card-primary">
+                            <div class="card-header mx-auto bg-cyan">
+                                <h3 class="card-title">@room.Location @room.Name </h3>
+                            </div>
+                            <form >
+                                <div class="card-body">
+                                    @if (!string.IsNullOrEmpty(@room.RoomImage))
+                                    {
+                                        <div class="form-group">
+                                            <label asp-for="@room.RoomImage">Room View </label>
+                                            <div class="shadow-lg p-3 mb-5 bg-white rounded">
+                                                <img height="250" width="250" object-fit="contain" src="@room.RoomImage" />
+                                            </div>
+                                        </div>
+                                    }
+
+                                    @if (!string.IsNullOrEmpty(@room.QRCode))
+                                    {
+                                        <div class="form-group shadow-lg p-3 mb-5 bg-white rounded">
+                                            <label asp-for="@room.QRCode">Room QR Code </label>
+                                            <div>
+                                                <img height="150" width="150" object-fit="contain" src="@room.QRCode" />
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                }
+            }
+            
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            $('#message').on('click', function () {
+                $(this).hide();
+            });
+        });
+    </script>
+}

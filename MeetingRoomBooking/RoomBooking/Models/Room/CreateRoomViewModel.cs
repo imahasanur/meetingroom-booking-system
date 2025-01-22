@@ -102,6 +102,7 @@ namespace RoomBooking.Models.Room
 
             var room = new CreateRoomDTO()
             { 
+                Id = (Guid)model.Id,
                 Name = model.Name,
                 Location = model.Location,
                 Capacity = model.Capacity,

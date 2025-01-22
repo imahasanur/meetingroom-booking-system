@@ -59,6 +59,16 @@
                 <!-- Navbar -->
                 <nav class = " navbar navbar-expand navbar-white navbar-light">
                     <!-- Left navbar links -->
+                    <ul class="navbar-nav">
+                        <li class="nav-item d-none d-sm-inline-block">
+                            <a class="nav-link" asp-controller="Home" asp-action="GetRooms">
+                                <i class="right fas fa-door-open"></i>
+                                <p>
+                                    Meeting Rooms
+                                </p>
+                            </a>
+                        </li>
+                    </ul>
                     <partial name="_LoginPartial" />
                 </nav>
             }

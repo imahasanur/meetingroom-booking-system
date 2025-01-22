@@ -117,6 +117,7 @@ namespace RoomBooking.Application.Services.Room
         {
             var room = new RoomBooking.Domain.Domain.Entities.Room()
             {
+                Id = roomDTO.Id,
                 Name = roomDTO.Name,
                 Details = roomDTO.Details,
                 Location = roomDTO.Location,

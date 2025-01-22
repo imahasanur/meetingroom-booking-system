@@ -41,7 +41,7 @@
                         <div class="form-group">
                             <label asp-for="RoomImage">Room Image </label>
                             <div>
-                                <img height="190" width="190" src="@Model.RoomImage" />
+                                <img height="190" width="190" object-fit="contain" src="@Model.RoomImage" />
                             </div>
                         </div>
                     }
@@ -103,7 +103,7 @@
                     @if (!string.IsNullOrEmpty(Model.QRCode))
                     {
                         <div class="form-group">
-                            <label asp-for="QRCode">QR Code </label>
+                            <label asp-for="QRCode">Room QR Code </label>
                             <div>
                                 <img height="150" width="150" object-fit="contain" src="@Model.QRCode" />
                             </div>

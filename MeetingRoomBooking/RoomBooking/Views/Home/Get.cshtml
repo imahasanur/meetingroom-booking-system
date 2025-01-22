@@ -1,0 +1,109 @@
+﻿@model EditRoomViewModel
+@{
+    ViewData["Title"] = "Edit Room";
+}
+
+<div class="row ml-auto">
+    <div class="col-md-1 col-sm-1"></div>
+    <div class=" col-md-6 col-sm-8">
+        @if (TempData["success"] is not null)
+        {
+            <div id="message" class="alert alert-success alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+                <i class="icon fas fa-check"></i>
+                @TempData["success"]
+            </div>
+        }
+
+        @if (TempData["failure"] is not null)
+        {
+            <div id="message" class="alert alert-danger alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+                <i class="icon fas fa-sad-tear"></i>
+                @TempData["failure"]
+            </div>
+        }
+
+        @if (TempData["message"] is not null)
+        {
+            <div id="message" class="alert alert-danger alert-dismissible fade show text-center" role="alert" onclick="hideMessage()">
+                <i class="icon  fas fa-times"></i>
+                @TempData["message"]
+            </div>
+        }
+        <div class="card card-primary">
+            <div class="card-header mx-auto bg-cyan">
+                <h3 class="card-title">Room Details</h3>
+            </div>
+            <form asp-controller="Room" asp-action="Get" asp-area="" asp-route-returnUrl="Room/GetRooms" method="get" enctype="multipart/form-data" >
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.RoomImage))
+                    {
+                        <div class="form-group">
+                            <label asp-for="RoomImage">Room View </label>
+                            <div class="shadow-lg p-3 mb-5 bg-white rounded">
+                                <img height="250" width="250" object-fit="contain" src="@Model.RoomImage" />
+                            </div>
+                        </div>
+                    }
+                    <div class="form-group shadow-lg p-3 mb-5 bg-white rounded">
+                        <label asp-for="Location"> Floor </label>
+                        <p> @Model.Location </p>
+                    </div>
+                   <div class="form-group shadow-lg p-3 mb-5 bg-white rounded">
+                        <label asp-for="Name">Room Name</label>
+                        <p>@Model.Name </p>
+                    </div>
+                    <div class="form-group shadow-lg p-3 mb-5 bg-white rounded">
+                        <label asp-for="Capacity">Room Capacity</label>
+                        <p>@Model.Capacity </p>
+                    </div>
+                    <div class="form-group shadow-lg p-3 mb-5 bg-white rounded">
+                        <label asp-for="Details">Room Details</label>
+                        <p>@Model.Details </p>
+                    </div>
+                    <div class="form-group shadow-lg p-3 mb-5 bg-white rounded">
+                        <label asp-for="Color">Room Color</label>
+                        <p>@Model.Details </p>
+                    </div>
+                    <div class="form-group shadow-lg p-3 mb-5 bg-white rounded">
+                        <label asp-for="FontColor">Room Font Color</label>
+                        <p>@Model.FontColor </p>
+                    </div>
+                    <div class="form-group shadow-lg p-3 mb-5 bg-white rounded">
+                        <label asp-for="MinimumCapacity">Minimum Attendee Capacity</label>
+                        <p>@Model.MinimumCapacity </p>
+                    </div>
+                    <div class="form-group shadow-lg p-3 mb-5 bg-white rounded">
+                        <label asp-for="MaximumCapacity">Maximum Attendee Capacity</label>
+                        <p>@Model.MaximumCapacity </p>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.QRCode))
+                    {
+                        
+                        <div class="form-group shadow-lg p-3 mb-5 bg-white rounded">
+                            <label asp-for="QRCode">Room QR Code </label>
+                            <div>
+                                <img height="150" width="150" object-fit="contain" src="@Model.QRCode" />
+                            </div>
+                        </div>
+                    }
+                   
+                   
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            $('#message').on('click', function () {
+                $(this).hide();
+            });
+        });
+    </script>
+}

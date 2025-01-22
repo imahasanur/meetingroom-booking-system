@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RoomBooking.Infrastructure.Membership;
 using RoomBooking.Models;
 using RoomBooking.Models.Account;
+using RoomBooking.Models.Room;
 using System.Diagnostics;
 
 namespace RoomBooking.Controllers
@@ -49,6 +50,69 @@ namespace RoomBooking.Controllers
             }
             
             return View();
+        }
+
+        public async Task<IActionResult> GetRooms()
+        {
+            TempData.Clear();
+
+            try
+            {
+                var model = new GetAllRoomViewModel();
+
+                model.ResolveDI(_provider);
+                var allRooms = await model.LoadRoomAsync("user");
+
+                if (allRooms == null || allRooms.Count == 0)
+                {
+                    TempData["message"] = "No rooms available now";
+                }
+
+                return View(allRooms);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "There is an exception while performing Get All room operation");
+                TempData["message"] = "There is an error while load rooms";
+
+                return View();
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            TempData.Clear();
+
+            try
+            {
+                var model = new EditRoomViewModel();
+                model.ResolveDI(_provider);
+
+                model = await model.GetRoomAsync(id);
+
+                TempData.Clear();
+
+                if (model?.CreatedBy is not null)
+                {
+                    model.ResolveDI(_provider);
+
+                    return View(model);
+                }
+                else
+                {
+                    TempData["message"] = "Room doesn't exist . Already deleted";
+                }
+
+                return RedirectToAction("GetRooms");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Room Get operation failed ");
+                TempData["failure"] = "Room Get operation failed";
+            }
+
+            return RedirectToAction("GetRooms");
         }
 
         public IActionResult Privacy()

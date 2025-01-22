@@ -8,6 +8,7 @@ namespace RoomBooking.Application.DTO
 {
     public record CreateRoomDTO
     {
+        public Guid Id { get; set; }
         public required string Name { get; set; }
         public required string Location { get; set; }
         public required int Capacity { get; set; }
