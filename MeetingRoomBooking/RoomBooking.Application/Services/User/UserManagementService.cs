@@ -44,6 +44,11 @@ namespace RoomBooking.Application.Services.User
         {
             var userDTO = await _unitOfWork.IdentityUserRepository.GetUserByMailAsync(userEmail);
 
+            if(userDTO == null)
+            {
+                throw new Exception("User not found. Mail id is not registered");
+            }
+
             RoomBooking.Application.DTO.GetRegisterUserDTO registerUserDTO = new RoomBooking.Application.DTO.GetRegisterUserDTO()
             {
                 Id = userDTO.Id,
