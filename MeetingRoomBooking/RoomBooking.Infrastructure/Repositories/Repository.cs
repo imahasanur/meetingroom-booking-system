@@ -142,7 +142,6 @@ namespace RoomBooking.Infrastructure.Repositories
                     return await query.ToListAsync();
             }
         }
-
        
     }
 }
