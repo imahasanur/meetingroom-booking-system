@@ -213,6 +213,12 @@ namespace RoomBooking.Controllers
                 var allUser = _userManager.Users.ToList().Select(x => x.Email).ToList();
 
                 var user =await GetUserClaim();
+                if(model == null)
+                {
+                    TempData["message"] = "Record not found ";
+
+                    return RedirectToAction("GetAll");
+                }
 
                 model.UserClaim = user.Item2;
 

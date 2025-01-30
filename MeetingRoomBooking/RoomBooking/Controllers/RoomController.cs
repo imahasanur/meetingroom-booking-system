@@ -211,6 +211,7 @@ namespace RoomBooking.Controllers
                 }
 
                 return RedirectToAction("GetAll");
+                //return View(model);
             }
             catch (Exception ex)
             {
@@ -249,8 +250,9 @@ namespace RoomBooking.Controllers
                     {
                         TempData["message"] = response;
                     }
-                    
-                    return RedirectToAction("GetAll");
+
+                    return View(model);
+                    //return RedirectToAction("GetAll");
                 }
                 catch (Exception ex)
                 {

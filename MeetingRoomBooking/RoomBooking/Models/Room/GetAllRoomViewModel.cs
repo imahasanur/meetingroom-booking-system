@@ -29,6 +29,10 @@ namespace RoomBooking.Models.Room
         public IFormFile? ImageFile { get; set; }
         public string? QRCode { get; set; }
 
+        //public GetAllRoomViewModel(IRoomManagementService roomManagementService)
+        //{
+        //    _roomService = roomManagementService;
+        //}
         public void ResolveDI(IServiceProvider provider)
         {
             _roomService = provider.GetService<IRoomManagementService>();
